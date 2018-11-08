@@ -1,12 +1,12 @@
 package com.voronin.english.controller;
 
-import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Word;
 import com.voronin.english.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,10 +40,5 @@ public class WordController {
                 return wordService.getWordsByCategory(id);
             }
         };
-    }
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void saveWord(CardFilled cardFilled, @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        this.wordService.prepareAndSave(cardFilled, photo);
     }
 }
