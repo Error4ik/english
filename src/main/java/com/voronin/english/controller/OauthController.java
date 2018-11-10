@@ -47,7 +47,6 @@ public class OauthController {
     @ResponseStatus(HttpStatus.OK)
     public void logoutUser(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        System.out.println(authHeader);
         if (authHeader != null) {
             String tokenValue = authHeader.replace("Bearer", "").trim();
             OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
