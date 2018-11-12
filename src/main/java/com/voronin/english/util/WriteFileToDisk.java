@@ -19,13 +19,10 @@ public class WriteFileToDisk {
 
     private final String fileSeparator = System.getProperty("file.separator");
 
-    @Value("${upload.image.folder}")
-    private String pathToSaveImage;
-
     @Value("${file.extension.to.save}")
     private String fileExtension;
 
-    public File writeImage(final MultipartFile photo) {
+    public File writeImage(final MultipartFile photo, final String pathToSaveImage) {
         File dir = new File(pathToSaveImage);
         if (!dir.exists()) {
             dir.mkdirs();

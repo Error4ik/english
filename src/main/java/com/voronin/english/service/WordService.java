@@ -5,6 +5,7 @@ import com.voronin.english.domain.*;
 import com.voronin.english.repository.WordRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,6 +44,9 @@ public class WordService {
     @Autowired
     private PhraseService phraseService;
 
+    @Value("${upload.image.folder}")
+    private String pathToSaveImage;
+
     public List<Word> getWords() {
         return this.wordRepository.findAll();
     }
@@ -54,13 +58,13 @@ public class WordService {
     public void prepareAndSave(final CardFilled card, final MultipartFile photo) {
         Word word = new Word(card.getWord(),
                 card.getTranscription(),
-                this.categoryService.getCategoryByname(card.getCategory()),
+                this.categoryService.getCategoryByName(card.getCategory()),
                 this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech()),
                 card.getDescription()
         );
-        word.setImage(getImage(photo));
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.wordRepository.save(word);
-
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
     }
@@ -78,13 +82,5 @@ public class WordService {
             translations.add(t);
         }
         return translations;
-    }
-
-    private Image getImage(final MultipartFile photo) {
-        Image image = new Image();
-        File file = this.writeFileToDisk.writeImage(photo);
-        image.setName(file.getName());
-        image.setUrl(file.getAbsolutePath());
-        return this.imageService.save(image);
     }
 }

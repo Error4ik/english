@@ -1,10 +1,15 @@
 package com.voronin.english.service;
 
 import com.voronin.english.domain.Category;
+import com.voronin.english.domain.Image;
 import com.voronin.english.repository.CategoryRepository;
+import com.voronin.english.util.WriteFileToDisk;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -19,11 +24,26 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private WriteFileToDisk writeFileToDisk;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Value("${upload.image.category.folder}")
+    private String pathToSaveImage;
+
     public List<Category> getCategories() {
         return this.categoryRepository.findAll();
     }
 
-    public Category getCategoryByname(final String name) {
+    public Category getCategoryByName(final String name) {
         return this.categoryRepository.getCategoryByName(name);
+    }
+
+    public void prepareAndSave(final Category category, final MultipartFile photo) {
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
+        this.categoryRepository.save(category);
     }
 }
