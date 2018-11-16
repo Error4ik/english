@@ -16,6 +16,6 @@ public class MainController {
 
     @RequestMapping("/user/current")
     public Principal getUserById(Principal principal) {
-        return principal == null ? () -> "EMPTY" : principal;
+        return principal == null ? () -> "Not an authorized user" : principal;
     }
 }
