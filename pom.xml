@@ -88,6 +88,15 @@
 			<artifactId>guava</artifactId>
 			<version>25.1-jre</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.11.452</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

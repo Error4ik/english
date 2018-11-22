@@ -1,15 +1,19 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.english.domain.*;
+import com.voronin.english.domain.CardFilled;
+import com.voronin.english.domain.Phrase;
+import com.voronin.english.domain.Translation;
+import com.voronin.english.domain.Word;
 import com.voronin.english.repository.WordRepository;
-import com.voronin.english.util.WriteFileToDisk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +27,11 @@ import java.util.UUID;
 @Service
 public class WordService {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(WordService.class);
+
+    @Autowired
+    private AmazonClient amazonClient;
+
     @Autowired
     private WordRepository wordRepository;
 
@@ -34,9 +43,6 @@ public class WordService {
 
     @Autowired
     private ImageService imageService;
-
-    @Autowired
-    private WriteFileToDisk writeFileToDisk;
 
     @Autowired
     private TranslationService translationService;
@@ -62,8 +68,11 @@ public class WordService {
                 this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech()),
                 card.getDescription()
         );
-        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
-        word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
+        try {
+            word.setImage(this.imageService.save(this.amazonClient.uploadFile(photo, pathToSaveImage)));
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
         this.wordRepository.save(word);
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
