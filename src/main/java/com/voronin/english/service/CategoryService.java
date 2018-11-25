@@ -1,7 +1,9 @@
 package com.voronin.english.service;
 
 import com.voronin.english.domain.Category;
+import com.voronin.english.domain.Image;
 import com.voronin.english.repository.CategoryRepository;
+import com.voronin.english.util.WriteFileToDisk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -27,10 +29,10 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private ImageService imageService;
+    private WriteFileToDisk writeFileToDisk;
 
     @Autowired
-    private AmazonClient amazonClient;
+    private ImageService imageService;
 
     @Value("${upload.image.category.folder}")
     private String pathToSaveImage;
@@ -44,11 +46,8 @@ public class CategoryService {
     }
 
     public void prepareAndSave(final Category category, final MultipartFile photo) {
-        try {
-            category.setImage(this.imageService.save(this.amazonClient.uploadFile(photo, pathToSaveImage)));
-            this.categoryRepository.save(category);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
+        this.categoryRepository.save(category);
     }
 }
