@@ -20,7 +20,7 @@ public class TranslationService {
     private TranslationRepository translationRepository;
 
 
-    public void saveAll(final List<Translation> list) {
-        this.translationRepository.saveAll(list);
+    public List<Translation> saveAll(final List<Translation> list) {
+        return this.translationRepository.saveAll(list);
     }
 }

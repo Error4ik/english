@@ -19,7 +19,7 @@ public class PhraseService {
     @Autowired
     private PhraseRepository phraseRepository;
 
-    public void saveAll(final List<Phrase> list) {
-        this.phraseRepository.saveAll(list);
+    public List<Phrase> saveAll(final List<Phrase> list) {
+        return this.phraseRepository.saveAll(list);
     }
 }

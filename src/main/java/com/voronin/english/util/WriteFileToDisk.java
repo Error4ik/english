@@ -1,5 +1,7 @@
 package com.voronin.english.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,8 @@ import java.io.IOException;
 @Component
 public class WriteFileToDisk {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(WriteFileToDisk.class);
+
     private final String fileSeparator = System.getProperty("file.separator");
 
     @Value("${file.extension.to.save}")
@@ -28,12 +32,9 @@ public class WriteFileToDisk {
             dir.mkdirs();
         }
 
-        String path = String.format("%s%s%s-%s.%s",
-                dir,
-                fileSeparator,
+        String path = String.format("%s%s%s-%s.%s", dir, fileSeparator,
                 photo.getOriginalFilename().replace(".jpg", ""),
-                System.currentTimeMillis(),
-                fileExtension
+                System.currentTimeMillis(), fileExtension
         );
 
         File file = new File(path);
@@ -41,7 +42,7 @@ public class WriteFileToDisk {
 //            photo.transferTo(file);
             ImageIO.write(ImageIO.read(photo.getInputStream()), fileExtension, file);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return file;
     }

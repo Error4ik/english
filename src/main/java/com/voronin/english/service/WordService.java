@@ -59,7 +59,7 @@ public class WordService {
         return this.wordRepository.getAllByCategoryId(categoryId);
     }
 
-    public void prepareAndSave(final CardFilled card, final MultipartFile photo) {
+    public Word prepareAndSave(final CardFilled card, final MultipartFile photo) {
         Word word = new Word(card.getWord(),
                 card.getTranscription(),
                 this.categoryService.getCategoryByName(card.getCategory()),
@@ -71,6 +71,7 @@ public class WordService {
         this.wordRepository.save(word);
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
+        return word;
     }
 
     private List<Phrase> getPhrases(final CardFilled card, final Word word) {

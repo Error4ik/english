@@ -28,6 +28,24 @@ public class CardFilled {
 
     private String description;
 
+    public CardFilled(String word, String transcription, String translation, String category, String partOfSpeech,
+                      String firstPhrase, String secondPhrase, String firstPhraseTranslation,
+                      String secondPhraseTranslation, String description) {
+        this.word = word;
+        this.transcription = transcription;
+        this.translation = translation;
+        this.category = category;
+        this.partOfSpeech = partOfSpeech;
+        this.firstPhrase = firstPhrase;
+        this.secondPhrase = secondPhrase;
+        this.firstPhraseTranslation = firstPhraseTranslation;
+        this.secondPhraseTranslation = secondPhraseTranslation;
+        this.description = description;
+    }
+
+    public CardFilled() {
+    }
+
     public String getWord() {
         return word;
     }

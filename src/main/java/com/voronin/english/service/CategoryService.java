@@ -45,9 +45,9 @@ public class CategoryService {
         return this.categoryRepository.getCategoryByName(name);
     }
 
-    public void prepareAndSave(final Category category, final MultipartFile photo) {
+    public Category prepareAndSave(final Category category, final MultipartFile photo) {
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
         category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
-        this.categoryRepository.save(category);
+        return this.categoryRepository.save(category);
     }
 }
