@@ -52,21 +52,21 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserById() throws Exception {
+    public void whenGetUserByIdShouldReturnUser() throws Exception {
         when(userRepository.getOne(uuid)).thenReturn(user);
 
         assertThat(userService.getUserById(uuid), is(user));
     }
 
     @Test
-    public void getUserByEmail() throws Exception {
+    public void whenGetUserByEmailShouldReturnUser() throws Exception {
         when(userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
 
         assertThat(userService.getUserByEmail(user.getEmail()), is(user));
     }
 
     @Test
-    public void regUser() throws Exception {
+    public void whenRegUserShouldReturnOptionalUser() throws Exception {
         Optional<User> optional = Optional.of(user);
         when(userRepository.save(user)).thenReturn(user);
 

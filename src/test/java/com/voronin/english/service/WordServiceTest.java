@@ -100,8 +100,6 @@ public class WordServiceTest {
 
     @Test
     public void whenPrepareAndSaveShouldReturnWord() throws Exception {
-        when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
-        when(partOfSpeechService.getPartOfSpeechByName(cardFilled.getPartOfSpeech())).thenReturn(partOfSpeech);
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
 
         assertThat(wordService.prepareAndSave(cardFilled, multipartFile), is(word));

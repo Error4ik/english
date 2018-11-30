@@ -36,7 +36,7 @@ public class TranslationServiceTest {
     private TranslationRepository translationRepository;
 
     @Test
-    public void saveAll() throws Exception {
+    public void whenSaveAllShouldReturnSavedList() throws Exception {
         Translation translation = new Translation("translation", new Word());
         List<Translation> list = Lists.newArrayList(translation);
 

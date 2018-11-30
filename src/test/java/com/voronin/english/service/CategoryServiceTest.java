@@ -84,7 +84,6 @@ public class CategoryServiceTest {
     @Test
     public void whenPrepareAndSaveShouldReturnCategory() throws Exception {
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
-        when(imageService.save(this.image)).thenReturn(image);
         when(categoryRepository.save(category)).thenReturn(category);
 
         assertThat(categoryService.prepareAndSave(category, multipartFile), is(category));
