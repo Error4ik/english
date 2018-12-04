@@ -88,4 +88,11 @@ public class CategoryServiceTest {
 
         assertThat(categoryService.prepareAndSave(category, multipartFile), is(category));
     }
+
+    @Test
+    public void whenSaveCategoryShouldReturnCategory() throws Exception {
+        when(categoryRepository.save(category)).thenReturn(category);
+
+        assertThat(categoryService.save(category), is(category));
+    }
 }

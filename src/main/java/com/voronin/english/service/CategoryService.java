@@ -50,4 +50,8 @@ public class CategoryService {
         category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         return this.categoryRepository.save(category);
     }
+
+    public Category save(final Category category) {
+        return this.categoryRepository.save(category);
+    }
 }

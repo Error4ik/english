@@ -26,6 +26,9 @@ public class Category {
     @JoinColumn(name = "image_id")
     private Image image;
 
+    @JoinColumn(name = "words_count")
+    private int wordsCount;
+
     public UUID getId() {
         return id;
     }
@@ -56,6 +59,14 @@ public class Category {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public int getWordsCount() {
+        return wordsCount;
+    }
+
+    public void setWordsCount(int wordsCount) {
+        this.wordsCount = wordsCount;
     }
 
     @Override

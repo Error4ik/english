@@ -60,15 +60,18 @@ public class WordService {
     }
 
     public Word prepareAndSave(final CardFilled card, final MultipartFile photo) {
+        Category category = this.categoryService.getCategoryByName(card.getCategory());
         Word word = new Word(card.getWord(),
                 card.getTranscription(),
-                this.categoryService.getCategoryByName(card.getCategory()),
+                category,
                 this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech()),
                 card.getDescription()
         );
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
         word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.wordRepository.save(word);
+        category.setWordsCount(category.getWordsCount() + 1);
+        this.categoryService.save(category);
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
         return word;

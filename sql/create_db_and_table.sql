@@ -88,3 +88,6 @@ ALTER TABLE public.users
 
 ALTER TABLE public.users
   ADD last_visit TIMESTAMP DEFAULT now() NOT NULL;
+
+ALTER TABLE public.categories
+  ADD words_count INT DEFAULT 0 NOT NULL;
