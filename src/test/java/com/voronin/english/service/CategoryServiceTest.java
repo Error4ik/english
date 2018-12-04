@@ -69,7 +69,7 @@ public class CategoryServiceTest {
         List<Category> list = new ArrayList<>();
         list.add(category);
 
-        when(categoryRepository.findAll()).thenReturn(list);
+        when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(list);
 
         assertThat(categoryService.getCategories(), is(list));
     }

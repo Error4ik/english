@@ -38,7 +38,7 @@ public class CategoryService {
     private String pathToSaveImage;
 
     public List<Category> getCategories() {
-        return this.categoryRepository.findAll();
+        return this.categoryRepository.findAllByOrderByNameAsc();
     }
 
     public Category getCategoryByName(final String name) {
