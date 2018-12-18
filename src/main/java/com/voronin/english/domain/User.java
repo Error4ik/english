@@ -3,8 +3,8 @@ package com.voronin.english.domain;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -28,7 +28,7 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @Column(name = "create_date")
     private Timestamp createDate;
@@ -41,7 +41,7 @@ public class User {
         this.lastVisit = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public User(String email, String password, List<Role> roles) {
+    public User(String email, String password, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.roles = roles;
@@ -73,11 +73,11 @@ public class User {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

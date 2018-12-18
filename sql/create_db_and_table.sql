@@ -91,3 +91,49 @@ ALTER TABLE public.users
 
 ALTER TABLE public.categories
   ADD words_count INT DEFAULT 0 NOT NULL;
+
+CREATE TABLE exams (
+  id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE questions (
+  id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  word_id UUID NOT NULL,
+  exam_id UUID NOT NULL,
+
+  FOREIGN KEY (word_id) REFERENCES words (id),
+  FOREIGN KEY (exam_id) REFERENCES exams (id)
+);
+
+CREATE TABLE question_words (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  question_id UUID NOT NULL,
+  word_id     UUID NOT NULL,
+
+  FOREIGN KEY (question_id) REFERENCES questions (id),
+  FOREIGN KEY (word_id) REFERENCES words (id)
+);
+
+ALTER TABLE public.exams
+  ADD category_id UUID NULL;
+ALTER TABLE public.exams
+  ADD CONSTRAINT category_id
+FOREIGN KEY (category_id) REFERENCES categories (id);
+
+CREATE TABLE user_exams_stats (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID    NOT NULL,
+  exam_id         UUID    NOT NULL,
+  total_questions INTEGER NOT NULL,
+  correct_answer  INTEGER NOT NULL,
+
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (exam_id) REFERENCES exams (id)
+);
+
+ALTER TABLE public.words
+  ADD use_in_question BOOLEAN DEFAULT FALSE NOT NULL;
+
+ALTER TABLE public.user_exams_stats
+  ADD date_of_the_exam TIMESTAMP DEFAULT now() NOT NULL;

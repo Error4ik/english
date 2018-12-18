@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class UserService {
         try {
             final String pass = user.getPassword();
             user.setPassword(encoder.encode(user.getPassword()));
-            user.setRoles(Lists.newArrayList(this.roleService.findRoleByName("user")));
+            user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             result = Optional.of(this.userRepository.save(user));
         } catch (DataIntegrityViolationException e) {
             LOGGER.error(e.getMessage());

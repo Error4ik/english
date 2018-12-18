@@ -59,6 +59,22 @@ public class WordService {
         return this.wordRepository.getAllByCategoryId(categoryId);
     }
 
+    public Word getWordByName(final String name) {
+        return this.wordRepository.getWordByWord(name);
+    }
+
+    public Word getWordById(final UUID uuid) {
+        return this.wordRepository.getWordById(uuid);
+    }
+
+    public List<Word> getWordsByNames(final List<String> names) {
+        return this.wordRepository.getAllByWordIn(names);
+    }
+
+    public Word save(final Word word) {
+        return this.wordRepository.save(word);
+    }
+
     public Word prepareAndSave(final CardFilled card, final MultipartFile photo) {
         Category category = this.categoryService.getCategoryByName(card.getCategory());
         Word word = new Word(card.getWord(),
@@ -69,7 +85,7 @@ public class WordService {
         );
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
         word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
-        this.wordRepository.save(word);
+        this.save(word);
         category.setWordsCount(category.getWordsCount() + 1);
         this.categoryService.save(category);
         this.translationService.saveAll(getTranslation(card, word));

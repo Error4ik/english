@@ -33,7 +33,7 @@ public class WriteFileToDisk {
         }
 
         String path = String.format("%s%s%s-%s.%s", dir, fileSeparator,
-                photo.getOriginalFilename().replace(".jpg", ""),
+                photo.getOriginalFilename().replace(".png", ""),
                 System.currentTimeMillis(), fileExtension
         );
 
