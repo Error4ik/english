@@ -12,9 +12,10 @@ import java.security.Principal;
  * @since 21.08.2018.
  */
 @RestController
+@RequestMapping("/user")
 public class MainController {
 
-    @RequestMapping("/user/current")
+    @RequestMapping("/current")
     public Principal getUserById(Principal principal) {
         return principal == null ? () -> "Not an authorized user" : principal;
     }
