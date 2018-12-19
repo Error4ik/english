@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -46,7 +48,7 @@ public class DetailServiceTest {
     public void whenValidUserShouldReturnUser() {
         Role role = new Role();
         role.setRole("user");
-        User user = new User("test@test.ru", "password", Lists.newArrayList(role));
+        User user = new User("test@test.ru", "password", new HashSet<>(Lists.newArrayList(role)));
         when(userService.getUserByEmail("test@test.ru")).thenReturn(user);
 
         UserDetails userDetails = detailService.loadUserByUsername("test@test.ru");

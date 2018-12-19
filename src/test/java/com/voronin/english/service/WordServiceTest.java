@@ -3,6 +3,7 @@ package com.voronin.english.service;
 import com.voronin.english.domain.*;
 import com.voronin.english.repository.WordRepository;
 import com.voronin.english.util.WriteFileToDisk;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,5 +105,28 @@ public class WordServiceTest {
         when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
 
         assertThat(wordService.prepareAndSave(cardFilled, multipartFile), is(word));
+    }
+
+    @Test
+    public void whenGetWordByNameShouldReturnWord() throws Exception {
+        when(wordRepository.getWordByWord(word.getWord())).thenReturn(word);
+
+        assertThat(wordService.getWordByName(word.getWord()), is(word));
+    }
+
+    @Test
+    public void whenGetWordByIdShouldReturnWord() throws Exception {
+        when(wordRepository.getWordById(word.getId())).thenReturn(word);
+
+        assertThat(wordService.getWordById(word.getId()), is(word));
+    }
+
+    @Test
+    public void whenGetWordByNamesShouldReturnListWord() throws Exception {
+        List<Word> words = Lists.newArrayList(word, word, word);
+        List<String> list = Lists.newArrayList("word", "word", "word");
+        when(wordRepository.getAllByWordIn(list)).thenReturn(words);
+
+        assertThat(wordService.getWordsByNames(list), is(words));
     }
 }

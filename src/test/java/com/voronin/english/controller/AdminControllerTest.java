@@ -3,6 +3,8 @@ package com.voronin.english.controller;
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
 import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.ExamService;
+import com.voronin.english.service.QuestionService;
 import com.voronin.english.service.WordService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +44,10 @@ public class AdminControllerTest {
     private CardFilled cardFilled;
     @MockBean
     private Category category;
+    @MockBean
+    private ExamService examService;
+    @MockBean
+    private QuestionService questionService;
 
     @Test
     public void whenGetMappingAddCardShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {

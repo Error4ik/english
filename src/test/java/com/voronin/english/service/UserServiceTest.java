@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class UserServiceTest {
 
     @Before
     public void init() {
-        user = new User("user@user.ru", "password", Lists.newArrayList(new Role()));
+        user = new User("user@user.ru", "password", new HashSet<>(Lists.newArrayList(new Role())));
         user.setId(uuid);
     }
 
