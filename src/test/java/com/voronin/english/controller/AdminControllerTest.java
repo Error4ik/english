@@ -6,6 +6,7 @@ import com.voronin.english.service.CategoryService;
 import com.voronin.english.service.ExamService;
 import com.voronin.english.service.QuestionService;
 import com.voronin.english.service.WordService;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -65,5 +68,33 @@ public class AdminControllerTest {
                 .andExpect(status().isOk());
 
         verify(this.categoryService, times(1)).prepareAndSave(category, null);
+    }
+
+    @Test
+    public void whenGetMappingAddQuestionShouldReturnStatusOkAndCallPrepareAndSaveMethod() throws Exception {
+        String exam = "exam";
+        String word = "word";
+        List<String> list = Lists.newArrayList("word", "word", "word");
+        this.mockMvc.perform(get("/admin/add-question")
+                .param("exam", exam)
+                .param("word", word)
+                .param("variants", "word")
+                .param("variants", "word")
+                .param("variants", "word"))
+                .andExpect(status().isOk());
+
+        verify(this.questionService, times(1)).prepareAndSave(exam, word, list);
+    }
+
+    @Test
+    public void whenMappingAddExamShouldReturnStatusOkAndCallPrepareAndSaveMethod() throws Exception {
+        String name = "name";
+        String category = "category";
+        this.mockMvc.perform(get("/admin/add-exam")
+                .param("name", name)
+                .param("category", category))
+                .andExpect(status().isOk());
+
+        verify(this.examService, times(1)).prepareAndSave(name, category);
     }
 }
