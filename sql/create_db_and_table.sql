@@ -132,8 +132,7 @@ CREATE TABLE user_exams_stats (
   FOREIGN KEY (exam_id) REFERENCES exams (id)
 );
 
-ALTER TABLE public.words
-  ADD use_in_question BOOLEAN DEFAULT FALSE NOT NULL;
-
 ALTER TABLE public.user_exams_stats
   ADD date_of_the_exam TIMESTAMP DEFAULT now() NOT NULL;
+
+ALTER TABLE public.exams ADD type INT DEFAULT 0;

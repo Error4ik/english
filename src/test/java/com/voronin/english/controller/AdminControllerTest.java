@@ -90,11 +90,13 @@ public class AdminControllerTest {
     public void whenMappingAddExamShouldReturnStatusOkAndCallPrepareAndSaveMethod() throws Exception {
         String name = "name";
         String category = "category";
+        int examType = 0;
         this.mockMvc.perform(get("/admin/add-exam")
                 .param("name", name)
-                .param("category", category))
+                .param("category", category)
+                .param("type", String.valueOf(examType)))
                 .andExpect(status().isOk());
 
-        verify(this.examService, times(1)).prepareAndSave(name, category);
+        verify(this.examService, times(1)).prepareAndSave(name, category, examType);
     }
 }

@@ -29,6 +29,8 @@ public class Exam {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    private int type;
+
     public Exam() {
     }
 
@@ -67,6 +69,14 @@ public class Exam {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Override

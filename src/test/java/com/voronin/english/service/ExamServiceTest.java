@@ -95,7 +95,7 @@ public class ExamServiceTest {
         whenNew(Exam.class).withArguments(exam.getName(), category).thenReturn(exam);
         when(examRepository.save(any(Exam.class))).thenReturn(exam);
 
-        assertThat(examService.prepareAndSave(exam.getName(), category.getName()), is(exam));
+        assertThat(examService.prepareAndSave(exam.getName(), category.getName(), 0), is(exam));
     }
 
 }

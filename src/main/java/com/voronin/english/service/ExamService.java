@@ -43,9 +43,10 @@ public class ExamService {
         return this.examRepository.save(exam);
     }
 
-    public Exam prepareAndSave(final String examName, final String categoryName) {
+    public Exam prepareAndSave(final String examName, final String categoryName, final int type) {
         Category category = this.categoryService.getCategoryByName(categoryName);
         Exam exam = new Exam(examName, category);
+        exam.setType(type);
         return this.save(exam);
     }
 }

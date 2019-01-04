@@ -37,9 +37,6 @@ public class QuestionService {
         Word correctAnswer = this.wordService.getWordByName(word);
         Set<Word> answerChoice = new HashSet<>(Lists.newArrayList(this.wordService.getWordsByNames(variants)));
         answerChoice.add(correctAnswer);
-        correctAnswer.setUseInQuestion(true);
-        return this.save(new Question(wordService.save(correctAnswer),
-                this.examService.getExamByName(exam),
-                answerChoice));
+        return this.save(new Question(correctAnswer, this.examService.getExamByName(exam), answerChoice));
     }
 }

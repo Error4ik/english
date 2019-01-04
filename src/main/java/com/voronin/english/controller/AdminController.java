@@ -54,7 +54,7 @@ public class AdminController {
     }
 
     @RequestMapping("/add-exam")
-    public Exam addExam(@RequestParam String name, String category) {
-        return examService.prepareAndSave(name, category);
+    public Exam addExam(@RequestParam String name, String category, int type) {
+        return examService.prepareAndSave(name, category, type);
     }
 }

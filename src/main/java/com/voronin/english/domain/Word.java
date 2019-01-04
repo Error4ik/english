@@ -48,9 +48,6 @@ public class Word {
     @Column(name = "date_added")
     private Timestamp date;
 
-    @Column(name = "use_in_question")
-    private boolean useInQuestion;
-
     public Word() {
     }
 
@@ -145,14 +142,6 @@ public class Word {
 
     public void setDate(Timestamp date) {
         this.date = date;
-    }
-
-    public boolean isUseInQuestion() {
-        return useInQuestion;
-    }
-
-    public void setUseInQuestion(boolean useInQuestion) {
-        this.useInQuestion = useInQuestion;
     }
 
     @Override

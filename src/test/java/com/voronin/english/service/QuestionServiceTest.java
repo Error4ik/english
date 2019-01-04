@@ -57,7 +57,6 @@ public class QuestionServiceTest {
         word.setWord("exam");
         List<String> variants = Lists.newArrayList(word.getWord());
         List<Word> words = Lists.newArrayList(word);
-        word.setUseInQuestion(true);
         Question question = new Question();
         question.setWord(word);
         question.setWords(new HashSet<>(words));
