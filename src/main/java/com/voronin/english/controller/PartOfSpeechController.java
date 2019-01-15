@@ -26,4 +26,9 @@ public class PartOfSpeechController {
     public List<PartOfSpeech> getSpeeches() {
         return partOfSpeechService.getAll();
     }
+
+    @GetMapping("/part-of-speech-without-noun")
+    public List<PartOfSpeech> getSpeechesWithoutNoun() {
+        return this.partOfSpeechService.getSpeechesWithoutNoun();
+    }
 }

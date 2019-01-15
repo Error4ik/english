@@ -38,9 +38,9 @@ CREATE TABLE words (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   word              VARCHAR(50)  NOT NULL,
   transcription     VARCHAR(50)  NOT NULL,
-  category_id       UUID         NOT NULL,
+  category_id       UUID,
   part_of_speech_id UUID         NOT NULL,
-  image_id          UUID         NOT NULL,
+  image_id          UUID,
   description       VARCHAR(255) NOT NULL,
 
   FOREIGN KEY (category_id) REFERENCES categories (id),
@@ -136,3 +136,5 @@ ALTER TABLE public.user_exams_stats
   ADD date_of_the_exam TIMESTAMP DEFAULT now() NOT NULL;
 
 ALTER TABLE public.exams ADD type INT DEFAULT 0;
+
+ALTER TABLE public.part_of_speech ADD number_of_words INT DEFAULT 0;

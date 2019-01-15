@@ -59,6 +59,10 @@ public class WordService {
         return this.wordRepository.getAllByCategoryId(categoryId);
     }
 
+    public List<Word> getWordsByPartOfSpeech(final UUID id) {
+        return this.wordRepository.getAllByPartOfSpeech(this.partOfSpeechService.getById(id));
+    }
+
     public Word getWordByName(final String name) {
         return this.wordRepository.getWordByWord(name);
     }
@@ -76,18 +80,21 @@ public class WordService {
     }
 
     public Word prepareAndSave(final CardFilled card, final MultipartFile photo) {
-        Category category = this.categoryService.getCategoryByName(card.getCategory());
-        Word word = new Word(card.getWord(),
-                card.getTranscription(),
-                category,
-                this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech()),
-                card.getDescription()
-        );
-        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
-        word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
-        this.save(word);
-        category.setWordsCount(category.getWordsCount() + 1);
-        this.categoryService.save(category);
+        PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech());
+        Word word = new Word(card.getWord(), card.getTranscription(), null, partOfSpeech, card.getDescription());
+        if (photo != null) {
+            Category category = this.categoryService.getCategoryByName(card.getCategory());
+            word.setCategory(category);
+            File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+            word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
+            this.save(word);
+            category.setWordsCount(category.getWordsCount() + 1);
+            this.categoryService.save(category);
+        } else {
+            this.save(word);
+        }
+        partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() +1);
+        this.partOfSpeechService.save(partOfSpeech);
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
         return word;

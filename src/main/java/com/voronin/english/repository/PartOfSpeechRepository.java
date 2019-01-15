@@ -14,5 +14,6 @@ import java.util.UUID;
  */
 @Repository
 public interface PartOfSpeechRepository extends JpaRepository<PartOfSpeech, UUID> {
-    public PartOfSpeech getPartOfSpeechByPartOfSpeech(final String partOfSpeech);
+    PartOfSpeech getPartOfSpeechByPartOfSpeech(final String partOfSpeech);
+    PartOfSpeech getById(final UUID id);
 }

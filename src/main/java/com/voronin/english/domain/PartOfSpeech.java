@@ -21,6 +21,9 @@ public class PartOfSpeech {
     @Column(name = "part_of_speech")
     private String partOfSpeech;
 
+    @Column(name = "number_of_words")
+    private int numberOfWords;
+
     public PartOfSpeech() {
     }
 
@@ -42,6 +45,14 @@ public class PartOfSpeech {
 
     public void setPartOfSpeech(String partOfSpeech) {
         this.partOfSpeech = partOfSpeech;
+    }
+
+    public int getNumberOfWords() {
+        return numberOfWords;
+    }
+
+    public void setNumberOfWords(int numberOfWords) {
+        this.numberOfWords = numberOfWords;
     }
 
     @Override

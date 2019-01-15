@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * TODO: comment.
@@ -25,5 +26,19 @@ public class PartOfSpeechService {
 
     public PartOfSpeech getPartOfSpeechByName(final String name) {
         return this.partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(name);
+    }
+
+    public List<PartOfSpeech> getSpeechesWithoutNoun() {
+        List<PartOfSpeech> speeches = this.partOfSpeechRepository.findAll();
+        speeches.remove(this.getPartOfSpeechByName("Существительное"));
+        return speeches;
+    }
+
+    public PartOfSpeech getById(final UUID id) {
+        return this.partOfSpeechRepository.getById(id);
+    }
+
+    public PartOfSpeech save(final PartOfSpeech partOfSpeech) {
+        return this.partOfSpeechRepository.save(partOfSpeech);
     }
 }

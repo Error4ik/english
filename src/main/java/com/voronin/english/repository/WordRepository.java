@@ -1,5 +1,6 @@
 package com.voronin.english.repository;
 
+import com.voronin.english.domain.PartOfSpeech;
 import com.voronin.english.domain.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,5 @@ public interface WordRepository extends JpaRepository<Word, UUID> {
     public Word getWordById(final UUID uuid);
     public Word getWordByWord(final String word);
     public List<Word> getAllByWordIn(final Collection<String> words);
+    public List<Word> getAllByPartOfSpeech(final PartOfSpeech partOfSpeech);
 }
