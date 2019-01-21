@@ -10,11 +10,15 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'create database library;' -U postgres
+  - psql -c 'create database english;' -U postgres
 # после выполнения сборки запустить скрипт, который будет собирать статистику по JaCoCo
 # Здесь используется сторонни сервис https://codecov.io/
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+env:
+  global:
+    - CODECOV_TOKEN=:f94fb057-7c1d-4629-86a3-ab5ca6d9011a
 
 # Отправлять уведомление на почту youremail@smtp.ru (Изменить на свою) если сборка упала
 notifications:
