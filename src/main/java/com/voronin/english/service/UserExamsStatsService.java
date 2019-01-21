@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,7 +44,7 @@ public class UserExamsStatsService {
         return this.userExamsStatsRepository.save(examsStats);
     }
 
-    public UserExamsStats getUserExamsStatsByUser(final User user) {
+    public List<UserExamsStats> getUserExamsStatsByUser(final User user) {
         return this.userExamsStatsRepository.getUserExamsStatsByUser(user);
     }
 }

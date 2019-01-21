@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -58,5 +59,29 @@ public class PartOfSpeechServiceTest {
                 .thenReturn(partOfSpeech);
 
         assertThat(partOfSpeechService.getPartOfSpeechByName(partOfSpeech.getPartOfSpeech()), is(partOfSpeech));
+    }
+
+    @Test
+    public void whenGetByIdShouldReturnPartOfSpeechById() throws Exception {
+        when(partOfSpeechRepository.getById(partOfSpeech.getId())).thenReturn(partOfSpeech);
+
+        assertThat(partOfSpeechService.getById(partOfSpeech.getId()), is(partOfSpeech));
+    }
+
+    @Test
+    public void whenSavePartOfSpeechShouldReturnPartOfSpeech() throws Exception {
+        when(partOfSpeechRepository.save(partOfSpeech)).thenReturn(partOfSpeech);
+
+        assertThat(partOfSpeechService.save(partOfSpeech), is(partOfSpeech));
+    }
+
+    @Test
+    public void whenGetSpeechWithoutNounShouldReturnListSpeeches() throws Exception {
+        PartOfSpeech noun = new PartOfSpeech("Существительное");
+        when(partOfSpeechRepository.findAll())
+                .thenReturn(Lists.newArrayList(noun, new PartOfSpeech("Прилагательное"), new PartOfSpeech("Союз")));
+        when(partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(noun.getPartOfSpeech())).thenReturn(noun);
+
+        assertFalse(partOfSpeechService.getSpeechesWithoutNoun().contains(noun));
     }
 }

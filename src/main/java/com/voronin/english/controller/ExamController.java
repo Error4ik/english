@@ -52,7 +52,7 @@ public class ExamController {
     }
 
     @RequestMapping("/exam-stats-by-user")
-    public UserExamsStats getStatsByUser(final Principal principal) {
+    public List<UserExamsStats> getStatsByUser(final Principal principal) {
         return this.userExamsStatsService.getUserExamsStatsByUser(this.userService.getUserByEmail(principal.getName()));
     }
 }

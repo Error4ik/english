@@ -15,6 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
@@ -92,9 +93,10 @@ public class UserExamsStatsServiceTest {
     @Test
     public void whenGetUserExamsStatsByUserShouldReturnUserStats() throws Exception {
         UserExamsStats examsStats = new UserExamsStats();
-        when(userExamsStatsRepository.getUserExamsStatsByUser(any(User.class))).thenReturn(examsStats);
+        List<UserExamsStats> list = Lists.newArrayList(examsStats);
+        when(userExamsStatsRepository.getUserExamsStatsByUser(any(User.class))).thenReturn(list);
 
-        assertThat(userExamsStatsService.getUserExamsStatsByUser(new User()), is(examsStats));
+        assertThat(userExamsStatsService.getUserExamsStatsByUser(new User()), is(list));
     }
 
 }

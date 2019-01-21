@@ -51,4 +51,12 @@ public class WordControllerTest {
                 .andExpect(status().isOk());
         verify(this.wordService, times(1)).getWordsByCategory(uuid);
     }
+
+    @Test
+    public void whenMappingWordsByPartOfSpeechShouldReturnStatusOkAndOneCallGetWordsByPartOfSpeech() throws Exception {
+        this.mockMvc
+                .perform(get("/word/words-by-part-of-speech/{id}", uuid))
+                .andExpect(status().isOk());
+        verify(this.wordService, times(1)).getWordsByPartOfSpeech(uuid);
+    }
 }

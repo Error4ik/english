@@ -38,4 +38,12 @@ public class PartOfSpeechControllerTest {
                 .andExpect(status().isOk());
         verify(this.partOfSpeechService, times(1)).getAll();
     }
+
+    @Test
+    public void whenMappingPartOfSpeechWithoutNounReturnStatusOkAndCallGetSpeechesWithoutNun() throws Exception {
+        this.mockMvc
+                .perform(get("/part-of-speech/part-of-speech-without-noun"))
+                .andExpect(status().isOk());
+        verify(this.partOfSpeechService, times(1)).getSpeechesWithoutNoun();
+    }
 }

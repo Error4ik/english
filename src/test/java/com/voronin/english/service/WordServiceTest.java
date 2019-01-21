@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
@@ -100,11 +101,20 @@ public class WordServiceTest {
     }
 
     @Test
-    public void whenPrepareAndSaveShouldReturnWord() throws Exception {
+    public void whenPrepareAndSaveWithPhotoShouldReturnWord() throws Exception {
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
         when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
+        when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
 
-        assertThat(wordService.prepareAndSave(cardFilled, multipartFile), is(word));
+        assertThat(wordService.prepareAndSave(cardFilled, multipartFile).getWord(), is(word.getWord()));
+    }
+
+    @Test
+    public void whenPrepareAndSaveWithoutPhotoShouldReturnWord() throws Exception {
+        when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
+
+        Word w = wordService.prepareAndSave(cardFilled, null);
+        assertThat(w.getWord(), is(word.getWord()));
     }
 
     @Test
@@ -128,5 +138,13 @@ public class WordServiceTest {
         when(wordRepository.getAllByWordIn(list)).thenReturn(words);
 
         assertThat(wordService.getWordsByNames(list), is(words));
+    }
+
+    @Test
+    public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
+        when(partOfSpeechService.getById(uuid)).thenReturn(partOfSpeech);
+        when(wordRepository.getAllByPartOfSpeech(partOfSpeech)).thenReturn(list);
+
+        assertThat(wordService.getWordsByPartOfSpeech(uuid), is(list));
     }
 }
