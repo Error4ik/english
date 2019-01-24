@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Quest repository.
  *
  * @author Alexey Voronin.
  * @since 10.12.2018.

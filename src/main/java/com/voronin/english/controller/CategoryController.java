@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * TODO: comment.
+ * Category controller.
  *
  * @author Alexey Voronin.
  * @since 16.10.2018.
@@ -18,9 +18,24 @@ import java.util.List;
 @RequestMapping("/category")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    /**
+     * Category service.
+     */
+    private final CategoryService categoryService;
 
+    /**
+     * Controller.
+     *
+     * @param categoryService category service.
+     */
+    @Autowired
+    public CategoryController(final CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    /**
+     * @return list of category.
+     */
     @RequestMapping("/categories")
     public List<Category> getCategories() {
         return this.categoryService.getCategories();

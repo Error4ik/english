@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * User service class.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
@@ -23,26 +23,69 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
+    /**
+     * User repository.
+     */
+    private final UserRepository userRepository;
+
+    /**
+     * BCrypt password encoder.
+     */
+    private final BCryptPasswordEncoder encoder;
+
+    /**
+     * Role service.
+     */
+    private final RoleService roleService;
+
+    /**
+     * Constructor.
+     *
+     * @param userRepository user repository.
+     * @param encoder        bcrypt password encoder.
+     * @param roleService    role service.
+     */
     @Autowired
-    private UserRepository userRepository;
+    public UserService(
+            final UserRepository userRepository,
+            final BCryptPasswordEncoder encoder,
+            final RoleService roleService) {
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.roleService = roleService;
+    }
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
-
-    @Autowired
-    private RoleService roleService;
-
+    /**
+     * Get user by id.
+     *
+     * @param id id.
+     * @return User.
+     */
     public User getUserById(final UUID id) {
         return this.userRepository.getOne(id);
     }
 
+    /**
+     * Get user by email.
+     *
+     * @param email email.
+     * @return User.
+     */
     public User getUserByEmail(final String email) {
         return this.userRepository.getUserByEmail(email);
     }
 
-
+    /**
+     * Registration user.
+     *
+     * @param user user.
+     * @return Optional User or DataIntegrityViolationException if registration failed.
+     */
     public Optional<User> regUser(final User user) {
         Optional<User> result = Optional.empty();
         try {
@@ -51,7 +94,7 @@ public class UserService {
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             result = Optional.of(this.userRepository.save(user));
         } catch (DataIntegrityViolationException e) {
-            LOGGER.error(e.getMessage());
+            logger.error(e.getMessage());
         }
         return result;
     }

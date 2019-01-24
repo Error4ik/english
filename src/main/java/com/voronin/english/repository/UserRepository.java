@@ -7,12 +7,18 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * User repository.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    public User getUserByEmail(final String email);
+
+    /**
+     * Get user by email.
+     * @param email email.
+     * @return user.
+     */
+    User getUserByEmail(String email);
 }

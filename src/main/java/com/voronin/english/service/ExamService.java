@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Exam service.
  *
  * @author Alexey Voronin.
  * @since 10.12.2018.
@@ -18,31 +18,85 @@ import java.util.UUID;
 @Service
 public class ExamService {
 
-    @Autowired
-    private ExamRepository examRepository;
-    @Autowired
+    /**
+     * Exam repository.
+     */
+    private final ExamRepository examRepository;
+
+    /**
+     * Category service.
+     */
     private CategoryService categoryService;
 
+    /**
+     * Constructor.
+     *
+     * @param examRepository  exam repository.
+     * @param categoryService category service.
+     */
+    @Autowired
+    public ExamService(final ExamRepository examRepository, final CategoryService categoryService) {
+        this.examRepository = examRepository;
+        this.categoryService = categoryService;
+    }
+
+    /**
+     * Return exam by id.
+     *
+     * @param uuid id.
+     * @return Exam.
+     */
     public Exam getExamById(final UUID uuid) {
         return this.examRepository.getExamById(uuid);
     }
 
+    /**
+     * Get all exams.
+     *
+     * @return the list of examinations.
+     */
     public List<Exam> getExams() {
         return this.examRepository.findAll();
     }
 
+    /**
+     * Get exam by category.
+     *
+     * @param category category.
+     * @return Exam.
+     */
     public Exam getExamByCategory(final Category category) {
         return this.examRepository.getExamByCategory(category);
     }
 
+    /**
+     * Get Exam by name.
+     *
+     * @param name name.
+     * @return Exam.
+     */
     public Exam getExamByName(final String name) {
         return examRepository.getExamByName(name);
     }
 
+    /**
+     * Save exam to database.
+     *
+     * @param exam exam.
+     * @return Exam.
+     */
     public Exam save(final Exam exam) {
         return this.examRepository.save(exam);
     }
 
+    /**
+     * Prepare and save exam to database.
+     *
+     * @param examName     exam name.
+     * @param categoryName category name.
+     * @param type         exam type.
+     * @return Exam.
+     */
     public Exam prepareAndSave(final String examName, final String categoryName, final int type) {
         Category category = this.categoryService.getCategoryByName(categoryName);
         Exam exam = new Exam(examName, category);

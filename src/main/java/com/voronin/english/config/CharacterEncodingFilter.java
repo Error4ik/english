@@ -1,11 +1,16 @@
 package com.voronin.english.config;
 
-import javax.servlet.*;
+import javax.servlet.ServletException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 /**
- * TODO: comment.
+ * Filter for utf-8 encoding.
  *
  * @author Alexey Voronin.
  * @since 07.05.2018.
@@ -14,13 +19,21 @@ import java.io.IOException;
 public class CharacterEncodingFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig)
-            throws ServletException {
+    public void init(final FilterConfig filterConfig) throws ServletException {
 
     }
 
+    /**
+     * Sets the utf-8 encoding in the request and response.
+     *
+     * @param request  request.
+     * @param response response.
+     * @param chain    filter chain.
+     * @throws IOException      exception.
+     * @throws ServletException exception.
+     */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Role repository.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
@@ -15,5 +15,10 @@ import java.util.UUID;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID> {
 
-    public Role findRoleByRole(final String name);
+    /**
+     * Get role bu name.
+     * @param name name.
+     * @return role.
+     */
+    Role findRoleByRole(String name);
 }

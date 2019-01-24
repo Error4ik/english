@@ -1,11 +1,15 @@
 package com.voronin.english.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Part of speech.
  *
  * @author Alexey Voronin.
  * @since 19.09.2018.
@@ -13,21 +17,33 @@ import java.util.UUID;
 @Entity(name = "part_of_speech")
 public class PartOfSpeech {
 
+    /**
+     * Id.
+     */
     @Id
     @org.hibernate.annotations.Type(type = "pg-uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * Part of speech name.
+     */
     @Column(name = "part_of_speech")
     private String partOfSpeech;
 
+    /**
+     * Number words in part of speech.
+     */
     @Column(name = "number_of_words")
     private int numberOfWords;
 
+    /**
+     * Empty constructor.
+     */
     public PartOfSpeech() {
     }
 
-    public PartOfSpeech(String partOfSpeech) {
+    public PartOfSpeech(final String partOfSpeech) {
         this.partOfSpeech = partOfSpeech;
     }
 
@@ -35,7 +51,7 @@ public class PartOfSpeech {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -43,7 +59,7 @@ public class PartOfSpeech {
         return partOfSpeech;
     }
 
-    public void setPartOfSpeech(String partOfSpeech) {
+    public void setPartOfSpeech(final String partOfSpeech) {
         this.partOfSpeech = partOfSpeech;
     }
 
@@ -51,17 +67,21 @@ public class PartOfSpeech {
         return numberOfWords;
     }
 
-    public void setNumberOfWords(int numberOfWords) {
+    public void setNumberOfWords(final int numberOfWords) {
         this.numberOfWords = numberOfWords;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PartOfSpeech)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PartOfSpeech)) {
+            return false;
+        }
         PartOfSpeech that = (PartOfSpeech) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getPartOfSpeech(), that.getPartOfSpeech());
+        return Objects.equals(getId(), that.getId())
+                && Objects.equals(getPartOfSpeech(), that.getPartOfSpeech());
     }
 
     @Override

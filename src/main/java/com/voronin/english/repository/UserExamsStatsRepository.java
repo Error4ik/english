@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * User exam stats repository.
  *
  * @author Alexey Voronin.
  * @since 12.12.2018.
@@ -18,7 +18,20 @@ import java.util.UUID;
 @Repository
 public interface UserExamsStatsRepository extends JpaRepository<UserExamsStats, UUID> {
 
-    UserExamsStats getUserExamsStatsByUserAndExam(final User user, final Exam exam);
+    /**
+     * Get exam stats by user and exam.
+     *
+     * @param user user.
+     * @param exam exam.
+     * @return UserExamsStats.
+     */
+    UserExamsStats getUserExamsStatsByUserAndExam(User user, Exam exam);
 
-    List<UserExamsStats> getUserExamsStatsByUser(final User user);
+    /**
+     * Get user exam stats by user.
+     *
+     * @param user user.
+     * @return UserExamsStats.
+     */
+    List<UserExamsStats> getUserExamsStatsByUser(User user);
 }

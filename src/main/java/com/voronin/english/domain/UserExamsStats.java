@@ -1,11 +1,18 @@
 package com.voronin.english.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * User exam stats.
  *
  * @author Alexey Voronin.
  * @since 12.12.2018.
@@ -13,32 +20,61 @@ import java.util.UUID;
 @Entity(name = "user_exams_stats")
 public class UserExamsStats {
 
+    /**
+     * Id.
+     */
     @Id
     @org.hibernate.annotations.Type(type = "pg-uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * User.
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * Exam.
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
+    /**
+     * Total question in exam.
+     */
     @Column(name = "total_questions")
     private int totalQuestions;
 
+    /**
+     * Correct answer.
+     */
     @Column(name = "correct_answer")
     private int correctAnswer;
 
+    /**
+     * Date of exam.
+     */
     @Column(name = "date_of_the_exam")
     private Timestamp dateOfTheExam;
 
+    /**
+     * Empty constructor.
+     */
     public UserExamsStats() {
     }
 
-    public UserExamsStats(User user, Exam exam, int totalQuestions, int correctAnswer) {
+    /**
+     * Constructor.
+     *
+     * @param user           user.
+     * @param exam           exam.
+     * @param totalQuestions total question.
+     * @param correctAnswer  correct answer.
+     */
+    public UserExamsStats(final User user, final Exam exam, final int totalQuestions, final int correctAnswer) {
         this.user = user;
         this.exam = exam;
         this.totalQuestions = totalQuestions;
@@ -96,11 +132,11 @@ public class UserExamsStats {
 
     @Override
     public String toString() {
-        return "UserExamsStats{" +
-                "id=" + id +
-                ", user=" + user +
-                ", totalQuestions=" + totalQuestions +
-                ", correctAnswer=" + correctAnswer +
-                '}';
+        return String.format(
+                "UserExamsStats{id=%s, user=%s, totalQuestions=%s, correctAnswer=%s}",
+                getId(),
+                getUser(),
+                getTotalQuestions(),
+                getCorrectAnswer());
     }
 }

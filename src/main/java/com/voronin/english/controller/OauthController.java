@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * TODO: comment.
+ * Oauth controller.
  *
  * @author Alexey Voronin.
  * @since 07.11.2018.
@@ -23,29 +23,56 @@ import java.util.Optional;
 @RestController
 public class OauthController {
 
-    @Autowired
-    private UserService userService;
+    /**
+     * User service.
+     */
+    private final UserService userService;
 
-    @Autowired
-    private TokenStore tokenStore;
+    /**
+     * Token store.
+     */
+    private final TokenStore tokenStore;
 
+    /**
+     * Constructor.
+     *
+     * @param userService user service.
+     * @param tokenStore  token store.
+     */
+    @Autowired
+    public OauthController(final UserService userService, final TokenStore tokenStore) {
+        this.userService = userService;
+        this.tokenStore = tokenStore;
+    }
+
+    /**
+     * Registration new user.
+     *
+     * @param user new user.
+     * @return user or error message if a user with this name is already registered.
+     */
     @RequestMapping("/registration")
     public Object registration(@RequestBody final User user) {
         Optional<User> result = this.userService.regUser(user);
-        return result.<Object>map(usr -> new Object(){
+        return result.<Object>map(usr -> new Object() {
             public User getUser() {
                 return usr;
             }
-        }).orElseGet(() -> new Object(){
+        }).orElseGet(() -> new Object() {
             public String getError() {
                 return String.format("Пользователь с почтой %s уже зарегистрирован.", user.getEmail());
             }
         });
     }
 
+    /**
+     * Logout.
+     *
+     * @param request http servlet request.
+     */
     @RequestMapping("/revoke")
     @ResponseStatus(HttpStatus.OK)
-    public void logoutUser(HttpServletRequest request) {
+    public void logoutUser(final HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
             String tokenValue = authHeader.replace("Bearer", "").trim();

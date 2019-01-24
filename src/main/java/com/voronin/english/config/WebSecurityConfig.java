@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 /**
- * TODO: comment.
+ * Web security config.
  *
  * @author Alexey Voronin.
  * @since 27.10.2018.
@@ -21,27 +21,53 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * Implementation user detail service.
+     */
     @Autowired
     private DetailService detailService;
 
+
+    /**
+     * Set detail service and password encoder by authentication manager builder.
+     *
+     * @param builder authentication manager builder.
+     * @throws Exception exception.
+     */
     @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
+    protected void configureGlobal(final AuthenticationManagerBuilder builder) throws Exception {
         builder
                 .userDetailsService(detailService)
                 .passwordEncoder(encoder());
     }
 
+    /**
+     * Token store bean.
+     *
+     * @return in memory token store.
+     */
     @Bean
     public TokenStore tokenStore() {
         return new InMemoryTokenStore();
     }
 
+    /**
+     * Authentication manager bean.
+     *
+     * @return authentication manager bean.
+     * @throws Exception exception.
+     */
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * BCrypt password encoder.
+     *
+     * @return BCryptPasswordEncoder.
+     */
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();

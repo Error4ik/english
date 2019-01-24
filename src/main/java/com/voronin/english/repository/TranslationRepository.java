@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Translation repository.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.

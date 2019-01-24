@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * TODO: comment.
+ * Class for writing a file to disk.
  *
  * @author Alexey Voronin.
  * @since 22.10.2018.
@@ -19,13 +19,28 @@ import java.io.IOException;
 @Component
 public class WriteFileToDisk {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(WriteFileToDisk.class);
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(WriteFileToDisk.class);
 
+    /**
+     * File separator.
+     */
     private final String fileSeparator = System.getProperty("file.separator");
 
+    /**
+     * Image extension.
+     */
     @Value("${file.extension.to.save}")
     private String fileExtension;
 
+    /**
+     * Write image to disk.
+     * @param photo image.
+     * @param pathToSaveImage path to save.
+     * @return File.
+     */
     public File writeImage(final MultipartFile photo, final String pathToSaveImage) {
         File dir = new File(pathToSaveImage);
         if (!dir.exists()) {
@@ -42,7 +57,7 @@ public class WriteFileToDisk {
 //            photo.transferTo(file);
             ImageIO.write(ImageIO.read(photo.getInputStream()), fileExtension, file);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            logger.error(e.getMessage());
         }
         return file;
     }

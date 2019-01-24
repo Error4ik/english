@@ -1,6 +1,14 @@
 package com.voronin.english.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -8,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * User.
  *
  * @author Alexey Voronin.
  * @since 07.09.2018.
@@ -16,32 +24,60 @@ import java.util.UUID;
 @Entity(name = "users")
 public class User {
 
+    /**
+     * Id.
+     */
     @Id
     @org.hibernate.annotations.Type(type = "pg-uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * User email.
+     */
     private String email;
 
+    /**
+     * User password.
+     */
     private String password;
 
+    /**
+     * User roles.
+     */
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    /**
+     * The date the user was created.
+     */
     @Column(name = "create_date")
     private Timestamp createDate;
 
+    /**
+     * Date of last visit.
+     */
     @Column(name = "last_visit")
     private Timestamp lastVisit;
 
+    /**
+     * Empty constructor.
+     */
     public User() {
         this.createDate = Timestamp.valueOf(LocalDateTime.now());
         this.lastVisit = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public User(String email, String password, Set<Role> roles) {
+    /**
+     * Constructor.
+     *
+     * @param email    user email.
+     * @param password user password.
+     * @param roles    user roles.
+     */
+    public User(final String email, final String password, final Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.roles = roles;
@@ -53,7 +89,7 @@ public class User {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -61,7 +97,7 @@ public class User {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -69,7 +105,7 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -77,7 +113,7 @@ public class User {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(final Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -85,7 +121,7 @@ public class User {
         return createDate;
     }
 
-    public void setCreateDate(Timestamp createDate) {
+    public void setCreateDate(final Timestamp createDate) {
         this.createDate = createDate;
     }
 
@@ -93,17 +129,21 @@ public class User {
         return lastVisit;
     }
 
-    public void setLastVisit(Timestamp lastVisit) {
+    public void setLastVisit(final Timestamp lastVisit) {
         this.lastVisit = lastVisit;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) &&
-                Objects.equals(getEmail(), user.getEmail());
+        return Objects.equals(getId(), user.getId())
+                && Objects.equals(getEmail(), user.getEmail());
     }
 
     @Override

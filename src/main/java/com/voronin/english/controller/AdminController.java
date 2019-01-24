@@ -17,7 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
- * TODO: comment.
+ * Admin controller class.
+ * This controller contain all method for admins.
  *
  * @author Alexey Voronin.
  * @since 08.11.2018.
@@ -26,35 +27,94 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private WordService wordService;
+    /**
+     * Word service.
+     */
+    private final WordService wordService;
 
-    @Autowired
-    private CategoryService categoryService;
+    /**
+     * Category service.
+     */
+    private final CategoryService categoryService;
 
-    @Autowired
-    private QuestionService questionService;
+    /**
+     * Question service.
+     */
+    private final QuestionService questionService;
 
-    @Autowired
-    private ExamService examService;
+    /**
+     * Exam service.
+     */
+    private final ExamService examService;
 
+    /**
+     * Controller.
+     *
+     * @param wordService     word service.
+     * @param categoryService category service.
+     * @param questionService question service.
+     * @param examService     exam service.
+     */
+    @Autowired
+    public AdminController(
+            final WordService wordService,
+            final CategoryService categoryService,
+            final QuestionService questionService,
+            final ExamService examService) {
+        this.wordService = wordService;
+        this.categoryService = categoryService;
+        this.questionService = questionService;
+        this.examService = examService;
+    }
+
+    /**
+     * Add new card.
+     *
+     * @param cardFilled Filled model for cards.
+     * @param photo      the image to the word.
+     */
     @RequestMapping("/add-card")
-    public void saveWord(final CardFilled cardFilled, @RequestParam(value = "photo", required = false) MultipartFile photo) {
+    public void saveWord(
+            final CardFilled cardFilled,
+            final @RequestParam(value = "photo", required = false) MultipartFile photo) {
         this.wordService.prepareAndSave(cardFilled, photo);
     }
 
+    /**
+     * Add new category for words.
+     *
+     * @param category category.
+     * @param file     the image to the category.
+     */
     @RequestMapping("/add-category")
-    public void saveCategory(final Category category, @RequestParam(value = "photo", required = false) MultipartFile file) {
+    public void saveCategory(
+            final Category category,
+            final @RequestParam(value = "photo", required = false) MultipartFile file) {
         this.categoryService.prepareAndSave(category, file);
     }
 
+    /**
+     * @param exam     name of the exam.
+     * @param word     correct answer.
+     * @param variants answers variants.
+     * @return question saved to the database.
+     */
     @RequestMapping("/add-question")
-    public Question addQuestion(@RequestParam String exam, @RequestParam String word, @RequestParam List<String> variants) {
+    public Question addQuestion(
+            final @RequestParam String exam,
+            final @RequestParam String word,
+            final @RequestParam List<String> variants) {
         return this.questionService.prepareAndSave(exam, word, variants);
     }
 
+    /**
+     * @param name     exam name.
+     * @param category name of the category for exam.
+     * @param type     the type of exam.
+     * @return exam saved to the database.
+     */
     @RequestMapping("/add-exam")
-    public Exam addExam(@RequestParam String name, String category, int type) {
+    public Exam addExam(final @RequestParam String name, final String category, final int type) {
         return examService.prepareAndSave(name, category, type);
     }
 }

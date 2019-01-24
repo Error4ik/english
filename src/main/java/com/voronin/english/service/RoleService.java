@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * TODO: comment.
+ * Role service.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
@@ -14,9 +14,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    /**
+     * Role repository.
+     */
+    private final RoleRepository roleRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param roleRepository role repository.
+     */
+    @Autowired
+    public RoleService(final RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    /**
+     * Find role by name.
+     *
+     * @param name role name.
+     * @return Role.
+     */
     public Role findRoleByName(final String name) {
         return this.roleRepository.findRoleByRole(name);
     }

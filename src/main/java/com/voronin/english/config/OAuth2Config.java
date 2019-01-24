@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
- * TODO: comment.
+ * OAuth 2 config class.
  *
  * @author Alexey Voronin.
  * @since 05.11.2018.
@@ -21,35 +21,88 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
+    /**
+     * Access token is only valid for 12 hour.
+     */
+    private final int accessToken = 43200;
+
+    /**
+     * Refresh token is only valid for 12 hour.
+     */
+    private final int refreshToken = 43200;
+
+    /**
+     * Client id.
+     */
     @Value("${auth.clientId}")
     private String clientId;
 
+    /**
+     * Password.
+     */
     @Value("${auth.password}")
     private String password;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    /**
+     * Authentication manager.
+     */
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenStore tokenStore;
+    /**
+     * Token store.
+     */
+    private final TokenStore tokenStore;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
+    /**
+     * BCrypt password encoder.
+     */
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager);
+    /**
+     * Constructor.
+     *
+     * @param authManager authentication manager.
+     * @param tokenStore  token store.
+     * @param encoder     BCrypt password encoder.
+     */
+    @Autowired
+    public OAuth2Config(
+            final AuthenticationManager authManager,
+            final TokenStore tokenStore,
+            final BCryptPasswordEncoder encoder) {
+        this.authenticationManager = authManager;
+        this.tokenStore = tokenStore;
+        this.passwordEncoder = encoder;
     }
 
+    /**
+     * Set token store and authentication manager.
+     *
+     * @param endpoints Authorisation server endpoints configurer.
+     * @throws Exception exception.
+     */
     @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints
+                .tokenStore(tokenStore)
+                .authenticationManager(authenticationManager);
+    }
+
+    /**
+     * Config clients details.
+     *
+     * @param clients Client details service configurer.
+     * @throws Exception exception.
+     */
+    @Override
+    public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
                 .withClient(this.clientId)
-                .secret(encoder.encode(this.password))
+                .secret(passwordEncoder.encode(this.password))
                 .authorizedGrantTypes("authorization_code", "refresh_token", "password")
                 .scopes("openid")
-                .accessTokenValiditySeconds(43200)//Access token is only valid for 12 hour.
-                .refreshTokenValiditySeconds(43200);//Refresh token is only valid for 12 hour.
+                .accessTokenValiditySeconds(accessToken)
+                .refreshTokenValiditySeconds(refreshToken);
     }
 }

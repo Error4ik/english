@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * TODO: comment.
+ * Part of speech controller.
  *
  * @author Alexey Voronin.
  * @since 22.10.2018.
@@ -19,14 +19,35 @@ import java.util.List;
 @RequestMapping("/part-of-speech")
 public class PartOfSpeechController {
 
-    @Autowired
-    private PartOfSpeechService partOfSpeechService;
+    /**
+     * Part of speech service.
+     */
+    private final PartOfSpeechService partOfSpeechService;
 
+    /**
+     * Constructor.
+     *
+     * @param partOfSpeechService part of speech service.
+     */
+    @Autowired
+    public PartOfSpeechController(final PartOfSpeechService partOfSpeechService) {
+        this.partOfSpeechService = partOfSpeechService;
+    }
+
+    /**
+     * Get all part of speech.
+     *
+     * @return list of part of speech.
+     */
     @GetMapping("/parts-of-speech")
     public List<PartOfSpeech> getSpeeches() {
         return partOfSpeechService.getAll();
     }
 
+    /**
+     * Get part of speech without noun.
+     * @return list of part of speech without noun.
+     */
     @GetMapping("/part-of-speech-without-noun")
     public List<PartOfSpeech> getSpeechesWithoutNoun() {
         return this.partOfSpeechService.getSpeechesWithoutNoun();

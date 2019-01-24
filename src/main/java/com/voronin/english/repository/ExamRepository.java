@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Exam repository.
  *
  * @author Alexey Voronin.
  * @since 10.12.2018.
@@ -16,9 +16,27 @@ import java.util.UUID;
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, UUID> {
 
-    Exam getExamById(final UUID uuid);
+    /**
+     * Get exam by id.
+     *
+     * @param uuid id.
+     * @return exam.
+     */
+    Exam getExamById(UUID uuid);
 
-    Exam getExamByCategory(final Category category);
+    /**
+     * Get exam by category.
+     *
+     * @param category category.
+     * @return exam.
+     */
+    Exam getExamByCategory(Category category);
 
-    Exam getExamByName(final String name);
+    /**
+     * Get exam by name.
+     *
+     * @param name name.
+     * @return exam.
+     */
+    Exam getExamByName(String name);
 }

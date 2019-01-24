@@ -8,14 +8,25 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Category repository.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
  */
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    Category getCategoryByName(final String name);
+    /**
+     * Get category by name.
+     *
+     * @param name name.
+     * @return category.
+     */
+    Category getCategoryByName(String name);
 
+    /**
+     * Get all category order by name.
+     *
+     * @return list of category.
+     */
     List<Category> findAllByOrderByNameAsc();
 }

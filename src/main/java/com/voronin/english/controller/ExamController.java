@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Exam controller.
  *
  * @author Alexey Voronin.
  * @since 08.12.2018.
@@ -25,25 +25,67 @@ import java.util.UUID;
 @RequestMapping("/exam")
 public class ExamController {
 
-    @Autowired
-    private ExamService examService;
+    /**
+     * Exam service.
+     */
+    private final ExamService examService;
 
-    @Autowired
-    private UserExamsStatsService userExamsStatsService;
+    /**
+     * User exam stat service.
+     */
+    private final UserExamsStatsService userExamsStatsService;
 
-    @Autowired
-    private UserService userService;
+    /**
+     * User service.
+     */
+    private final UserService userService;
 
+    /**
+     * Constructor.
+     *
+     * @param examService           exam service.
+     * @param userExamsStatsService user exam stat service.
+     * @param userService           user service.
+     */
+    @Autowired
+    public ExamController(
+            final ExamService examService,
+            final UserExamsStatsService userExamsStatsService,
+            final UserService userService) {
+        this.examService = examService;
+        this.userExamsStatsService = userExamsStatsService;
+        this.userService = userService;
+    }
+
+    /**
+     * Get exam by id.
+     *
+     * @param id id.
+     * @return exam.
+     */
     @RequestMapping("/{id}")
     public Exam getExam(final @PathVariable UUID id) {
         return this.examService.getExamById(id);
     }
 
+    /**
+     * Get all exams.
+     *
+     * @return list of exam.
+     */
     @RequestMapping("/exams")
     public List<Exam> getExams() {
         return this.examService.getExams();
     }
 
+    /**
+     * Save all user-completed exams.
+     *
+     * @param principal     user.
+     * @param examId        exam id.
+     * @param correctAnswer number of correct answers.
+     * @return user exam stats.
+     */
     @RequestMapping("/save-stats-for-exam")
     public UserExamsStats saveStats(final Principal principal,
                                     @RequestParam final UUID examId,
@@ -51,8 +93,14 @@ public class ExamController {
         return userExamsStatsService.save(principal, examId, correctAnswer);
     }
 
+    /**
+     *
+     * @param principal user.
+     * @return list of exam statistics.
+     */
     @RequestMapping("/exam-stats-by-user")
     public List<UserExamsStats> getStatsByUser(final Principal principal) {
-        return this.userExamsStatsService.getUserExamsStatsByUser(this.userService.getUserByEmail(principal.getName()));
+        return this.userExamsStatsService.getUserExamsStatsByUser(
+                this.userService.getUserByEmail(principal.getName()));
     }
 }

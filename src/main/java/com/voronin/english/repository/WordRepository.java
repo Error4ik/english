@@ -10,16 +10,51 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Word repository.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
  */
 @Repository
 public interface WordRepository extends JpaRepository<Word, UUID> {
-    public List<Word> getAllByCategoryId(final UUID categoryId);
-    public Word getWordById(final UUID uuid);
-    public Word getWordByWord(final String word);
-    public List<Word> getAllByWordIn(final Collection<String> words);
-    public List<Word> getAllByPartOfSpeech(final PartOfSpeech partOfSpeech);
+
+    /**
+     * Get words by category id.
+     *
+     * @param categoryId category id.
+     * @return list of words.
+     */
+    List<Word> getAllByCategoryId(UUID categoryId);
+
+    /**
+     * Get word by id.
+     *
+     * @param uuid id;
+     * @return word.
+     */
+    Word getWordById(UUID uuid);
+
+    /**
+     * Get word by name.
+     *
+     * @param word name.
+     * @return word.
+     */
+    Word getWordByWord(String word);
+
+    /**
+     * Get the words that are included in the list.
+     *
+     * @param words list.
+     * @return list of words.
+     */
+    List<Word> getAllByWordIn(Collection<String> words);
+
+    /**
+     * Get words by part of speech.
+     *
+     * @param partOfSpeech part of speech.
+     * @return list of words.
+     */
+    List<Word> getAllByPartOfSpeech(PartOfSpeech partOfSpeech);
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * TODO: comment.
+ * Phrase service.
  *
  * @author Alexey Voronin.
  * @since 10.10.2018.
@@ -16,9 +16,27 @@ import java.util.List;
 @Service
 public class PhraseService {
 
-    @Autowired
-    private PhraseRepository phraseRepository;
+    /**
+     * Phrase repository.
+     */
+    private final PhraseRepository phraseRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param phraseRepository phrase repository.
+     */
+    @Autowired
+    public PhraseService(final PhraseRepository phraseRepository) {
+        this.phraseRepository = phraseRepository;
+    }
+
+    /**
+     * Save all Phrases.
+     *
+     * @param list list phrases.
+     * @return List of phrases.
+     */
     public List<Phrase> saveAll(final List<Phrase> list) {
         return this.phraseRepository.saveAll(list);
     }

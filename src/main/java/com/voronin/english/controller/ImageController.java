@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Image controller.
  *
  * @author Alexey Voronin.
  * @since 23.11.2018.
@@ -22,8 +22,21 @@ import java.util.UUID;
 @RestController
 public class ImageController {
 
+    /**
+     * Image service.
+     */
+    private final ImageService imageService;
+
+    /**
+     * Constructor.
+     *
+     * @param imageService image service.
+     */
     @Autowired
-    private ImageService imageService;
+    public ImageController(final ImageService imageService) {
+        this.imageService = imageService;
+    }
+
     /**
      * Mapping web requests /image/{imageId}.
      *

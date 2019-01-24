@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 
 /**
- * TODO: comment.
+ * Resource server config.
  *
  * @author Alexey Voronin.
  * @since 05.11.2018.
@@ -17,21 +17,33 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
+    /**
+     * Real name for Resource server security configurer.
+     */
     private static final String RESOURCE_ID = "resource_id";
 
+    /**
+     * @param resources Resource server security configurer.
+     */
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
+    public void configure(final ResourceServerSecurityConfigurer resources) {
         resources.resourceId(RESOURCE_ID).stateless(false);
     }
 
+    /**
+     * @param http http security.
+     * @throws Exception exception.
+     */
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("admin")
                 .antMatchers("/user").hasAnyAuthority("user", "admin")
                 .anyRequest().permitAll()
-                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 
 }

@@ -2,12 +2,18 @@ package com.voronin.english.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * TODO: comment.
+ * Translation.
  *
  * @author Alexey Voronin.
  * @since 20.09.2018.
@@ -15,22 +21,40 @@ import java.util.UUID;
 @Entity(name = "translations")
 public class Translation {
 
+    /**
+     * Id.
+     */
     @Id
     @org.hibernate.annotations.Type(type = "pg-uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * Translation word.
+     */
     private String translation;
 
+    /**
+     * Word.
+     */
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_id")
     private Word word;
 
+    /**
+     * Empty constructor.
+     */
     public Translation() {
     }
 
-    public Translation(String translation, Word word) {
+    /**
+     * Constructor.
+     *
+     * @param translation translation word.
+     * @param word        word.
+     */
+    public Translation(final String translation, final Word word) {
         this.translation = translation;
         this.word = word;
     }
@@ -39,7 +63,7 @@ public class Translation {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -47,7 +71,7 @@ public class Translation {
         return translation;
     }
 
-    public void setTranslation(String translation) {
+    public void setTranslation(final String translation) {
         this.translation = translation;
     }
 
@@ -55,17 +79,21 @@ public class Translation {
         return word;
     }
 
-    public void setWord(Word word) {
+    public void setWord(final Word word) {
         this.word = word;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Translation)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Translation)) {
+            return false;
+        }
         Translation that = (Translation) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getTranslation(), that.getTranslation());
+        return Objects.equals(getId(), that.getId())
+                && Objects.equals(getTranslation(), that.getTranslation());
     }
 
     @Override

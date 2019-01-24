@@ -1,36 +1,88 @@
 package com.voronin.english.domain;
 
 /**
- * TODO: comment.
+ * Object to fill the card.
  *
  * @author Alexey Voronin.
  * @since 22.10.2018.
  */
 public class CardFilled {
 
+    /**
+     * Word.
+     */
     private String word;
 
+    /**
+     * Transcription.
+     */
     private String transcription;
 
+    /**
+     * Translation.
+     */
     private String translation;
 
+    /**
+     * Category.
+     */
     private String category;
 
+    /**
+     * Part of speech.
+     */
     private String partOfSpeech;
 
+    /**
+     * First phrase.
+     */
     private String firstPhrase;
 
+    /**
+     * Second phrase.
+     */
     private String secondPhrase;
 
+    /**
+     * First phrase translate.
+     */
     private String firstPhraseTranslation;
 
+    /**
+     * Second phrase translate.
+     */
     private String secondPhraseTranslation;
 
+    /**
+     * Description.
+     */
     private String description;
 
-    public CardFilled(String word, String transcription, String translation, String category, String partOfSpeech,
-                      String firstPhrase, String secondPhrase, String firstPhraseTranslation,
-                      String secondPhraseTranslation, String description) {
+    /**
+     * Constructor.
+     *
+     * @param word                    word.
+     * @param transcription           transcription.
+     * @param translation             translation.
+     * @param category                category.
+     * @param partOfSpeech            part of speech.
+     * @param firstPhrase             first phrase.
+     * @param secondPhrase            second phrase.
+     * @param firstPhraseTranslation  first phrase translation.
+     * @param secondPhraseTranslation second phrase translation.
+     * @param description             description.
+     */
+    public CardFilled(
+            final String word,
+            final String transcription,
+            final String translation,
+            final String category,
+            final String partOfSpeech,
+            final String firstPhrase,
+            final String secondPhrase,
+            final String firstPhraseTranslation,
+            final String secondPhraseTranslation,
+            final String description) {
         this.word = word;
         this.transcription = transcription;
         this.translation = translation;
@@ -43,6 +95,9 @@ public class CardFilled {
         this.description = description;
     }
 
+    /**
+     * Empty constructor.
+     */
     public CardFilled() {
     }
 
@@ -50,7 +105,7 @@ public class CardFilled {
         return word;
     }
 
-    public void setWord(String word) {
+    public void setWord(final String word) {
         this.word = word;
     }
 
@@ -58,7 +113,7 @@ public class CardFilled {
         return transcription;
     }
 
-    public void setTranscription(String transcription) {
+    public void setTranscription(final String transcription) {
         this.transcription = transcription;
     }
 
@@ -66,7 +121,7 @@ public class CardFilled {
         return translation;
     }
 
-    public void setTranslation(String translation) {
+    public void setTranslation(final String translation) {
         this.translation = translation;
     }
 
@@ -74,7 +129,7 @@ public class CardFilled {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(final String category) {
         this.category = category;
     }
 
@@ -82,7 +137,7 @@ public class CardFilled {
         return partOfSpeech;
     }
 
-    public void setPartOfSpeech(String partOfSpeech) {
+    public void setPartOfSpeech(final String partOfSpeech) {
         this.partOfSpeech = partOfSpeech;
     }
 
@@ -90,7 +145,7 @@ public class CardFilled {
         return firstPhrase;
     }
 
-    public void setFirstPhrase(String firstPhrase) {
+    public void setFirstPhrase(final String firstPhrase) {
         this.firstPhrase = firstPhrase;
     }
 
@@ -98,7 +153,7 @@ public class CardFilled {
         return secondPhrase;
     }
 
-    public void setSecondPhrase(String secondPhrase) {
+    public void setSecondPhrase(final String secondPhrase) {
         this.secondPhrase = secondPhrase;
     }
 
@@ -106,7 +161,7 @@ public class CardFilled {
         return firstPhraseTranslation;
     }
 
-    public void setFirstPhraseTranslation(String firstPhraseTranslation) {
+    public void setFirstPhraseTranslation(final String firstPhraseTranslation) {
         this.firstPhraseTranslation = firstPhraseTranslation;
     }
 
@@ -114,7 +169,7 @@ public class CardFilled {
         return secondPhraseTranslation;
     }
 
-    public void setSecondPhraseTranslation(String secondPhraseTranslation) {
+    public void setSecondPhraseTranslation(final String secondPhraseTranslation) {
         this.secondPhraseTranslation = secondPhraseTranslation;
     }
 
@@ -122,23 +177,23 @@ public class CardFilled {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
     @Override
     public String toString() {
-        return "CardFilled{" +
-                "word='" + word + '\'' +
-                ", transcription='" + transcription + '\'' +
-                ", translation='" + translation + '\'' +
-                ", category='" + category + '\'' +
-                ", partOfSpeech='" + partOfSpeech + '\'' +
-                ", firstPhrase='" + firstPhrase + '\'' +
-                ", secondPhrase='" + secondPhrase + '\'' +
-                ", firstPhraseTranslation='" + firstPhraseTranslation + '\'' +
-                ", secondPhraseTranslation='" + secondPhraseTranslation + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "CardFilled{"
+                + "word='" + word + '\''
+                + ", transcription='" + transcription + '\''
+                + ", translation='" + translation + '\''
+                + ", category='" + category + '\''
+                + ", partOfSpeech='" + partOfSpeech + '\''
+                + ", firstPhrase='" + firstPhrase + '\''
+                + ", secondPhrase='" + secondPhrase + '\''
+                + ", firstPhraseTranslation='" + firstPhraseTranslation + '\''
+                + ", secondPhraseTranslation='" + secondPhraseTranslation + '\''
+                + ", description='" + description + '\''
+                + '}';
     }
 }

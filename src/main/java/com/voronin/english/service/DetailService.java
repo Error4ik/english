@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO: comment.
+ * Detail service, implementation UserDetailService.
  *
  * @author Alexey Voronin.
  * @since 27.10.2018.
@@ -22,9 +22,27 @@ import java.util.Set;
 @Component
 public class DetailService implements UserDetailsService {
 
-    @Autowired
-    private UserService userService;
+    /**
+     * User service.
+     */
+    private final UserService userService;
 
+    /**
+     * Constructor.
+     *
+     * @param userService user service.
+     */
+    @Autowired
+    public DetailService(final UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Load user by email from database.
+     *
+     * @param email user email.
+     * @return user or throw DisabledException if email or password incorrect.
+     */
     @Override
     public UserDetails loadUserByUsername(final String email) {
         final User user = this.userService.getUserByEmail(email);
