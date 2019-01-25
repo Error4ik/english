@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * CategoryService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -35,24 +35,57 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class CategoryServiceTest {
 
+    /**
+     * Mock CategoryRepository.
+     */
     @MockBean
     private CategoryRepository categoryRepository;
+
+    /**
+     * Mock WriteFileToDisk.
+     */
     @MockBean
     private WriteFileToDisk writeFileToDisk;
+
+    /**
+     * Mock ImageService.
+     */
     @MockBean
     private ImageService imageService;
+
+    /**
+     * Mock MultipartFile.
+     */
     @MockBean
     private MultipartFile multipartFile;
+
+    /**
+     * Mock File.
+     */
     @MockBean
     private File file;
 
+    /**
+     * Category for test.
+     */
     private Category category = new Category();
+
+    /**
+     * Image for test.
+     */
     private Image image = new Image();
+
+    /**
+     * Path to save image.
+     */
     @Value("${upload.image.category.folder}")
     private String pathToSaveImage;
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Before
-    public void init() throws Exception {
+    public void init() {
         image.setName("image");
         image.setUrl("path");
         category.setName("test");
@@ -61,9 +94,17 @@ public class CategoryServiceTest {
         category.setImage(this.image);
     }
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * When call getCategories method should return list of categories.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenCallGetCategoriesShouldReturnListCategories() throws Exception {
         List<Category> list = new ArrayList<>();
@@ -74,6 +115,11 @@ public class CategoryServiceTest {
         assertThat(categoryService.getCategories(), is(list));
     }
 
+    /**
+     * When call getCategoryByName method with parameter should return one category.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetCategoryByNameShouldReturnOneCategory() throws Exception {
         when(categoryRepository.getCategoryByName(category.getName())).thenReturn(category);
@@ -81,6 +127,11 @@ public class CategoryServiceTest {
         assertThat(categoryService.getCategoryByName(category.getName()).getId(), is(category.getId()));
     }
 
+    /**
+     * When call prepareAndSave method should return saved category.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenPrepareAndSaveShouldReturnCategory() throws Exception {
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
@@ -89,6 +140,11 @@ public class CategoryServiceTest {
         assertThat(categoryService.prepareAndSave(category, multipartFile), is(category));
     }
 
+    /**
+     * When call save method should return saved category.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenSaveCategoryShouldReturnCategory() throws Exception {
         when(categoryRepository.save(category)).thenReturn(category);

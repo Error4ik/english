@@ -24,7 +24,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * UserExamsStatsService test class.
  *
  * @author Alexey Voronin.
  * @since 19.12.2018.
@@ -34,29 +34,46 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class UserExamsStatsServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private UserExamsStatsService userExamsStatsService;
 
+    /**
+     * Mock UserExamsStatsRepository.
+     */
     @MockBean
     private UserExamsStatsRepository userExamsStatsRepository;
+
+    /**
+     * Mock UserService.
+     */
     @MockBean
     private UserService userService;
+
+    /**
+     * Mock ExamService.
+     */
     @MockBean
     private ExamService examService;
 
+    /**
+     * UUID id for test.
+     */
     private UUID uuid = UUID.randomUUID();
 
+    /**
+     * When you call save, if the statistics already exist in the database.
+     *
+     * @throws Exception exception.
+     */
     @Test
-    public void whenSaveShouldReturnSavedExamStatsWithoutNull() throws Exception {
+    public void whenSaveWithoutNullShouldReturnSavedExamStats() throws Exception {
         User user = new User();
         Exam exam = new Exam();
         exam.setQuestions(Lists.newArrayList(new Question()));
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "user";
-            }
-        };
+        Principal principal = () -> "user";
 
         UserExamsStats examsStats = new UserExamsStats(user, exam, 1, 1);
         when(userService.getUserByEmail("user")).thenReturn(user);
@@ -68,17 +85,17 @@ public class UserExamsStatsServiceTest {
 
     }
 
+    /**
+     * When you call save, if the statistics do not exist in the database.
+     *
+     * @throws Exception exception.
+     */
     @Test
-    public void whenSaveShouldReturnSavedExamStatsWithNull() throws Exception {
+    public void whenSaveWithNullShouldReturnSavedExamStats() throws Exception {
         User user = new User();
         Exam exam = new Exam();
         exam.setQuestions(Lists.newArrayList(new Question()));
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "user";
-            }
-        };
+        Principal principal = () -> "user";
 
         UserExamsStats examsStats = new UserExamsStats(user, exam, 1, 1);
         when(userService.getUserByEmail("user")).thenReturn(user);
@@ -90,6 +107,11 @@ public class UserExamsStatsServiceTest {
 
     }
 
+    /**
+     * When call getUserExamsStatsByUser should return UserExamsStats.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetUserExamsStatsByUserShouldReturnUserStats() throws Exception {
         UserExamsStats examsStats = new UserExamsStats();
@@ -98,5 +120,4 @@ public class UserExamsStatsServiceTest {
 
         assertThat(userExamsStatsService.getUserExamsStatsByUser(new User()), is(list));
     }
-
 }

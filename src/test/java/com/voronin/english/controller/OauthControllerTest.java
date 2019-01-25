@@ -20,13 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * TODO: comment.
+ * OauthController test class.
  *
  * @author Alexey Voronin.
  * @since 29.11.2018.
@@ -36,21 +38,46 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "user", roles = {"USER"})
 public class OauthControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Mock UserService.
+     */
     @MockBean
     private UserService userService;
 
+    /**
+     * Mock TokenStore.
+     */
     @MockBean
     private TokenStore tokenStore;
+
+    /**
+     * Mock HttpServletRequest.
+     */
     @MockBean
     private HttpServletRequest request;
+
+    /**
+     * Mock OAuth2AccessToken.
+     */
     @MockBean
     private OAuth2AccessToken accessToken;
 
+    /**
+     * When Mapping '/registration' valid user should return status isOk
+     * and return user and call regUser method once.
+     *
+     * @throws Exception exception.
+     */
     @Test
-    public void whenMappingRegistrationShouldReturnStatusOkAndReturnWithoutError() throws Exception {
+    public void whenMappingRegistrationShouldReturnStatusOkAndReturnUser() throws Exception {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setEmail("test");
@@ -73,6 +100,12 @@ public class OauthControllerTest {
         verify(this.userService, times(1)).regUser(user);
     }
 
+    /**
+     * When Mapping '/registration' valid user should return status isOk
+     * and return error and call regUser method once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingRegistrationShouldReturnStatusOkAndReturnWithError() throws Exception {
         User user = new User();
@@ -98,6 +131,11 @@ public class OauthControllerTest {
         verify(this.userService, times(1)).regUser(user);
     }
 
+    /**
+     * When Mapping '/revoke' without token should return status isOk.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingRevokeAndRequestGetHeaderNullShouldReturnStatusOk() throws Exception {
         this.mockMvc
@@ -109,6 +147,12 @@ public class OauthControllerTest {
                 .andReturn();
     }
 
+    /**
+     * When Mapping '/revoke' with token should return status isOk
+     * and call removeAccessToken method of the TokenStore class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingRevokeAndRequestGetHeaderNotNullShouldReturnStatusOk() throws Exception {
         String authHeader = "test";
@@ -118,11 +162,11 @@ public class OauthControllerTest {
                         .header("Content-type", "application/json; charset=utf-8")
                         .header("Authorization", authHeader)
                         .with(csrf())
-                .flashAttr("request", request))
+                        .flashAttr("request", request))
                 .andExpect(status()
                         .isOk())
                 .andReturn();
 
-        verify(this.tokenStore, timeout(1)).removeAccessToken(accessToken);
+        verify(this.tokenStore, times(1)).removeAccessToken(accessToken);
     }
 }

@@ -14,8 +14,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
- * TODO: comment.
+ * PartOfSpeechController test class.
  *
  * @author Alexey Voronin.
  * @since 28.11.2018.
@@ -25,12 +26,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "user", roles = {"USER"})
 public class PartOfSpeechControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Mock PartOfSpeechService.
+     */
     @MockBean
     private PartOfSpeechService partOfSpeechService;
 
+    /**
+     * When mapping '/part-of-speech/parts-of-speech' should return status isOk
+     * and call the getAll method of the PartOfSpeechService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingPartsOfSpeechShouldReturnStatusOkAndOneCallGetAllMethod() throws Exception {
         this.mockMvc
@@ -39,6 +54,12 @@ public class PartOfSpeechControllerTest {
         verify(this.partOfSpeechService, times(1)).getAll();
     }
 
+    /**
+     * When mapping '/part-of-speech/part-of-speech-without-noun' should return status isOk
+     * and call the getSpeechesWithoutNoun method of the PartOfSpeechService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingPartOfSpeechWithoutNounReturnStatusOkAndCallGetSpeechesWithoutNun() throws Exception {
         this.mockMvc

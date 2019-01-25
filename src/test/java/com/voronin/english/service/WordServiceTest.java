@@ -1,6 +1,10 @@
 package com.voronin.english.service;
 
-import com.voronin.english.domain.*;
+import com.voronin.english.domain.Word;
+import com.voronin.english.domain.PartOfSpeech;
+import com.voronin.english.domain.CardFilled;
+import com.voronin.english.domain.Category;
+import com.voronin.english.domain.Image;
 import com.voronin.english.repository.WordRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.assertj.core.util.Lists;
@@ -26,7 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * WordService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -36,39 +40,110 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class WordServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private WordService wordService;
 
+    /**
+     * Mock WriteFileToDisk.
+     */
     @MockBean
     private WriteFileToDisk writeFileToDisk;
+
+    /**
+     * Mock WordRepository.
+     */
     @MockBean
     private WordRepository wordRepository;
+
+    /**
+     * Mock CategoryService.
+     */
     @MockBean
     private CategoryService categoryService;
+
+    /**
+     * Mock PartOfSpeechService.
+     */
     @MockBean
     private PartOfSpeechService partOfSpeechService;
+
+    /**
+     * Mock ImageService.
+     */
     @MockBean
     private ImageService imageService;
+
+    /**
+     * Mock TranslationService.
+     */
     @MockBean
     private TranslationService translationService;
+
+    /**
+     * Mock PhraseService.
+     */
     @MockBean
     private PhraseService phraseService;
+
+    /**
+     * Mock MultipartFile.
+     */
     @MockBean
     private MultipartFile multipartFile;
+
+    /**
+     * Mock File.
+     */
     @MockBean
     private File file;
 
+    /**
+     * Path to save image.
+     */
     @Value("${upload.image.folder}")
     private String pathToSaveImage;
 
+    /**
+     * Class for test.
+     */
     private Word word = new Word();
+
+    /**
+     * Class for test.
+     */
     private Category category = new Category();
+
+    /**
+     * Class for test.
+     */
     private PartOfSpeech partOfSpeech = new PartOfSpeech();
+
+    /**
+     * UUID id for test.
+     */
     private UUID uuid = UUID.randomUUID();
+
+    /**
+     * Class for test.
+     */
     private CardFilled cardFilled;
+
+    /**
+     * Class for test.
+     */
     private Image image = new Image();
+
+    /**
+     * List Word for test.
+     */
     private List<Word> list = new ArrayList<>();
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Before
     public void init() {
         category.setId(uuid);
@@ -86,6 +161,11 @@ public class WordServiceTest {
         list.add(word);
     }
 
+    /**
+     * When Call getWords should return list of Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetWordsShouldReturnListWords() throws Exception {
         when(wordRepository.findAll()).thenReturn(list);
@@ -93,6 +173,11 @@ public class WordServiceTest {
         assertThat(wordService.getWords(), is(list));
     }
 
+    /**
+     * When call getWordsByCategory should return list Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
         when(wordRepository.getAllByCategoryId(category.getId())).thenReturn(list);
@@ -100,6 +185,11 @@ public class WordServiceTest {
         assertThat(wordService.getWordsByCategory(category.getId()), is(list));
     }
 
+    /**
+     * When call prepareAndSave with photo should return saved Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenPrepareAndSaveWithPhotoShouldReturnWord() throws Exception {
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
@@ -109,6 +199,11 @@ public class WordServiceTest {
         assertThat(wordService.prepareAndSave(cardFilled, multipartFile).getWord(), is(word.getWord()));
     }
 
+    /**
+     * When call prepareAndSave without photo should return saved Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenPrepareAndSaveWithoutPhotoShouldReturnWord() throws Exception {
         when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
@@ -117,6 +212,11 @@ public class WordServiceTest {
         assertThat(w.getWord(), is(word.getWord()));
     }
 
+    /**
+     * When call getWordByName should return Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetWordByNameShouldReturnWord() throws Exception {
         when(wordRepository.getWordByWord(word.getWord())).thenReturn(word);
@@ -124,6 +224,11 @@ public class WordServiceTest {
         assertThat(wordService.getWordByName(word.getWord()), is(word));
     }
 
+    /**
+     * When call getWordById should return Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetWordByIdShouldReturnWord() throws Exception {
         when(wordRepository.getWordById(word.getId())).thenReturn(word);
@@ -131,8 +236,13 @@ public class WordServiceTest {
         assertThat(wordService.getWordById(word.getId()), is(word));
     }
 
+    /**
+     * When call getWordsByNames should return list of Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
-    public void whenGetWordByNamesShouldReturnListWord() throws Exception {
+    public void whenGetWordsByNamesShouldReturnListWord() throws Exception {
         List<Word> words = Lists.newArrayList(word, word, word);
         List<String> list = Lists.newArrayList("word", "word", "word");
         when(wordRepository.getAllByWordIn(list)).thenReturn(words);
@@ -140,6 +250,11 @@ public class WordServiceTest {
         assertThat(wordService.getWordsByNames(list), is(words));
     }
 
+    /**
+     * When call getWordsByPartOfSpeech should return List of Word.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
         when(partOfSpeechService.getById(uuid)).thenReturn(partOfSpeech);

@@ -17,13 +17,15 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * TODO: comment.
+ * ImageController test class.
  *
  * @author Alexey Voronin.
  * @since 29.11.2018.
@@ -32,18 +34,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ImageController.class)
 public class ImageControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Mock ImageService.
+     */
     @MockBean
     private ImageService imageService;
 
+    /**
+     * Mock Image.
+     */
     @MockBean
     private Image image;
 
+    /**
+     * Mock ImageRepository.
+     */
     @MockBean
     private ImageRepository imageRepository;
 
+    /**
+     * When mapping '/image/{id}' should call the getImageById method of the ImageService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     public void whenMappingImageByIdShouldReturnByteArray() throws Exception {

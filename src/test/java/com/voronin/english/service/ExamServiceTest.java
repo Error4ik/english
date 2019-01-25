@@ -18,11 +18,12 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
- * TODO: comment.
+ * ExamService test class.
  *
  * @author Alexey Voronin.
  * @since 19.12.2018.
@@ -32,18 +33,42 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @WithMockUser(username = "user", roles = {"USER"})
 public class ExamServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private ExamService examService;
 
+    /**
+     * Mock ExamRepository.
+     */
     @MockBean
     private ExamRepository examRepository;
+
+    /**
+     * Mock CategoryService.
+     */
     @MockBean
     private CategoryService categoryService;
 
+    /**
+     * Class for test.
+     */
     private Exam exam = new Exam();
+
+    /**
+     * Class for test.
+     */
     private Category category = new Category();
+
+    /**
+     * UUID id for test.
+     */
     private UUID uuid = UUID.randomUUID();
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Before
     public void init() {
         category.setId(uuid);
@@ -53,6 +78,11 @@ public class ExamServiceTest {
         exam.setCategory(category);
     }
 
+    /**
+     * When call getExamById should return exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetExamByIdShouldReturnExam() throws Exception {
         when(examRepository.getExamById(uuid)).thenReturn(exam);
@@ -60,6 +90,11 @@ public class ExamServiceTest {
         assertThat(examService.getExamById(uuid), is(exam));
     }
 
+    /**
+     * When getExams should return list of exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetExamsShouldReturnListExam() throws Exception {
         List<Exam> exams = Lists.newArrayList(exam);
@@ -68,6 +103,11 @@ public class ExamServiceTest {
         assertThat(examService.getExams(), is(exams));
     }
 
+    /**
+     * When call getExamByCategory should return exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetExamByCategoryShouldReturnExam() throws Exception {
         when(examRepository.getExamByCategory(category)).thenReturn(exam);
@@ -75,6 +115,11 @@ public class ExamServiceTest {
         assertThat(examService.getExamByCategory(category), is(exam));
     }
 
+    /**
+     * When call getExamByName should return exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetExamByNameShouldReturnExam() throws Exception {
         when(examRepository.getExamByName(exam.getName())).thenReturn(exam);
@@ -82,6 +127,11 @@ public class ExamServiceTest {
         assertThat(examService.getExamByName(exam.getName()), is(exam));
     }
 
+    /**
+     * When call save should return saved exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenSaveExamShouldReturnSavedExam() throws Exception {
         when(examRepository.save(exam)).thenReturn(exam);
@@ -89,6 +139,11 @@ public class ExamServiceTest {
         assertThat(examService.save(exam), is(exam));
     }
 
+    /**
+     * When call prepareAndSave should return saved exam.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenPrepareAndSaveShouldReturnSavedExam() throws Exception {
         when(categoryService.getCategoryByName(category.getName())).thenReturn(category);
@@ -97,5 +152,4 @@ public class ExamServiceTest {
 
         assertThat(examService.prepareAndSave(exam.getName(), category.getName(), 0), is(exam));
     }
-
 }

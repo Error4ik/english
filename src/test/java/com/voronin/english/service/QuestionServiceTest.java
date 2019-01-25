@@ -23,7 +23,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * QuestionService test class.
  *
  * @author Alexey Voronin.
  * @since 19.12.2018.
@@ -33,16 +33,35 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class QuestionServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private QuestionService questionService;
 
+    /**
+     * Mock QuestRepository.
+     */
     @MockBean
     private QuestRepository questRepository;
+
+    /**
+     * Mock WordService.
+     */
     @MockBean
     private WordService wordService;
+
+    /**
+     * Mock ExamService.
+     */
     @MockBean
     private ExamService examService;
 
+    /**
+     * When call save should return saved Question.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenSaveQuestionShouldReturnSavedQuestion() throws Exception {
         Question question = new Question();
@@ -51,6 +70,11 @@ public class QuestionServiceTest {
         assertThat(questionService.save(question), is(question));
     }
 
+    /**
+     * When call prepareAndSave should return saved question.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenPrepareAndSaveShouldReturnSavedQuestion() throws Exception {
         Word word = new Word();
@@ -67,5 +91,4 @@ public class QuestionServiceTest {
 
         assertThat(questionService.prepareAndSave("exam", word.getWord(), variants), is(question));
     }
-
 }

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * DetailService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -30,13 +30,23 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class DetailServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private DetailService detailService;
 
+    /**
+     * Mock UserService.
+     */
     @MockBean
     private UserService userService;
 
 
+    /**
+     * When you call the getUserByEmail method with a user who is not in
+     * the database, should throw a DisabledException.
+     */
     @Test(expected = DisabledException.class)
     public void whenUserEqualsNullShouldThrowException() {
         when(userService.getUserByEmail("test")).thenReturn(null);
@@ -44,6 +54,9 @@ public class DetailServiceTest {
         detailService.loadUserByUsername("test");
     }
 
+    /**
+     * When you call the getUserByEmail method with a user who is in the database, should return user.
+     */
     @Test
     public void whenValidUserShouldReturnUser() {
         Role role = new Role();

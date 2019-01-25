@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * PhraseService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -29,14 +29,25 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class PhraseServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private PhraseService phraseService;
 
+    /**
+     * Mock PhraseRepository.
+     */
     @MockBean
     private PhraseRepository phraseRepository;
 
+    /**
+     * When call saveAll should return saved list.
+     *
+     * @throws Exception exception.
+     */
     @Test
-    public void saveAll() throws Exception {
+    public void whenSaveAllShouldReturnSavedList() throws Exception {
         Phrase phrase = new Phrase();
         phrase.setId(UUID.randomUUID());
         phrase.setPhrase("Test Phrase");

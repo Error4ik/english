@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * TODO: comment.
+ * AdminController test.
  *
  * @author Alexey Voronin.
  * @since 29.11.2018.
@@ -34,24 +34,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "user", roles = {"USER"})
 public class AdminControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Mock WordService.
+     */
     @MockBean
     private WordService wordService;
 
+    /**
+     * Mock CategoryService.
+     */
     @MockBean
     private CategoryService categoryService;
 
+    /**
+     * Mock CardFilled class.
+     */
     @MockBean
     private CardFilled cardFilled;
+
+    /**
+     * Mock Category class.
+     */
     @MockBean
     private Category category;
+
+    /**
+     * Mock ExamService.
+     */
     @MockBean
     private ExamService examService;
+
+    /**
+     * Mock QuestionService.
+     */
     @MockBean
     private QuestionService questionService;
 
+    /**
+     * When mapping '/admin/add-card' should call the prepareAndSave method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetMappingAddCardShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {
         this.mockMvc
@@ -61,6 +92,11 @@ public class AdminControllerTest {
         verify(this.wordService, times(1)).prepareAndSave(cardFilled, null);
     }
 
+    /**
+     * When mapping '/admin/add-category' should call the prepareAndSave method of the CategoryService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetMappingAddCategoryShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {
         this.mockMvc
@@ -70,6 +106,11 @@ public class AdminControllerTest {
         verify(this.categoryService, times(1)).prepareAndSave(category, null);
     }
 
+    /**
+     * When mapping '/admin/add-question' should call the prepareAndSave method of the QuestionService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetMappingAddQuestionShouldReturnStatusOkAndCallPrepareAndSaveMethod() throws Exception {
         String exam = "exam";
@@ -86,17 +127,22 @@ public class AdminControllerTest {
         verify(this.questionService, times(1)).prepareAndSave(exam, word, list);
     }
 
+    /**
+     * When mapping '/admin/add-exam' should call the prepareAndSave method of the ExamService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingAddExamShouldReturnStatusOkAndCallPrepareAndSaveMethod() throws Exception {
         String name = "name";
-        String category = "category";
+        String categoryName = "category";
         int examType = 0;
         this.mockMvc.perform(get("/admin/add-exam")
                 .param("name", name)
-                .param("category", category)
+                .param("category", categoryName)
                 .param("type", String.valueOf(examType)))
                 .andExpect(status().isOk());
 
-        verify(this.examService, times(1)).prepareAndSave(name, category, examType);
+        verify(this.examService, times(1)).prepareAndSave(name, categoryName, examType);
     }
 }

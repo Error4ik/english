@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * PartOfSpeechService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -31,20 +31,37 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class PartOfSpeechServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private PartOfSpeechService partOfSpeechService;
 
+    /**
+     * Mock PartOfSpeechRepository.
+     */
     @MockBean
     private PartOfSpeechRepository partOfSpeechRepository;
 
+    /**
+     * Class for test.
+     */
     private PartOfSpeech partOfSpeech = new PartOfSpeech();
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Before
     public void init() {
         partOfSpeech.setPartOfSpeech("speech");
         partOfSpeech.setId(UUID.randomUUID());
     }
 
+    /**
+     * When call getAll should return list of PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetAllShouldReturnListPartOfSpeech() throws Exception {
         List<PartOfSpeech> list = Lists.newArrayList(partOfSpeech);
@@ -53,6 +70,11 @@ public class PartOfSpeechServiceTest {
         assertThat(partOfSpeechService.getAll(), is(list));
     }
 
+    /**
+     * When call partOfSpeechByName should return PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void getPartOfSpeechByName() throws Exception {
         when(partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(partOfSpeech.getPartOfSpeech()))
@@ -61,6 +83,11 @@ public class PartOfSpeechServiceTest {
         assertThat(partOfSpeechService.getPartOfSpeechByName(partOfSpeech.getPartOfSpeech()), is(partOfSpeech));
     }
 
+    /**
+     * When call getById should return PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetByIdShouldReturnPartOfSpeechById() throws Exception {
         when(partOfSpeechRepository.getById(partOfSpeech.getId())).thenReturn(partOfSpeech);
@@ -68,6 +95,11 @@ public class PartOfSpeechServiceTest {
         assertThat(partOfSpeechService.getById(partOfSpeech.getId()), is(partOfSpeech));
     }
 
+    /**
+     * When call save should return saved PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenSavePartOfSpeechShouldReturnPartOfSpeech() throws Exception {
         when(partOfSpeechRepository.save(partOfSpeech)).thenReturn(partOfSpeech);
@@ -75,6 +107,11 @@ public class PartOfSpeechServiceTest {
         assertThat(partOfSpeechService.save(partOfSpeech), is(partOfSpeech));
     }
 
+    /**
+     * When call getSpeechWithoutNoun should return list of PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenGetSpeechWithoutNounShouldReturnListSpeeches() throws Exception {
         PartOfSpeech noun = new PartOfSpeech("Существительное");

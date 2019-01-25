@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * TranslationService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -29,12 +29,23 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class TranslationServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private TranslationService translationService;
 
+    /**
+     * Mock TranslationRepository.
+     */
     @MockBean
     private TranslationRepository translationRepository;
 
+    /**
+     * When call saveAll should return saved list.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenSaveAllShouldReturnSavedList() throws Exception {
         Translation translation = new Translation("translation", new Word());

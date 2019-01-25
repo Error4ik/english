@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * ImageService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -28,19 +28,34 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class ImageServiceTest {
 
+    /**
+     * Mock ImageRepository.
+     */
     @MockBean
     private ImageRepository imageRepository;
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Autowired
     private ImageService imageService;
 
+    /**
+     * Class for test.
+     */
     private final Image image = new Image("image", "url");
 
+    /**
+     * initialization of objects for the tests.
+     */
     @Before
     public void init() {
         this.image.setId(UUID.randomUUID());
     }
 
+    /**
+     * When call save should return saved image.
+     */
     @Test
     public void whenSaveImageShouldReturnImage() {
         when(imageRepository.save(image)).thenReturn(image);
@@ -48,6 +63,9 @@ public class ImageServiceTest {
         assertThat(this.imageService.save(image), is(image));
     }
 
+    /**
+     * When call getImageById should return image.
+     */
     @Test
     public void whenGetImageByIdShouldReturnImage() {
         when(imageRepository.getOne(image.getId())).thenReturn(image);

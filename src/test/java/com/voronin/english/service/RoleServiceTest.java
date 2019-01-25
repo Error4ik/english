@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO: comment.
+ * RoleService test class.
  *
  * @author Alexey Voronin.
  * @since 30.11.2018.
@@ -25,12 +25,23 @@ import static org.mockito.Mockito.when;
 @WithMockUser(username = "user", roles = {"USER"})
 public class RoleServiceTest {
 
+    /**
+     * The class object under test.
+     */
     @Autowired
     private RoleService roleService;
 
+    /**
+     * Mock RoleRepository.
+     */
     @MockBean
     private RoleRepository roleRepository;
 
+    /**
+     * When findRoleByName should return role.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenFindRoleByNameShouldReturnRole() throws Exception {
         Role role = new Role();

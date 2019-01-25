@@ -16,7 +16,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * TODO: comment.
+ * CategoryController test.
  *
  * @author Alexey Voronin.
  * @since 29.11.2018.
@@ -26,12 +26,25 @@ import static org.mockito.Mockito.verify;
 @WithMockUser(username = "user", roles = {"USER"})
 public class CategoryControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Mock CategoryService.
+     */
     @MockBean
     private CategoryService categoryService;
 
+    /**
+     * When mapping '/category/categories' should call the getCategories method of the CategoryService class once.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingCategoriesShouldReturnStatusOkAndOneCallGetCategoriesMethod() throws Exception {
         this.mockMvc

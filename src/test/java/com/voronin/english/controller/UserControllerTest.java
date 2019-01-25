@@ -16,19 +16,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * TODO: comment.
+ * UserController test class.
  *
  * @author Alexey Voronin.
  * @since 28.11.2018.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(MainController.class)
+@WebMvcTest(UserController.class)
 @WithMockUser(username = "user", roles = {"USER"})
-public class MainControllerTest {
+public class UserControllerTest {
 
+    /**
+     * Main entry point for server-side Spring MVC test support.
+     *
+     * @see MockMvc
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * When mapping '/user/current' should return mock user.
+     *
+     * @throws Exception exception.
+     */
     @Test
     public void whenMappingUserCurrentShouldReturnMockUser() throws Exception {
         String expectedValue = "user";
