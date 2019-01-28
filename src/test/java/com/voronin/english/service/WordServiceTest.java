@@ -257,9 +257,8 @@ public class WordServiceTest {
      */
     @Test
     public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
-        when(partOfSpeechService.getById(uuid)).thenReturn(partOfSpeech);
-        when(wordRepository.getAllByPartOfSpeech(partOfSpeech)).thenReturn(list);
+        when(wordRepository.getAllByPartOfSpeechId(uuid)).thenReturn(list);
 
-        assertThat(wordService.getWordsByPartOfSpeech(uuid), is(list));
+        assertThat(wordService.getWordsByPartOfSpeechId(uuid), is(list));
     }
 }

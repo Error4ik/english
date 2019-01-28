@@ -85,6 +85,6 @@ public class WordControllerTest {
         this.mockMvc
                 .perform(get("/word/words-by-part-of-speech/{id}", uuid))
                 .andExpect(status().isOk());
-        verify(this.wordService, times(1)).getWordsByPartOfSpeech(uuid);
+        verify(this.wordService, times(1)).getWordsByPartOfSpeechId(uuid);
     }
 }

@@ -53,8 +53,8 @@ public interface WordRepository extends JpaRepository<Word, UUID> {
     /**
      * Get words by part of speech.
      *
-     * @param partOfSpeech part of speech.
+     * @param partOfSpeechId part of speech.
      * @return list of words.
      */
-    List<Word> getAllByPartOfSpeech(PartOfSpeech partOfSpeech);
+    List<Word> getAllByPartOfSpeechId(UUID partOfSpeechId);
 }

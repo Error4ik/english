@@ -73,6 +73,6 @@ public class WordController {
      */
     @GetMapping("/words-by-part-of-speech/{id}")
     public List<Word> getWordsByPartOfSpeech(@PathVariable final UUID id) {
-        return this.wordService.getWordsByPartOfSpeech(id);
+        return this.wordService.getWordsByPartOfSpeechId(id);
     }
 }

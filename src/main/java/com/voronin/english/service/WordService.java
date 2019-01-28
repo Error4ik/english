@@ -131,8 +131,8 @@ public class WordService {
      * @param id id.
      * @return list of Word.
      */
-    public List<Word> getWordsByPartOfSpeech(final UUID id) {
-        return this.wordRepository.getAllByPartOfSpeech(this.partOfSpeechService.getById(id));
+    public List<Word> getWordsByPartOfSpeechId(final UUID id) {
+        return this.wordRepository.getAllByPartOfSpeechId(id);
     }
 
     /**
@@ -186,14 +186,7 @@ public class WordService {
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech());
         Word word = new Word(card.getWord(), card.getTranscription(), null, partOfSpeech, card.getDescription());
         if (photo != null) {
-            Category category = this.categoryService.getCategoryByName(card.getCategory());
-            word.setCategory(category);
-            File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
-            word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
-            this.save(word);
-            category.setWordsCount(category.getWordsCount() + 1);
-            this.categoryService.save(category);
-            logger.info(String.format("Word save with image, %s", word));
+            saveWordWithImage(card, photo, word);
         } else {
             this.save(word);
             logger.info(String.format("Word save without image, %s", word));
@@ -203,6 +196,24 @@ public class WordService {
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
         return word;
+    }
+
+    /**
+     * Method prepare and save word with image.
+     *
+     * @param card  Filled model of the word.
+     * @param photo word image.
+     * @param word  word.
+     */
+    private void saveWordWithImage(final CardFilled card, final MultipartFile photo, final Word word) {
+        Category category = this.categoryService.getCategoryByName(card.getCategory());
+        word.setCategory(category);
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        word.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
+        this.save(word);
+        category.setWordsCount(category.getWordsCount() + 1);
+        this.categoryService.save(category);
+        logger.info(String.format("Word save with image, %s", word));
     }
 
     /**
