@@ -138,3 +138,34 @@ ALTER TABLE public.user_exams_stats
 ALTER TABLE public.exams ADD type INT DEFAULT 0;
 
 ALTER TABLE public.part_of_speech ADD number_of_words INT DEFAULT 0;
+
+CREATE TABLE type_of_phrase (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type_of_phrase VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE time_of_phrase (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  time_of_phrase VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE phrase_category (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name              VARCHAR(255) NOT NULL,
+  time_of_phrase_id UUID         NOT NULL,
+  type_of_phrase_id UUID         NOT NULL,
+  description       VARCHAR(500) NOT NULL,
+  number_of_phrases INTEGER          DEFAULT 0,
+
+  FOREIGN KEY (time_of_phrase_id) REFERENCES time_of_phrase (id),
+  FOREIGN KEY (type_of_phrase_id) REFERENCES type_of_phrase (id)
+);
+
+CREATE TABLE phrase_for_training (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  category_id UUID         NOT NULL,
+  phrase      VARCHAR(255) NOT NULL,
+  translation VARCHAR(255) NOT NULL,
+
+  FOREIGN KEY (category_id) REFERENCES phrase_category (id)
+);

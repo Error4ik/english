@@ -1,6 +1,7 @@
 package com.voronin.english.controller;
 
 import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.PhraseCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,12 @@ public class CategoryControllerTest {
     private CategoryService categoryService;
 
     /**
+     * Mock PhraseCategoryService.
+     */
+    @MockBean
+    private PhraseCategoryService phraseCategoryService;
+
+    /**
      * When mapping '/category/categories' should call the getCategories method of the CategoryService class once.
      *
      * @throws Exception exception.
@@ -52,5 +59,20 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk());
 
         verify(this.categoryService, times(1)).getCategories();
+    }
+
+    /**
+     * When mapping '/category/phrase-category' should call the getPhraseCategories method of
+     * the PhraseCategoryService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingPhraseCategoryShouldReturnStatusOkAndCallGetPhraseCategoriesMethod() throws Exception {
+        this.mockMvc
+                .perform(get("/category/phrase-category"))
+                .andExpect(status().isOk());
+
+        verify(this.phraseCategoryService, times(1)).findAll();
     }
 }

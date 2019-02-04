@@ -2,10 +2,11 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
+import com.voronin.english.service.WordService;
 import com.voronin.english.service.CategoryService;
 import com.voronin.english.service.ExamService;
 import com.voronin.english.service.QuestionService;
-import com.voronin.english.service.WordService;
+import com.voronin.english.service.PhraseForTrainingService;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,6 +80,12 @@ public class AdminControllerTest {
     private QuestionService questionService;
 
     /**
+     * Mock PhraseForTrainingService.
+     */
+    @MockBean
+    private PhraseForTrainingService phraseForTrainingService;
+
+    /**
      * When mapping '/admin/add-card' should call the prepareAndSave method of the WordService class once.
      *
      * @throws Exception exception.
@@ -144,5 +151,26 @@ public class AdminControllerTest {
                 .andExpect(status().isOk());
 
         verify(this.examService, times(1)).prepareAndSave(name, categoryName, examType);
+    }
+
+    /**
+     * When mapping '/admin/add-phrase-for-training' should call
+     * the prepareAndSave method of the PhraseForTrainingService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingAddPhraseFromTrainingShouldReturnStatusOkAndCallPrepareAndSaveMethodOneTime()
+            throws Exception {
+        String phrase = "phrase";
+        String translate = "translate";
+        String category = "category";
+        this.mockMvc.perform(get("/admin/add-phrase-for-training")
+                .param("phrase", phrase)
+                .param("translate", translate)
+                .param("category", category))
+                .andExpect(status().isOk());
+        verify(this.phraseForTrainingService, times(1))
+                .prepareAndSave(phrase, translate, category);
     }
 }
