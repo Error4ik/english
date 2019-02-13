@@ -62,6 +62,7 @@ public class DetailServiceTest {
         Role role = new Role();
         role.setRole("user");
         User user = new User("test@test.ru", "password", new HashSet<>(Lists.newArrayList(role)));
+        user.setActive(true);
         when(userService.getUserByEmail("test@test.ru")).thenReturn(user);
 
         UserDetails userDetails = detailService.loadUserByUsername("test@test.ru");

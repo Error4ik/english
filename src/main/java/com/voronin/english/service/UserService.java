@@ -6,10 +6,12 @@ import com.voronin.english.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,20 +46,34 @@ public class UserService {
     private final RoleService roleService;
 
     /**
+     * SmtpMailSender.
+     */
+    private final SmtpMailSender smtpMailSender;
+
+    /**
+     * Path for activate user.
+     */
+    @Value("${auth.user.activate.path}")
+    private String activatePath;
+
+    /**
      * Constructor.
      *
      * @param userRepository user repository.
      * @param encoder        bcrypt password encoder.
      * @param roleService    role service.
+     * @param smtpMailSender SmtpMailSender.
      */
     @Autowired
     public UserService(
             final UserRepository userRepository,
             final BCryptPasswordEncoder encoder,
-            final RoleService roleService) {
+            final RoleService roleService,
+            final SmtpMailSender smtpMailSender) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.roleService = roleService;
+        this.smtpMailSender = smtpMailSender;
     }
 
     /**
@@ -81,6 +97,16 @@ public class UserService {
     }
 
     /**
+     * Save User to db.
+     *
+     * @param user User.
+     * @return saved entity.
+     */
+    public User save(final User user) {
+        return this.userRepository.save(user);
+    }
+
+    /**
      * Registration user.
      *
      * @param user user.
@@ -89,13 +115,31 @@ public class UserService {
     public Optional<User> regUser(final User user) {
         Optional<User> result = Optional.empty();
         try {
-            final String pass = user.getPassword();
             user.setPassword(encoder.encode(user.getPassword()));
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
+            user.setActivationKey(UUID.randomUUID().toString());
             result = Optional.of(this.userRepository.save(user));
-        } catch (DataIntegrityViolationException e) {
+            String path = "<a href='%s/activate/%s'>Link to activate your account.</a>";
+            String subject = "Activated account for ~ english.ru";
+            smtpMailSender.send(user.getEmail(), subject, String.format(path, activatePath, user.getActivationKey()));
+        } catch (DataIntegrityViolationException | MessagingException e) {
             logger.error(e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * Activate user by key.
+     *
+     * @param activationKey user key.
+     * @return User.
+     */
+    public User activateUser(final String activationKey) {
+        User user = this.userRepository.getUserByActivationKey(activationKey);
+        if (user != null && !user.isActive()) {
+            user.setActive(true);
+            this.userRepository.save(user);
+        }
+        return user;
     }
 }

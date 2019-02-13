@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,6 +58,18 @@ public class UserServiceTest {
      */
     @MockBean
     private RoleService roleService;
+
+    /**
+     * Mock SmtpMailSender.
+     */
+    @MockBean
+    private SmtpMailSender smtpMailSender;
+
+    /**
+     * Path for activate user.
+     */
+    @Value("${auth.user.activate.path}")
+    private String activatePath;
 
     /**
      * Class fo test.

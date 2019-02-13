@@ -17,8 +17,17 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     /**
      * Get user by email.
+     *
      * @param email email.
      * @return user.
      */
     User getUserByEmail(String email);
+
+    /**
+     * Get user by key.
+     *
+     * @param key user key.
+     * @return User.
+     */
+    User getUserByActivationKey(String key);
 }

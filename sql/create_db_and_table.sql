@@ -135,9 +135,11 @@ CREATE TABLE user_exams_stats (
 ALTER TABLE public.user_exams_stats
   ADD date_of_the_exam TIMESTAMP DEFAULT now() NOT NULL;
 
-ALTER TABLE public.exams ADD type INT DEFAULT 0;
+ALTER TABLE public.exams
+  ADD type INT DEFAULT 0;
 
-ALTER TABLE public.part_of_speech ADD number_of_words INT DEFAULT 0;
+ALTER TABLE public.part_of_speech
+  ADD number_of_words INT DEFAULT 0;
 
 CREATE TABLE type_of_phrase (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -170,53 +172,60 @@ CREATE TABLE phrase_for_training (
   FOREIGN KEY (category_id) REFERENCES phrase_category (id)
 );
 
-create table oauth_client_details (
-  client_id VARCHAR(256) PRIMARY KEY,
-  resource_ids VARCHAR(256),
-  client_secret VARCHAR(256),
-  scope VARCHAR(256),
-  authorized_grant_types VARCHAR(256),
+CREATE TABLE oauth_client_details (
+  client_id               VARCHAR(256) PRIMARY KEY,
+  resource_ids            VARCHAR(256),
+  client_secret           VARCHAR(256),
+  scope                   VARCHAR(256),
+  authorized_grant_types  VARCHAR(256),
   web_server_redirect_uri VARCHAR(256),
-  authorities VARCHAR(256),
-  access_token_validity INTEGER,
-  refresh_token_validity INTEGER,
-  additional_information VARCHAR(4096),
-  autoapprove VARCHAR(256)
+  authorities             VARCHAR(256),
+  access_token_validity   INTEGER,
+  refresh_token_validity  INTEGER,
+  additional_information  VARCHAR(4096),
+  autoapprove             VARCHAR(256)
 );
 
-create table oauth_client_token (
-  token_id VARCHAR(256),
-  token bytea,
+CREATE TABLE oauth_client_token (
+  token_id          VARCHAR(256),
+  token             BYTEA,
   authentication_id VARCHAR(256),
-  user_name VARCHAR(256),
-  client_id VARCHAR(256)
+  user_name         VARCHAR(256),
+  client_id         VARCHAR(256)
 );
 
-create table oauth_access_token (
-  token_id VARCHAR(256),
-  token bytea,
+CREATE TABLE oauth_access_token (
+  token_id          VARCHAR(256),
+  token             BYTEA,
   authentication_id VARCHAR(256),
-  user_name VARCHAR(256),
-  client_id VARCHAR(256),
-  authentication bytea,
-  refresh_token VARCHAR(256)
+  user_name         VARCHAR(256),
+  client_id         VARCHAR(256),
+  authentication    BYTEA,
+  refresh_token     VARCHAR(256)
 );
 
-create table oauth_refresh_token (
-  token_id VARCHAR(256),
-  token bytea,
-  authentication bytea
+CREATE TABLE oauth_refresh_token (
+  token_id       VARCHAR(256),
+  token          BYTEA,
+  authentication BYTEA
 );
 
-create table oauth_code (
-  code VARCHAR(256), authentication bytea
+CREATE TABLE oauth_code (
+  code           VARCHAR(256),
+  authentication BYTEA
 );
 
-create table oauth_approvals (
-  userId VARCHAR(256),
-  clientId VARCHAR(256),
-  scope VARCHAR(256),
-  status VARCHAR(10),
-  expiresAt TIMESTAMP,
+CREATE TABLE oauth_approvals (
+  userId         VARCHAR(256),
+  clientId       VARCHAR(256),
+  scope          VARCHAR(256),
+  status         VARCHAR(10),
+  expiresAt      TIMESTAMP,
   lastModifiedAt TIMESTAMP
 );
+
+ALTER TABLE public.users
+  ADD activationKey VARCHAR(255) NULL;
+
+ALTER TABLE public.users
+  ADD active BOOLEAN DEFAULT FALSE  NOT NULL;

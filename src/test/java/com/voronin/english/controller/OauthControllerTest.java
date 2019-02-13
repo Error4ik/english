@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.voronin.english.domain.User;
+import com.voronin.english.repository.UserRepository;
 import com.voronin.english.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,6 +71,12 @@ public class OauthControllerTest {
      */
     @MockBean
     private OAuth2AccessToken accessToken;
+
+    /**
+     * Mock UserRepository.
+     */
+    @MockBean
+    private UserRepository userRepository;
 
     /**
      * When Mapping '/registration' valid user should return status isOk
@@ -168,5 +176,23 @@ public class OauthControllerTest {
                 .andReturn();
 
         verify(this.tokenStore, times(1)).removeAccessToken(accessToken);
+    }
+
+    /**
+     * When Mapping '/activate/{key}' should return status isOk
+     * and call activateUser method of the UserService class once
+     * and return String with flag true.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenSh() throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        when(this.userService.activateUser(uuid.toString())).thenReturn(new User());
+        this.mockMvc
+                .perform(get("/activate/{key}", uuid.toString()))
+                .andExpect(status().isOk());
+
+        verify(this.userService, times(1)).activateUser(uuid.toString());
     }
 }

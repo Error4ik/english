@@ -63,6 +63,17 @@ public class User {
     private Timestamp lastVisit;
 
     /**
+     * The user is activated or not.
+     */
+    private boolean active;
+
+    /**
+     * User activationKey.
+     */
+    @Column(name = "key")
+    private String activationKey;
+
+    /**
      * Empty constructor.
      */
     public User() {
@@ -131,6 +142,22 @@ public class User {
 
     public void setLastVisit(final Timestamp lastVisit) {
         this.lastVisit = lastVisit;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
     }
 
     @Override

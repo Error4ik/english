@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -63,6 +60,17 @@ public class OauthController {
                 return String.format("Пользователь с почтой %s уже зарегистрирован.", user.getEmail());
             }
         });
+    }
+
+    /**
+     * Activate user by key.
+     *
+     * @param key user key.
+     * @return User.
+     */
+    @RequestMapping("/activate/{key}")
+    public String activateUser(final @PathVariable String key) {
+        return String.format("Activation is %s", this.userService.activateUser(key).isActive());
     }
 
     /**

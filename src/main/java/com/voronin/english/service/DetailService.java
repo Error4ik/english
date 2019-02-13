@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,11 +49,17 @@ public class DetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String email) {
         final User user = this.userService.getUserByEmail(email);
         if (user != null) {
-            Set<GrantedAuthority> roles = new HashSet<>();
-            for (Role role : user.getRoles()) {
-                roles.add(new SimpleGrantedAuthority(role.getRole()));
+            if (user.isActive()) {
+                Set<GrantedAuthority> roles = new HashSet<>();
+                for (Role role : user.getRoles()) {
+                    roles.add(new SimpleGrantedAuthority(role.getRole()));
+                }
+                user.setLastVisit(Timestamp.valueOf(LocalDateTime.now()));
+                userService.save(user);
+                return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), roles);
+            } else {
+                throw new DisabledException("The user is not activated.");
             }
-            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), roles);
         } else {
             throw new DisabledException("Логин или пароль не совпадают.");
         }
