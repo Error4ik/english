@@ -1,10 +1,6 @@
 package com.voronin.english.service;
 
-import com.voronin.english.domain.Word;
-import com.voronin.english.domain.PartOfSpeech;
-import com.voronin.english.domain.CardFilled;
-import com.voronin.english.domain.Category;
-import com.voronin.english.domain.Image;
+import com.voronin.english.domain.*;
 import com.voronin.english.repository.WordRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.assertj.core.util.Lists;
@@ -15,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,6 +96,12 @@ public class WordServiceTest {
      */
     @MockBean
     private File file;
+
+    /**
+     * Mock JavaMailSender.
+     */
+    @MockBean
+    private JavaMailSender javaMailSender;
 
     /**
      * Path to save image.

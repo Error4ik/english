@@ -11,7 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,9 +46,9 @@ public class UserService {
     private final RoleService roleService;
 
     /**
-     * SmtpMailSender.
+     * CustomEmailService.
      */
-    private final SmtpMailSender smtpMailSender;
+    private final CustomEmailService customEmailService;
 
     /**
      * Path for activate user.
@@ -59,21 +59,21 @@ public class UserService {
     /**
      * Constructor.
      *
-     * @param userRepository user repository.
-     * @param encoder        bcrypt password encoder.
-     * @param roleService    role service.
-     * @param smtpMailSender SmtpMailSender.
+     * @param userRepository     user repository.
+     * @param encoder            bcrypt password encoder.
+     * @param roleService        role service.
+     * @param customEmailService CustomEmailService.
      */
     @Autowired
     public UserService(
             final UserRepository userRepository,
             final BCryptPasswordEncoder encoder,
             final RoleService roleService,
-            final SmtpMailSender smtpMailSender) {
+            final CustomEmailService customEmailService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.roleService = roleService;
-        this.smtpMailSender = smtpMailSender;
+        this.customEmailService = customEmailService;
     }
 
     /**
@@ -119,10 +119,12 @@ public class UserService {
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             user.setActivationKey(UUID.randomUUID().toString());
             result = Optional.of(this.userRepository.save(user));
-            String path = "<a href='%s/activate/%s'>Link to activate your account.</a>";
             String subject = "Activated account for ~ english.ru";
-            smtpMailSender.send(user.getEmail(), subject, String.format(path, activatePath, user.getActivationKey()));
-        } catch (DataIntegrityViolationException | MessagingException e) {
+            customEmailService.send(user.getEmail(), subject, String.format(
+                            "%s/activate/%s",
+                            activatePath,
+                            user.getActivationKey()));
+        } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
         return result;

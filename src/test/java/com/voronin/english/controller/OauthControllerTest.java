@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -47,6 +48,12 @@ public class OauthControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
+
+    /**
+     * Mock JavaMailSender.
+     */
+    @MockBean
+    private JavaMailSender javaMailSender;
 
     /**
      * Mock UserService.
@@ -186,7 +193,7 @@ public class OauthControllerTest {
      * @throws Exception exception.
      */
     @Test
-    public void whenSh() throws Exception {
+    public void whenMappingActivateWithKeyShouldReturnStatusOkAndCallActivateUserMethodOnce() throws Exception {
         final UUID uuid = UUID.randomUUID();
         when(this.userService.activateUser(uuid.toString())).thenReturn(new User());
         this.mockMvc

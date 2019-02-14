@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,6 +36,12 @@ public class DetailServiceTest {
      */
     @Autowired
     private DetailService detailService;
+
+    /**
+     * Mock JavaMailSender.
+     */
+    @MockBean
+    private JavaMailSender javaMailSender;
 
     /**
      * Mock UserService.
@@ -68,5 +75,17 @@ public class DetailServiceTest {
         UserDetails userDetails = detailService.loadUserByUsername("test@test.ru");
 
         assertThat(userDetails.getUsername(), is(user.getEmail()));
+    }
+
+    /**
+     * When user is not activated throws exception.
+     *
+     * @throws Exception DisabledException.
+     */
+    @Test(expected = DisabledException.class)
+    public void whenUserNotActivatedShouldThrowException() throws Exception {
+        when(userService.getUserByEmail("test")).thenReturn(new User());
+
+        detailService.loadUserByUsername("test");
     }
 }

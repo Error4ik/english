@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,6 +23,8 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -60,10 +63,16 @@ public class UserServiceTest {
     private RoleService roleService;
 
     /**
-     * Mock SmtpMailSender.
+     * Mock CustomEmailService.
      */
     @MockBean
-    private SmtpMailSender smtpMailSender;
+    private CustomEmailService customEmailService;
+
+    /**
+     * Mock JavaMailSender.
+     */
+    @MockBean
+    private JavaMailSender javaMailSender;
 
     /**
      * Path for activate user.
@@ -138,5 +147,54 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenThrow(DataIntegrityViolationException.class);
 
         assertThat(userService.regUser(user), is(optional));
+    }
+
+    /**
+     * When call save should return saved entity.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenSaveShouldReturnSavedEntity() throws Exception {
+        when(userRepository.save(user)).thenReturn(user);
+
+        assertThat(userService.save(user), is(user));
+    }
+
+    /**
+     * When user is null should return null.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenActivatedWithUserNullShouldReturnNull() throws Exception {
+        when(userRepository.getUserByActivationKey("key")).thenReturn(null);
+
+        assertNull(userService.activateUser("key"));
+    }
+
+    /**
+     * When the user is not null and the user is not activated, you should activate the user and return it.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUserIsNotNullButUserIsNotActivatedShouldActivatedUserAndReturnIt() throws Exception {
+        when(userRepository.getUserByActivationKey("key")).thenReturn(user);
+
+        assertTrue(userService.activateUser("key").isActive());
+    }
+
+    /**
+     * When user is not null and user is activated should return that user.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUserIsNotNulAndUserIsActivatedShouldReturnThatUser() throws Exception {
+        user.setActive(true);
+        when(userRepository.getUserByActivationKey("key")).thenReturn(user);
+
+        assertThat(userService.activateUser("key").isActive(), is(true));
     }
 }

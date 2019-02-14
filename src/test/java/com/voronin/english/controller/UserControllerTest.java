@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.oauth2.common.util.JacksonJsonParser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,6 +35,12 @@ public class UserControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
+
+    /**
+     * Mock JavaMailSender.
+     */
+    @MockBean
+    private JavaMailSender javaMailSender;
 
     /**
      * When mapping '/user/current' should return mock user.
