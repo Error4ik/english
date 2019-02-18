@@ -2,14 +2,11 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
-import com.voronin.english.service.WordService;
-import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.ExamService;
-import com.voronin.english.service.QuestionService;
-import com.voronin.english.service.PhraseForTrainingService;
+import com.voronin.english.service.*;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -91,6 +88,18 @@ public class AdminControllerTest {
      */
     @MockBean
     private PhraseForTrainingService phraseForTrainingService;
+
+    /**
+     * Mock UserService.
+     */
+    @MockBean
+    private UserService userService;
+
+    /**
+     * Mock RoleService.
+     */
+    @MockBean
+    private RoleService roleService;
 
     /**
      * When mapping '/admin/add-card' should call the prepareAndSave method of the WordService class once.

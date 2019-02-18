@@ -1,6 +1,7 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
+import com.voronin.english.domain.Role;
 import com.voronin.english.domain.User;
 import com.voronin.english.repository.UserRepository;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -121,9 +123,9 @@ public class UserService {
             result = Optional.of(this.userRepository.save(user));
             String subject = "Activated account for ~ english.ru";
             customEmailService.send(user.getEmail(), subject, String.format(
-                            "%s/activate/%s",
-                            activatePath,
-                            user.getActivationKey()));
+                    "%s/activate/%s",
+                    activatePath,
+                    user.getActivationKey()));
         } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
@@ -143,5 +145,31 @@ public class UserService {
             this.userRepository.save(user);
         }
         return user;
+    }
+
+    /**
+     * Return all users.
+     *
+     * @return list of User.
+     */
+    public List<User> getUsers() {
+        return this.userRepository.getAllByOrderByCreateDate();
+    }
+
+    /**
+     * Change User role or add new role.
+     *
+     * @param userId User id.
+     * @param roleId Role id.
+     */
+    public void changeUserRole(final UUID userId, final UUID roleId) {
+        User user = this.getUserById(userId);
+        Role role = roleService.getRoleById(roleId);
+        if (user.getRoles().contains(role)) {
+            user.getRoles().remove(role);
+        } else {
+            user.getRoles().add(role);
+        }
+        this.save(user);
     }
 }

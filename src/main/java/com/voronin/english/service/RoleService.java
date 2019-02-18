@@ -5,6 +5,9 @@ import com.voronin.english.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Role service.
  *
@@ -37,5 +40,24 @@ public class RoleService {
      */
     public Role findRoleByName(final String name) {
         return this.roleRepository.findRoleByRole(name);
+    }
+
+    /**
+     * Return all roles.
+     *
+     * @return list of Role.
+     */
+    public List<Role> getRoles() {
+        return this.roleRepository.findAll();
+    }
+
+    /**
+     * Get Role by id.
+     *
+     * @param roleId role id.
+     * @return Role.
+     */
+    public Role getRoleById(final UUID roleId) {
+        return this.roleRepository.getRoleById(roleId);
     }
 }

@@ -17,8 +17,17 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
 
     /**
      * Get role bu name.
+     *
      * @param name name.
      * @return role.
      */
     Role findRoleByRole(String name);
+
+    /**
+     * Get Role by id.
+     *
+     * @param uuid role id.
+     * @return Role.
+     */
+    Role getRoleById(UUID uuid);
 }

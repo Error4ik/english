@@ -1,13 +1,17 @@
 package com.voronin.english.controller;
 
-import com.voronin.english.domain.CardFilled;
+import com.voronin.english.domain.User;
 import com.voronin.english.domain.Category;
+import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Question;
 import com.voronin.english.domain.Exam;
+import com.voronin.english.domain.Role;
 import com.voronin.english.domain.PhraseForTraining;
+import com.voronin.english.service.UserService;
 import com.voronin.english.service.WordService;
-import com.voronin.english.service.CategoryService;
 import com.voronin.english.service.QuestionService;
+import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.RoleService;
 import com.voronin.english.service.ExamService;
 import com.voronin.english.service.PhraseForTrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Admin controller class.
@@ -55,6 +60,16 @@ public class AdminController {
     private PhraseForTrainingService phraseForTrainingService;
 
     /**
+     * UserService.
+     */
+    private final UserService userService;
+
+    /**
+     * RoleService.
+     */
+    private final RoleService roleService;
+
+    /**
      * Controller.
      *
      * @param wordService              word service.
@@ -62,6 +77,8 @@ public class AdminController {
      * @param questionService          question service.
      * @param examService              exam service.
      * @param phraseForTrainingService PhraseForTrainingService.
+     * @param userService              UserService.
+     * @param roleService              RoleService.
      */
     @Autowired
     public AdminController(
@@ -69,12 +86,16 @@ public class AdminController {
             final CategoryService categoryService,
             final QuestionService questionService,
             final ExamService examService,
-            final PhraseForTrainingService phraseForTrainingService) {
+            final PhraseForTrainingService phraseForTrainingService,
+            final UserService userService,
+            final RoleService roleService) {
         this.wordService = wordService;
         this.categoryService = categoryService;
         this.questionService = questionService;
         this.examService = examService;
         this.phraseForTrainingService = phraseForTrainingService;
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
     /**
@@ -140,5 +161,38 @@ public class AdminController {
             final @RequestParam String translate,
             final @RequestParam String category) {
         return this.phraseForTrainingService.prepareAndSave(phrase, translate, category);
+    }
+
+    /**
+     * Get all users.
+     *
+     * @return list of User.
+     */
+    @RequestMapping("/users")
+    public List<User> getUsers() {
+        return this.userService.getUsers();
+    }
+
+    /**
+     * Return all roles.
+     *
+     * @return list of Role.
+     */
+    @RequestMapping("/roles")
+    public List<Role> getRoles() {
+        return this.roleService.getRoles();
+    }
+
+    /**
+     * Change the user role.
+     *
+     * @param userId User.
+     * @param roleId Role.
+     * @return true or false.
+     */
+    @RequestMapping("/change-role")
+    public boolean changeRole(final @RequestParam UUID userId, final @RequestParam String roleId) {
+        userService.changeUserRole(userId, UUID.fromString(roleId));
+        return true;
     }
 }
