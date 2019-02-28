@@ -29,6 +29,21 @@ public class Role {
      */
     private String role;
 
+    /**
+     * Empty constructor.
+     */
+    public Role() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param role role.
+     */
+    public Role(final String role) {
+        this.role = role;
+    }
+
     public UUID getId() {
         return id;
     }

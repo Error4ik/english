@@ -67,9 +67,10 @@ public class Exam {
      * @param name     exam name.
      * @param category exam category.
      */
-    public Exam(final String name, final Category category) {
+    public Exam(final String name, final Category category, final int type) {
         this.name = name;
         this.category = category;
+        this.type = type;
     }
 
     public UUID getId() {

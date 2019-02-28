@@ -3,6 +3,8 @@ package com.voronin.english.service;
 import com.voronin.english.domain.Category;
 import com.voronin.english.domain.Exam;
 import com.voronin.english.repository.ExamRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,11 @@ import java.util.UUID;
  */
 @Service
 public class ExamService {
+
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(ExamService.class);
 
     /**
      * Exam repository.
@@ -98,9 +105,15 @@ public class ExamService {
      * @return Exam.
      */
     public Exam prepareAndSave(final String examName, final String categoryName, final int type) {
+        logger.debug(String.format(
+                "Arguments - examName - %s, categoryName - %s, type - %s",
+                examName,
+                categoryName,
+                type));
         Category category = this.categoryService.getCategoryByName(categoryName);
-        Exam exam = new Exam(examName, category);
-        exam.setType(type);
-        return this.save(exam);
+        Exam exam = new Exam(examName, category, type);
+        this.save(exam);
+        logger.debug(String.format("Return - %s", exam));
+        return exam;
     }
 }

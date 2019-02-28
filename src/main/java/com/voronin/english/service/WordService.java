@@ -183,6 +183,7 @@ public class WordService {
      * @return Word.
      */
     public Word prepareAndSave(final CardFilled card, final MultipartFile photo) {
+        logger.debug(String.format("Arguments - word - %s, photo - %s", card, photo));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech());
         Word word = new Word(card.getWord(), card.getTranscription(), null, partOfSpeech, card.getDescription());
         if (photo != null) {
@@ -195,6 +196,7 @@ public class WordService {
         this.partOfSpeechService.save(partOfSpeech);
         this.translationService.saveAll(getTranslation(card, word));
         this.phraseService.saveAll(getPhrases(card, word));
+        logger.debug(String.format("Return - %s", word));
         return word;
     }
 
@@ -206,6 +208,7 @@ public class WordService {
      * @param word  word.
      */
     private void saveWordWithImage(final CardFilled card, final MultipartFile photo, final Word word) {
+        logger.debug(String.format("Arguments - %s, %s, %s", card, photo, word));
         Category category = this.categoryService.getCategoryByName(card.getCategory());
         word.setCategory(category);
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);

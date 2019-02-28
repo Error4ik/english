@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -115,12 +116,13 @@ public class UserService {
      * @return Optional User or DataIntegrityViolationException if registration failed.
      */
     public Optional<User> regUser(final User user) {
+        logger.debug(String.format("Arguments - %s", user));
         Optional<User> result = Optional.empty();
         try {
             user.setPassword(encoder.encode(user.getPassword()));
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             user.setActivationKey(UUID.randomUUID().toString());
-            result = Optional.of(this.userRepository.save(user));
+            result = Optional.of(this.save(user));
             String subject = "Activated account for ~ english.ru";
             customEmailService.send(user.getEmail(), subject, String.format(
                     "%s/activate/%s",
@@ -129,6 +131,7 @@ public class UserService {
         } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
+        logger.debug(String.format("Return - %s", result));
         return result;
     }
 
@@ -139,11 +142,13 @@ public class UserService {
      * @return User.
      */
     public User activateUser(final String activationKey) {
+        logger.debug(String.format("Arguments - %s", activationKey));
         User user = this.userRepository.getUserByActivationKey(activationKey);
         if (user != null && !user.isActive()) {
             user.setActive(true);
             this.userRepository.save(user);
         }
+        logger.debug(String.format("Return - %s", user));
         return user;
     }
 
@@ -159,17 +164,25 @@ public class UserService {
     /**
      * Change User role or add new role.
      *
-     * @param userId User id.
-     * @param roleId Role id.
+     * @param principal Principal.
+     * @param userId    User id.
+     * @param roleId    Role id.
+     * @return User.
      */
-    public void changeUserRole(final UUID userId, final UUID roleId) {
+    public User changeUserRole(final Principal principal, final UUID userId, final UUID roleId) {
+        logger.debug(String.format("Arguments - %s, userId - %s, roleId - %s", principal, userId, roleId));
         User user = this.getUserById(userId);
         Role role = roleService.getRoleById(roleId);
-        if (user.getRoles().contains(role)) {
-            user.getRoles().remove(role);
-        } else {
-            user.getRoles().add(role);
+        if (user != null && role != null) {
+            logger.debug(String.format("User before change role - %s", user));
+            if (user.getRoles().contains(role)) {
+                user.getRoles().remove(role);
+            } else {
+                user.getRoles().add(role);
+            }
+            user = this.save(user);
+            logger.debug(String.format("Saved user - %s", user));
         }
-        this.save(user);
+        return user;
     }
 }

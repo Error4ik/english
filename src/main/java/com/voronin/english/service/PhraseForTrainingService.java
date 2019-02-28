@@ -3,6 +3,8 @@ package com.voronin.english.service;
 import com.voronin.english.domain.PhraseCategory;
 import com.voronin.english.domain.PhraseForTraining;
 import com.voronin.english.repository.PhraseForTrainingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,11 @@ import java.util.UUID;
  */
 @Service
 public class PhraseForTrainingService {
+
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(PhraseForTrainingService.class);
 
     /**
      * PhraseForTrainingRepository.
@@ -70,11 +77,16 @@ public class PhraseForTrainingService {
      * @return saved entity.
      */
     public PhraseForTraining prepareAndSave(final String phrase, final String translate, final String category) {
+        logger.debug(String.format("Arguments - phrase - %s, translate - %s, category - %s",
+                phrase,
+                translate,
+                category));
         PhraseCategory phraseCategory = this.phraseCategoryService.getCategoryByName(category);
         PhraseForTraining phraseForTraining = new PhraseForTraining(phrase, translate, phraseCategory);
         this.save(phraseForTraining);
         phraseCategory.setNumberOfPhrases(phraseCategory.getNumberOfPhrases() + 1);
         this.phraseCategoryService.save(phraseCategory);
+        logger.debug(String.format("Return - %s", phraseForTraining));
         return phraseForTraining;
     }
 }

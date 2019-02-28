@@ -17,7 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.security.Principal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,7 +83,7 @@ public class UserServiceTest {
     private String activatePath;
 
     /**
-     * Class fo test.
+     * Class for test.
      */
     private User user;
 
@@ -91,11 +93,16 @@ public class UserServiceTest {
     private UUID uuid = UUID.randomUUID();
 
     /**
+     * Principal.
+     */
+    private Principal principal;
+
+    /**
      * initialization of objects for the tests.
      */
     @Before
     public void init() {
-        user = new User("user@user.ru", "password", new HashSet<>(Lists.newArrayList(new Role())));
+        user = new User("user@user.ru", "password", new HashSet<>(Lists.newArrayList(new Role("user"))));
         user.setId(uuid);
     }
 
@@ -196,5 +203,48 @@ public class UserServiceTest {
         when(userRepository.getUserByActivationKey("key")).thenReturn(user);
 
         assertThat(userService.activateUser("key").isActive(), is(true));
+    }
+
+    /**
+     * When getUsers should return list of User.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetUsersShouldReturnListOfUser() throws Exception {
+        List<User> users = Lists.newArrayList(user, user);
+        when(userRepository.getAllByOrderByCreateDate()).thenReturn(users);
+
+        assertThat(this.userService.getUsers(), is(users));
+    }
+
+    /**
+     * When changeUserRole and user roles contains role, should remove that role.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUserRolesContainsRoleShouldRemoveThatRole() throws Exception {
+        Role role = new Role("user");
+        when(userRepository.getOne(uuid)).thenReturn(user);
+        when(roleService.getRoleById(uuid)).thenReturn(role);
+        when(userRepository.save(user)).thenReturn(user);
+
+        assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
+    }
+
+    /**
+     * When changeUserRole and user roles not contains role, should add that role.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUserRolesNotContainsRoleShouldAddThatRole() throws Exception {
+        Role role = new Role("admin");
+        when(userRepository.getOne(uuid)).thenReturn(user);
+        when(roleService.getRoleById(uuid)).thenReturn(role);
+        when(userRepository.save(user)).thenReturn(user);
+
+        assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
     }
 }

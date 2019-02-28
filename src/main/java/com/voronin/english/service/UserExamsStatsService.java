@@ -4,6 +4,8 @@ import com.voronin.english.domain.Exam;
 import com.voronin.english.domain.User;
 import com.voronin.english.domain.UserExamsStats;
 import com.voronin.english.repository.UserExamsStatsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,11 @@ import java.util.UUID;
  */
 @Service
 public class UserExamsStatsService {
+
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(UserExamsStatsService.class);
 
     /**
      * User exam stats repository.
@@ -62,6 +69,8 @@ public class UserExamsStatsService {
      * @return UserExamsStats.
      */
     public UserExamsStats save(final Principal principal, final UUID examId, final int correctAnswer) {
+        logger.debug(String.format(
+                "Arguments - principal - %s, examId - %s, correctAnswer - %s", principal, examId, correctAnswer));
         User user = this.userService.getUserByEmail(principal.getName());
         Exam exam = this.examService.getExamById(examId);
         UserExamsStats examsStats = this.userExamsStatsRepository.getUserExamsStatsByUserAndExam(user, exam);
@@ -72,7 +81,9 @@ public class UserExamsStatsService {
             examsStats.setCorrectAnswer(correctAnswer);
             examsStats.setDateOfTheExam(new Timestamp(System.currentTimeMillis()));
         }
-        return this.userExamsStatsRepository.save(examsStats);
+        examsStats = this.userExamsStatsRepository.save(examsStats);
+        logger.debug(String.format("Return - %s", examsStats));
+        return examsStats;
     }
 
     /**

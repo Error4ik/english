@@ -83,6 +83,7 @@ public class ExamServiceTest {
         exam.setId(uuid);
         exam.setName("exam");
         exam.setCategory(category);
+        exam.setType(0);
     }
 
     /**
@@ -154,9 +155,12 @@ public class ExamServiceTest {
     @Test
     public void whenPrepareAndSaveShouldReturnSavedExam() throws Exception {
         when(categoryService.getCategoryByName(category.getName())).thenReturn(category);
-        whenNew(Exam.class).withArguments(exam.getName(), category).thenReturn(exam);
-        when(examRepository.save(any(Exam.class))).thenReturn(exam);
 
-        assertThat(examService.prepareAndSave(exam.getName(), category.getName(), 0), is(exam));
+        assertThat(
+                examService.prepareAndSave(
+                        exam.getName(),
+                        category.getName(),
+                        0).getCategory().getName(),
+                is(exam.getCategory().getName()));
     }
 }

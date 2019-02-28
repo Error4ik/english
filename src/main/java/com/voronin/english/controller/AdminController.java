@@ -8,11 +8,11 @@ import com.voronin.english.domain.Exam;
 import com.voronin.english.domain.Role;
 import com.voronin.english.domain.PhraseForTraining;
 import com.voronin.english.service.UserService;
+import com.voronin.english.service.RoleService;
 import com.voronin.english.service.WordService;
+import com.voronin.english.service.ExamService;
 import com.voronin.english.service.QuestionService;
 import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.RoleService;
-import com.voronin.english.service.ExamService;
 import com.voronin.english.service.PhraseForTrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -186,13 +187,15 @@ public class AdminController {
     /**
      * Change the user role.
      *
-     * @param userId User.
-     * @param roleId Role.
-     * @return true or false.
+     * @param principal Principal.
+     * @param userId    User.
+     * @param roleId    Role.
      */
     @RequestMapping("/change-role")
-    public boolean changeRole(final @RequestParam UUID userId, final @RequestParam String roleId) {
-        userService.changeUserRole(userId, UUID.fromString(roleId));
-        return true;
+    public void changeRole(
+            final Principal principal,
+            final @RequestParam UUID userId,
+            final @RequestParam String roleId) {
+        userService.changeUserRole(principal, userId, UUID.fromString(roleId));
     }
 }

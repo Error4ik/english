@@ -4,6 +4,8 @@ import com.voronin.english.domain.Category;
 import com.voronin.english.domain.Image;
 import com.voronin.english.repository.CategoryRepository;
 import com.voronin.english.util.WriteFileToDisk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,11 @@ import java.util.List;
  */
 @Service
 public class CategoryService {
+
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     /**
      * Category repository.
@@ -86,9 +93,12 @@ public class CategoryService {
      * @return category.
      */
     public Category prepareAndSave(final Category category, final MultipartFile photo) {
+        logger.debug(String.format("Arguments - %s, %s", category, photo));
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
         category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
-        return this.categoryRepository.save(category);
+        this.categoryRepository.save(category);
+        logger.debug(String.format("Return - %s", category));
+        return category;
     }
 
     /**
