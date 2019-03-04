@@ -149,7 +149,7 @@ public class UserServiceTest {
      * @throws Exception exception.
      */
     @Test
-    public void whenRegUserWithExistUsetShouldReturnOptionalUser() throws Exception {
+    public void whenRegUserWithExistUserShouldReturnOptionalUser() throws Exception {
         Optional<User> optional = Optional.empty();
         when(userRepository.save(user)).thenThrow(DataIntegrityViolationException.class);
 

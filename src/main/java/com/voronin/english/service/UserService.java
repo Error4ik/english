@@ -1,6 +1,7 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
+import com.voronin.english.domain.Message;
 import com.voronin.english.domain.Role;
 import com.voronin.english.domain.User;
 import com.voronin.english.repository.UserRepository;
@@ -123,11 +124,11 @@ public class UserService {
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             user.setActivationKey(UUID.randomUUID().toString());
             result = Optional.of(this.save(user));
-            String subject = "Activated account for ~ english.ru";
-            customEmailService.send(user.getEmail(), subject, String.format(
-                    "%s/activate/%s",
-                    activatePath,
-                    user.getActivationKey()));
+            customEmailService.send(
+                    new Message(
+                            user.getEmail(),
+                            "Activated account for ~ english.ru",
+                            String.format("%s/activate/%s", activatePath, user.getActivationKey())));
         } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }

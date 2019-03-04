@@ -1,6 +1,7 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
+import com.voronin.english.domain.Message;
 import it.ozimov.springboot.mail.model.Email;
 import it.ozimov.springboot.mail.model.defaultimpl.DefaultEmail;
 import it.ozimov.springboot.mail.service.EmailService;
@@ -49,17 +50,17 @@ public class CustomEmailService {
     }
 
     /**
-     * @param addressee addressee.
-     * @param subject   subject.
-     * @param body      body.
+     * Send email.
+     *
+     * @param message Message for email.
      */
-    public void send(final String addressee, final String subject, final String body) throws UnsupportedEncodingException {
-        logger.debug(String.format("Arguments - %s, %s, %s", addressee, subject, body));
+    public void send(final Message message) throws UnsupportedEncodingException {
+        logger.debug(String.format("Arguments - %s", message));
         final Email email = DefaultEmail.builder()
                 .from(new InternetAddress(emailFrom, "Support english.ru"))
-                .to(Lists.newArrayList(new InternetAddress(addressee, addressee)))
-                .subject(subject)
-                .body(body)
+                .to(Lists.newArrayList(new InternetAddress(message.getAddress(), message.getAddress())))
+                .subject(message.getSubject())
+                .body(message.getBody())
                 .encoding("UTF-8").build();
         emailService.send(email);
     }
