@@ -3,6 +3,8 @@ package com.voronin.english.controller;
 import com.voronin.english.domain.Word;
 import com.voronin.english.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,14 +55,27 @@ public class WordController {
     /**
      * Get words by category.
      *
-     * @param id category id.
+     * @param id    category id.
+     * @param limit item per page.
+     * @param page  number of page.
      * @return an object containing a list of words.
      */
-    @GetMapping("/words-by-category/{id}")
-    public Object getWordsByCategory(@PathVariable final UUID id) {
+    @GetMapping("/words-by-category/{id}/{limit}/{page}")
+    public Object getWordsByCategory(
+            @PathVariable final UUID id,
+            @PathVariable final int limit,
+            @PathVariable final int page) {
         return new Object() {
             public List<Word> getWordsByCategory() {
-                return wordService.getWordsByCategory(id);
+                return wordService.getWordsByCategoryId(id, new PageRequest(
+                        page,
+                        limit,
+                        Sort.Direction.ASC,
+                        "word"));
+            }
+
+            public long getAllRecords() {
+                return wordService.getNumberOfRecordsByCategoryId(id);
             }
         };
     }
@@ -68,11 +83,29 @@ public class WordController {
     /**
      * Get words by part of speech.
      *
-     * @param id part of speech id.
+     * @param id    part of speech id.
+     * @param limit item per page.
+     * @param page  number of page.
      * @return list of words.
      */
-    @GetMapping("/words-by-part-of-speech/{id}")
-    public List<Word> getWordsByPartOfSpeech(@PathVariable final UUID id) {
-        return this.wordService.getWordsByPartOfSpeechId(id);
+    @GetMapping("/words-by-part-of-speech/{id}/{limit}/{page}")
+    public Object getWordsByPartOfSpeech(
+            @PathVariable final UUID id,
+            @PathVariable final int limit,
+            @PathVariable final int page) {
+        return new Object() {
+            public List<Word> getWordsByPartOfSpeech() {
+                return wordService.getWordsByPartOfSpeechId(id, new PageRequest(
+                        page,
+                        limit,
+                        Sort.Direction.ASC,
+                        "word"
+                ));
+            }
+
+            public long getAllRecords() {
+                return wordService.getNumberOfRecordsByPartOfSpeechId(id);
+            }
+        };
     }
 }

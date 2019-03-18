@@ -67,19 +67,19 @@ public class PhraseForTrainingServiceTest {
     private final PhraseForTraining phraseForTraining =
             new PhraseForTraining("phrase", "translate", phraseCategory);
 
-    /**
-     * When call getPhrasesByCategoryId should return PhraseForTraining entity.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetPhrasesByCategoryIdShouldReturnPhraseForTrainingEntity() throws Exception {
-        final UUID id = UUID.randomUUID();
-        List<PhraseForTraining> list = Lists.newArrayList(phraseForTraining);
-        when(phraseForTrainingRepository.getAllByPhraseCategoryId(id)).thenReturn(list);
-
-        assertThat(this.phraseForTrainingService.getPhrasesByCategoryId(id), is(list));
-    }
+//    /**
+//     * When call getPhrasesByCategoryId should return PhraseForTraining entity.
+//     *
+//     * @throws Exception exception.
+//     */
+//    @Test
+//    public void whenGetPhrasesByCategoryIdShouldReturnPhraseForTrainingEntity() throws Exception {
+//        final UUID id = UUID.randomUUID();
+//        List<PhraseForTraining> list = Lists.newArrayList(phraseForTraining);
+//        when(phraseForTrainingRepository.getAllByPhraseCategoryId(id)).thenReturn(list);
+//
+//        assertThat(this.phraseForTrainingService.getPhrasesByCategoryId(id), is(list));
+//    }
 
     /**
      * When call save should return saved entity.

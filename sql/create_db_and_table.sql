@@ -225,7 +225,7 @@ CREATE TABLE oauth_approvals (
 );
 
 ALTER TABLE public.users
-  ADD activationKey VARCHAR(255) NULL;
+  ADD Key VARCHAR(255) NULL;
 
 ALTER TABLE public.users
   ADD active BOOLEAN DEFAULT FALSE  NOT NULL;

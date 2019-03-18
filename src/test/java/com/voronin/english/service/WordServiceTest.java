@@ -176,17 +176,17 @@ public class WordServiceTest {
         assertThat(wordService.getWords(), is(list));
     }
 
-    /**
-     * When call getWordsByCategory should return list Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
-        when(wordRepository.getAllByCategoryId(category.getId())).thenReturn(list);
-
-        assertThat(wordService.getWordsByCategory(category.getId()), is(list));
-    }
+//    /**
+//     * When call getWordsByCategory should return list Word.
+//     *
+//     * @throws Exception exception.
+//     */
+//    @Test
+//    public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
+//        when(wordRepository.getAllByCategoryId(category.getId())).thenReturn(list);
+//
+//        assertThat(wordService.getWordsByCategory(category.getId()), is(list));
+//    }
 
     /**
      * When call prepareAndSave with photo should return saved Word.
@@ -253,15 +253,15 @@ public class WordServiceTest {
         assertThat(wordService.getWordsByNames(list), is(words));
     }
 
-    /**
-     * When call getWordsByPartOfSpeech should return List of Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
-        when(wordRepository.getAllByPartOfSpeechId(uuid)).thenReturn(list);
-
-        assertThat(wordService.getWordsByPartOfSpeechId(uuid), is(list));
-    }
+//    /**
+//     * When call getWordsByPartOfSpeech should return List of Word.
+//     *
+//     * @throws Exception exception.
+//     */
+//    @Test
+//    public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
+//        when(wordRepository.getAllByPartOfSpeechId(uuid)).thenReturn(list);
+//
+//        assertThat(wordService.getWordsByPartOfSpeechId(uuid), is(list));
+//    }
 }

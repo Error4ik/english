@@ -6,6 +6,7 @@ import com.voronin.english.repository.PhraseForTrainingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,8 +55,18 @@ public class PhraseForTrainingService {
      * @param phraseCategoryId id.
      * @return list of PhraseForTraining.
      */
-    public List<PhraseForTraining> getPhrasesByCategoryId(final UUID phraseCategoryId) {
-        return this.phraseForTrainingRepository.getAllByPhraseCategoryId(phraseCategoryId);
+    public List<PhraseForTraining> getPhrasesByCategoryId(final UUID phraseCategoryId, final Pageable pageable) {
+        return this.phraseForTrainingRepository.getAllByPhraseCategoryId(phraseCategoryId, pageable);
+    }
+
+    /**
+     * Get the number of records by PhraseCategory id.
+     *
+     * @param phraseCategoryId PhraseCategory id.
+     * @return number of records.
+     */
+    public long getNumberOfRecordsByPhraseCategoryId(final UUID phraseCategoryId) {
+        return this.phraseForTrainingRepository.getNumberOfRecordsByPhraseCategoryId(phraseCategoryId);
     }
 
     /**

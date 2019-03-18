@@ -1,19 +1,15 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.english.domain.Word;
-import com.voronin.english.domain.Category;
-import com.voronin.english.domain.CardFilled;
-import com.voronin.english.domain.PartOfSpeech;
-import com.voronin.english.domain.Translation;
-import com.voronin.english.domain.Phrase;
-import com.voronin.english.domain.Image;
+import com.voronin.english.domain.*;
 import com.voronin.english.repository.WordRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -121,18 +117,19 @@ public class WordService {
      * @param categoryId category id.
      * @return list of Word.
      */
-    public List<Word> getWordsByCategory(final UUID categoryId) {
-        return this.wordRepository.getAllByCategoryId(categoryId);
+    public List<Word> getWordsByCategoryId(final UUID categoryId, final Pageable pageable) {
+        return this.wordRepository.getAllByCategoryId(categoryId, pageable);
     }
 
     /**
      * Get words by part of speech id.
      *
-     * @param id id.
+     * @param id       id.
+     * @param pageable Pageable.
      * @return list of Word.
      */
-    public List<Word> getWordsByPartOfSpeechId(final UUID id) {
-        return this.wordRepository.getAllByPartOfSpeechId(id);
+    public List<Word> getWordsByPartOfSpeechId(final UUID id, final Pageable pageable) {
+        return this.wordRepository.getAllByPartOfSpeechId(id, pageable);
     }
 
     /**
@@ -163,6 +160,26 @@ public class WordService {
      */
     public List<Word> getWordsByNames(final List<String> names) {
         return this.wordRepository.getAllByWordIn(names);
+    }
+
+    /**
+     * Get number of records by category id.
+     *
+     * @param categoryId category id.
+     * @return number of records.
+     */
+    public long getNumberOfRecordsByCategoryId(final UUID categoryId) {
+        return this.wordRepository.getNumberOfRecordsByCategoryId(categoryId);
+    }
+
+    /**
+     * Get number of records by part of speech id.
+     *
+     * @param partOfSpeechId partOfSpeechid.
+     * @return number of records.
+     */
+    public long getNumberOfRecordsByPartOfSpeechId(final UUID partOfSpeechId) {
+        return this.wordRepository.getNumberOfRecordsByPartOfSpeechId(partOfSpeechId);
     }
 
     /**
