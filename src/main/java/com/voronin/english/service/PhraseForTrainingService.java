@@ -53,6 +53,7 @@ public class PhraseForTrainingService {
      * Get all by PhraseCategory.
      *
      * @param phraseCategoryId id.
+     * @param pageable         Pageable.
      * @return list of PhraseForTraining.
      */
     public List<PhraseForTraining> getPhrasesByCategoryId(final UUID phraseCategoryId, final Pageable pageable) {

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -104,6 +105,12 @@ public class WordServiceTest {
     private JavaMailSender javaMailSender;
 
     /**
+     * Mock Pageable.
+     */
+    @MockBean
+    private Pageable pageable;
+
+    /**
      * Path to save image.
      */
     @Value("${upload.image.folder}")
@@ -176,17 +183,17 @@ public class WordServiceTest {
         assertThat(wordService.getWords(), is(list));
     }
 
-//    /**
-//     * When call getWordsByCategory should return list Word.
-//     *
-//     * @throws Exception exception.
-//     */
-//    @Test
-//    public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
-//        when(wordRepository.getAllByCategoryId(category.getId())).thenReturn(list);
-//
-//        assertThat(wordService.getWordsByCategory(category.getId()), is(list));
-//    }
+    /**
+     * When call getWordsByCategory should return list Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
+        when(wordRepository.getAllByCategoryId(category.getId(), pageable)).thenReturn(list);
+
+        assertThat(wordService.getWordsByCategoryId(category.getId(), pageable), is(list));
+    }
 
     /**
      * When call prepareAndSave with photo should return saved Word.
@@ -247,21 +254,47 @@ public class WordServiceTest {
     @Test
     public void whenGetWordsByNamesShouldReturnListWord() throws Exception {
         List<Word> words = Lists.newArrayList(word, word, word);
-        List<String> list = Lists.newArrayList("word", "word", "word");
-        when(wordRepository.getAllByWordIn(list)).thenReturn(words);
+        List<String> listOfNames = Lists.newArrayList("word", "word", "word");
+        when(wordRepository.getAllByWordIn(listOfNames)).thenReturn(words);
 
-        assertThat(wordService.getWordsByNames(list), is(words));
+        assertThat(wordService.getWordsByNames(listOfNames), is(words));
     }
 
-//    /**
-//     * When call getWordsByPartOfSpeech should return List of Word.
-//     *
-//     * @throws Exception exception.
-//     */
-//    @Test
-//    public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
-//        when(wordRepository.getAllByPartOfSpeechId(uuid)).thenReturn(list);
-//
-//        assertThat(wordService.getWordsByPartOfSpeechId(uuid), is(list));
-//    }
+    /**
+     * When call getWordsByPartOfSpeech should return List of Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetWordsByPartOfSpeechShouldReturnListWord() throws Exception {
+        when(wordRepository.getAllByPartOfSpeechId(uuid, pageable)).thenReturn(list);
+
+        assertThat(wordService.getWordsByPartOfSpeechId(uuid, pageable), is(list));
+    }
+
+    /**
+     * When call getNumberOfRecordsByCategoryId should return number of records.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetNumberOfRecordsByCategoryIdShouldReturnNumberOfRecords() throws Exception {
+        final long numberOfRecords = 10;
+        when(wordRepository.getNumberOfRecordsByCategoryId(uuid)).thenReturn(numberOfRecords);
+
+        assertThat(wordService.getNumberOfRecordsByCategoryId(uuid), is(numberOfRecords));
+    }
+
+    /**
+     * When call getNumberOfRecordsByPartOfSpeechId should return number of records.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetNumberOfRecordsByPartOfSpeechIdShouldReturnNumberOfRecords() throws Exception {
+        final long numberOfRecords = 10;
+        when(wordRepository.getNumberOfRecordsByPartOfSpeechId(uuid)).thenReturn(numberOfRecords);
+
+        assertThat(wordService.getNumberOfRecordsByPartOfSpeechId(uuid), is(numberOfRecords));
+    }
 }

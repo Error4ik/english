@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -62,24 +63,34 @@ public class PhraseForTrainingServiceTest {
     private PhraseCategory phraseCategory;
 
     /**
+     * Mock Pageable.
+     */
+    @MockBean
+    private Pageable pageable;
+
+    /**
+     * Id for test.
+     */
+    private final UUID id = UUID.randomUUID();
+
+    /**
      * Object for test.
      */
     private final PhraseForTraining phraseForTraining =
             new PhraseForTraining("phrase", "translate", phraseCategory);
 
-//    /**
-//     * When call getPhrasesByCategoryId should return PhraseForTraining entity.
-//     *
-//     * @throws Exception exception.
-//     */
-//    @Test
-//    public void whenGetPhrasesByCategoryIdShouldReturnPhraseForTrainingEntity() throws Exception {
-//        final UUID id = UUID.randomUUID();
-//        List<PhraseForTraining> list = Lists.newArrayList(phraseForTraining);
-//        when(phraseForTrainingRepository.getAllByPhraseCategoryId(id)).thenReturn(list);
-//
-//        assertThat(this.phraseForTrainingService.getPhrasesByCategoryId(id), is(list));
-//    }
+    /**
+     * When call getPhrasesByCategoryId should return PhraseForTraining entity.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetPhrasesByCategoryIdShouldReturnPhraseForTrainingEntity() throws Exception {
+        List<PhraseForTraining> list = Lists.newArrayList(phraseForTraining);
+        when(phraseForTrainingRepository.getAllByPhraseCategoryId(id, pageable)).thenReturn(list);
+
+        assertThat(this.phraseForTrainingService.getPhrasesByCategoryId(id, pageable), is(list));
+    }
 
     /**
      * When call save should return saved entity.
@@ -109,4 +120,16 @@ public class PhraseForTrainingServiceTest {
                 phraseCategory.getName()), is(phraseForTraining));
     }
 
+    /**
+     * When getNumberOfRecordsByPhraseCategoryId should return number of records.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetNumberOfRecordsByPhraseCategoryIdShouldReturnNumberOfRecords() throws Exception {
+        final long numberOfRecords = 10;
+        when(this.phraseForTrainingRepository.getNumberOfRecordsByPhraseCategoryId(id)).thenReturn(numberOfRecords);
+
+        assertThat(this.phraseForTrainingService.getNumberOfRecordsByPhraseCategoryId(id), is(numberOfRecords));
+    }
 }

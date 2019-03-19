@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -56,17 +58,33 @@ public class PhraseControllerTest {
     private final UUID id = UUID.randomUUID();
 
     /**
-     * When mapping '/phrase/category/{id}' should return status ok and call getPhrasesByCategoryId method of the
+     * When mapping '/phrase/category/{id}/{limit}/{page}'
+     * should return status ok and call getPhrasesByCategoryId method of the
      * PhraseForTrainingService class once.
      *
      * @throws Exception exception.
      */
     @Test
     public void whenMappingCategoryIdShouldReturnStatusOkAndCallGetPhrasesByCategoryIdMethod() throws Exception {
-//        this.mockMvc
-//                .perform(get("/phrase/category/{id}", id))
-//                .andExpect(status().isOk());
-//
-//        verify(this.phraseForTrainingService, times(1)).getPhrasesByCategoryId(id);
+        final int numberOfPage = 0;
+        final int itemPerPage = 1;
+        this.mockMvc
+                .perform(get(
+                        "/phrase/category/{id}/{limit}/{page}",
+                        id,
+                        itemPerPage,
+                        numberOfPage))
+                .andExpect(status().isOk());
+
+        verify(this.phraseForTrainingService, times(1))
+                .getPhrasesByCategoryId(
+                        id,
+                        new PageRequest(
+                                numberOfPage,
+                                itemPerPage,
+                                Sort.Direction.ASC,
+                                "id"));
+        verify(this.phraseForTrainingService, times(1))
+                .getNumberOfRecordsByPhraseCategoryId(id);
     }
 }
