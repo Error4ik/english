@@ -126,4 +126,21 @@ public class WordControllerTest {
 
         verify(this.wordService, times(1)).getNumberOfRecordsByPartOfSpeechId(uuid);
     }
+
+    /**
+     * When mapping '/word/words-by-category/{id}'
+     * should call the getWordsByCategory method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingWordsByCategoryIdShouldReturnStatusOkAndCallGetWordsByCategoryIdMethod() throws Exception {
+        this.mockMvc
+                .perform(get(
+                        "/word/words-by-category/{id}",
+                        uuid
+                ))
+                .andExpect(status().isOk());
+        verify(this.wordService, times(1)).getWordsByCategoryId(uuid);
+    }
 }

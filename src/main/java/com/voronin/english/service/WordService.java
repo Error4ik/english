@@ -112,13 +112,23 @@ public class WordService {
     }
 
     /**
-     * Get words by category id.
+     * Get words by category id with pageable.
      *
      * @param categoryId category id.
      * @return list of Word.
      */
     public List<Word> getWordsByCategoryId(final UUID categoryId, final Pageable pageable) {
         return this.wordRepository.getAllByCategoryId(categoryId, pageable);
+    }
+
+    /**
+     * Get words by category id.
+     *
+     * @param categoryId category id.
+     * @return list of words.
+     */
+    public List<Word> getWordsByCategoryId(final UUID categoryId) {
+        return this.wordRepository.getAllByCategoryId(categoryId);
     }
 
     /**

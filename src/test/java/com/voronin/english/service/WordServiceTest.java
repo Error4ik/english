@@ -184,12 +184,13 @@ public class WordServiceTest {
     }
 
     /**
-     * When call getWordsByCategory should return list Word.
+     * When call getWordsByCategoryId with limit and page
+     * should return list Word.
      *
      * @throws Exception exception.
      */
     @Test
-    public void whenGetWordsByCategoryShouldReturnListWords() throws Exception {
+    public void whenGetWordsByCategoryIdWithLimitAndPageShouldReturnListWords() throws Exception {
         when(wordRepository.getAllByCategoryId(category.getId(), pageable)).thenReturn(list);
 
         assertThat(wordService.getWordsByCategoryId(category.getId(), pageable), is(list));
@@ -296,5 +297,17 @@ public class WordServiceTest {
         when(wordRepository.getNumberOfRecordsByPartOfSpeechId(uuid)).thenReturn(numberOfRecords);
 
         assertThat(wordService.getNumberOfRecordsByPartOfSpeechId(uuid), is(numberOfRecords));
+    }
+
+    /**
+     * When getWordsByCategoryId should return list of words.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetWordsByCategoryIdShouldReturnListOfWords() throws Exception {
+        when(wordRepository.getAllByCategoryId(uuid)).thenReturn(list);
+
+        assertThat(wordService.getWordsByCategoryId(uuid), is(list));
     }
 }

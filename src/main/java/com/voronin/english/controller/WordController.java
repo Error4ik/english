@@ -108,4 +108,15 @@ public class WordController {
             }
         };
     }
+
+    /**
+     * Get words by category id;
+     *
+     * @param id category id.
+     * @return list of words.
+     */
+    @RequestMapping("/words-by-category/{id}")
+    public List<Word> getWordsByCategoryId(@PathVariable final UUID id) {
+        return this.wordService.getWordsByCategoryId(id);
+    }
 }

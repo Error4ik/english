@@ -21,13 +21,21 @@ import java.util.UUID;
 public interface WordRepository extends JpaRepository<Word, UUID> {
 
     /**
-     * Get words by category id.
+     * Get words by category id with pageable.
      *
      * @param categoryId category id.
      * @param pageable   pageable.
      * @return list of words.
      */
     List<Word> getAllByCategoryId(UUID categoryId, Pageable pageable);
+
+    /**
+     * Get words by category id.
+     *
+     * @param categoryId category id.
+     * @return list of words.
+     */
+    List<Word> getAllByCategoryId(UUID categoryId);
 
     /**
      * Get word by id.
