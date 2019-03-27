@@ -235,3 +235,6 @@ ALTER TABLE public.part_of_speech
 ALTER TABLE public.part_of_speech
   ADD CONSTRAINT part_of_speech_images__fk
 FOREIGN KEY (image_id) REFERENCES images (id);
+
+ALTER TABLE public.part_of_speech
+  ADD description VARCHAR(500) DEFAULT 'empty description' NULL;

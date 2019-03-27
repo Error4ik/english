@@ -48,6 +48,11 @@ public class PartOfSpeech {
     private Image image;
 
     /**
+     * Description of part of speech.
+     */
+    private String description;
+
+    /**
      * Empty constructor.
      */
     public PartOfSpeech() {
@@ -87,6 +92,14 @@ public class PartOfSpeech {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
