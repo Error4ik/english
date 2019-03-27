@@ -229,3 +229,9 @@ ALTER TABLE public.users
 
 ALTER TABLE public.users
   ADD active BOOLEAN DEFAULT FALSE  NOT NULL;
+
+ALTER TABLE public.part_of_speech
+  ADD image_id UUID NULL;
+ALTER TABLE public.part_of_speech
+  ADD CONSTRAINT part_of_speech_images__fk
+FOREIGN KEY (image_id) REFERENCES images (id);

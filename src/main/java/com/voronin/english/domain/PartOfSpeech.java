@@ -5,6 +5,9 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -38,6 +41,13 @@ public class PartOfSpeech {
     private int numberOfWords;
 
     /**
+     * Image for part of speech.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "image_id")
+    private Image image;
+
+    /**
      * Empty constructor.
      */
     public PartOfSpeech() {
@@ -69,6 +79,14 @@ public class PartOfSpeech {
 
     public void setNumberOfWords(final int numberOfWords) {
         this.numberOfWords = numberOfWords;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     @Override
