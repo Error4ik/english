@@ -1,5 +1,6 @@
 package com.voronin.english.controller;
 
+import com.voronin.english.service.NounService;
 import com.voronin.english.service.WordService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +54,12 @@ public class WordControllerTest {
     private WordService wordService;
 
     /**
+     * Mock NounService.
+     */
+    @MockBean
+    private NounService nounService;
+
+    /**
      * UUID id for test.
      */
     private UUID uuid = UUID.randomUUID();
@@ -87,15 +94,15 @@ public class WordControllerTest {
                         itemPerPage,
                         numberOfPage))
                 .andExpect(status().isOk());
-        verify(this.wordService, times(1))
-                .getWordsByCategoryId(
+        verify(this.nounService, times(1))
+                .getNounsByCategoryId(
                         uuid,
                         new PageRequest(
                                 numberOfPage,
                                 itemPerPage,
                                 Sort.Direction.ASC,
                                 "word"));
-        verify(this.wordService, times(1)).getNumberOfRecordsByCategoryId(uuid);
+        verify(this.nounService, times(1)).getNumberOfRecordsByCategoryId(uuid);
     }
 
     /**
@@ -141,6 +148,6 @@ public class WordControllerTest {
                         uuid
                 ))
                 .andExpect(status().isOk());
-        verify(this.wordService, times(1)).getWordsByCategoryId(uuid);
+        verify(this.nounService, times(1)).getNounsByCategoryId(uuid);
     }
 }

@@ -57,9 +57,8 @@ public class PartOfSpeechService {
      * @return list of PartOfSpeech without noun.
      */
     public List<PartOfSpeech> getSpeechesWithoutNoun() {
-        List<PartOfSpeech> speeches = this.partOfSpeechRepository.findAll();
-        speeches.remove(this.getPartOfSpeechByName("Существительное"));
-        return speeches;
+        String noun = "Существительное";
+        return this.partOfSpeechRepository.findAllByPartOfSpeechIsNotLike(noun);
     }
 
     /**

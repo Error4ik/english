@@ -2,13 +2,7 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
-import com.voronin.english.service.UserService;
-import com.voronin.english.service.RoleService;
-import com.voronin.english.service.WordService;
-import com.voronin.english.service.ExamService;
-import com.voronin.english.service.QuestionService;
-import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.PhraseForTrainingService;
+import com.voronin.english.service.*;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,17 +104,37 @@ public class AdminControllerTest {
     private RoleService roleService;
 
     /**
-     * When mapping '/admin/add-card' should call the prepareAndSave method of the WordService class once.
+     * Mock NounService.
+     */
+    @MockBean
+    private NounService nounService;
+
+    /**
+     * When mapping '/admin/add-noun' should call the prepareAndSave method of the NounService class once.
      *
      * @throws Exception exception.
      */
     @Test
-    public void whenGetMappingAddCardShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {
+    public void whenGetMappingAddNounShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {
         this.mockMvc
-                .perform(get("/admin/add-card").flashAttr("cardFilled", cardFilled))
+                .perform(get("/admin/add-noun").flashAttr("cardFilled", cardFilled))
                 .andExpect(status().isOk());
 
-        verify(this.wordService, times(1)).prepareAndSave(cardFilled, null);
+        verify(this.nounService, times(1)).prepareAndSave(cardFilled, null);
+    }
+
+    /**
+     * When mapping '/admin/add-word' should call the prepareAndSave method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetMappingAddWordShouldReturnStatusOkAndOneCallPrepareAndSaveMethod() throws Exception {
+        this.mockMvc
+                .perform(get("/admin/add-word").flashAttr("cardFilled", cardFilled))
+                .andExpect(status().isOk());
+
+        verify(this.wordService, times(1)).prepareAndSave(cardFilled);
     }
 
     /**
@@ -149,7 +163,7 @@ public class AdminControllerTest {
         List<String> list = Lists.newArrayList("word", "word", "word");
         this.mockMvc.perform(get("/admin/add-question")
                 .param("exam", exam)
-                .param("word", word)
+                .param("noun", word)
                 .param("variants", "word")
                 .param("variants", "word")
                 .param("variants", "word"))

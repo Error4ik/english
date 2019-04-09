@@ -7,13 +7,14 @@ import com.voronin.english.domain.Question;
 import com.voronin.english.domain.Exam;
 import com.voronin.english.domain.Role;
 import com.voronin.english.domain.PhraseForTraining;
+import com.voronin.english.service.WordService;
+import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.NounService;
+import com.voronin.english.service.QuestionService;
+import com.voronin.english.service.ExamService;
+import com.voronin.english.service.PhraseForTrainingService;
 import com.voronin.english.service.UserService;
 import com.voronin.english.service.RoleService;
-import com.voronin.english.service.WordService;
-import com.voronin.english.service.ExamService;
-import com.voronin.english.service.QuestionService;
-import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.PhraseForTrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,11 @@ public class AdminController {
      * Word service.
      */
     private final WordService wordService;
+
+    /**
+     * Noun service.
+     */
+    private final NounService nounService;
 
     /**
      * Category service.
@@ -73,6 +79,7 @@ public class AdminController {
     /**
      * Controller.
      *
+     * @param nounService              noun service.
      * @param wordService              word service.
      * @param categoryService          category service.
      * @param questionService          question service.
@@ -83,6 +90,7 @@ public class AdminController {
      */
     @Autowired
     public AdminController(
+            final NounService nounService,
             final WordService wordService,
             final CategoryService categoryService,
             final QuestionService questionService,
@@ -90,6 +98,7 @@ public class AdminController {
             final PhraseForTrainingService phraseForTrainingService,
             final UserService userService,
             final RoleService roleService) {
+        this.nounService = nounService;
         this.wordService = wordService;
         this.categoryService = categoryService;
         this.questionService = questionService;
@@ -100,20 +109,30 @@ public class AdminController {
     }
 
     /**
-     * Add new card.
+     * Add new noun.
      *
      * @param cardFilled Filled model for cards.
      * @param photo      the image to the word.
      */
-    @RequestMapping("/add-card")
-    public void saveWord(
+    @RequestMapping("/add-noun")
+    public void saveNoun(
             final CardFilled cardFilled,
             final @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        this.wordService.prepareAndSave(cardFilled, photo);
+        this.nounService.prepareAndSave(cardFilled, photo);
     }
 
     /**
-     * Add new category for words.
+     * Add new word.
+     *
+     * @param cardFilled Filled model for cards.
+     */
+    @RequestMapping("/add-word")
+    public void saveWord(final CardFilled cardFilled) {
+        this.wordService.prepareAndSave(cardFilled);
+    }
+
+    /**
+     * Add new category for nouns.
      *
      * @param category category.
      * @param file     the image to the category.
@@ -126,17 +145,19 @@ public class AdminController {
     }
 
     /**
+     * Add new question for exam by nouns.
+     *
      * @param exam     name of the exam.
-     * @param word     correct answer.
+     * @param noun     correct answer.
      * @param variants answers variants.
      * @return question saved to the database.
      */
     @RequestMapping("/add-question")
     public Question addQuestion(
             final @RequestParam String exam,
-            final @RequestParam String word,
+            final @RequestParam String noun,
             final @RequestParam List<String> variants) {
-        return this.questionService.prepareAndSave(exam, word, variants);
+        return this.questionService.prepareAndSave(exam, noun, variants);
     }
 
     /**

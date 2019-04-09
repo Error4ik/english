@@ -1,7 +1,7 @@
 package com.voronin.english.service;
 
+import com.voronin.english.domain.Noun;
 import com.voronin.english.domain.Question;
-import com.voronin.english.domain.Word;
 import com.voronin.english.repository.QuestRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -15,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -57,7 +56,7 @@ public class QuestionServiceTest {
      * Mock WordService.
      */
     @MockBean
-    private WordService wordService;
+    private NounService nounService;
 
     /**
      * Mock ExamService.
@@ -85,18 +84,18 @@ public class QuestionServiceTest {
      */
     @Test
     public void whenPrepareAndSaveShouldReturnSavedQuestion() throws Exception {
-        Word word = new Word();
-        word.setWord("exam");
-        List<String> variants = Lists.newArrayList(word.getWord());
-        List<Word> words = Lists.newArrayList(word);
+        Noun noun = new Noun();
+        noun.setWord("exam");
+        List<String> variants = Lists.newArrayList(noun.getWord());
+        List<Noun> nouns = Lists.newArrayList(noun);
         Question question = new Question();
-        question.setWord(word);
-        question.setWords(new HashSet<>(words));
-        when(wordService.getWordByName(anyString())).thenReturn(word);
-        when(wordService.getWordsByNames(anyList())).thenReturn(words);
-        when(wordService.save(any(Word.class))).thenReturn(word);
+        question.setWord(noun);
+        question.setNouns(new HashSet<>(nouns));
+        when(nounService.getNounByName(anyString())).thenReturn(noun);
+        when(nounService.getNounsByNames(anyList())).thenReturn(nouns);
+        when(nounService.save(any(Noun.class))).thenReturn(noun);
         when(questRepository.save(any(Question.class))).thenReturn(question);
 
-        assertThat(questionService.prepareAndSave("exam", word.getWord(), variants), is(question));
+        assertThat(questionService.prepareAndSave("exam", noun.getWord(), variants), is(question));
     }
 }

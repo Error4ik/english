@@ -14,7 +14,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
@@ -65,12 +64,6 @@ public class ExamControllerTest {
      */
     @MockBean
     private UserExamsStatsService userExamsStatsService;
-
-    /**
-     * Mock Principal.
-     */
-    @MockBean
-    private Principal principal;
 
     /**
      * UUID id for test.

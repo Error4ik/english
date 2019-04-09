@@ -238,3 +238,6 @@ FOREIGN KEY (image_id) REFERENCES images (id);
 
 ALTER TABLE public.part_of_speech
   ADD description VARCHAR(500) DEFAULT 'empty description' NULL;
+
+ALTER TABLE public.words
+  ADD BILLING_DETAILS_TYPE CHARACTER NULL;

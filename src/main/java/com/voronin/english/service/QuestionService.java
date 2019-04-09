@@ -1,8 +1,8 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
+import com.voronin.english.domain.Noun;
 import com.voronin.english.domain.Question;
-import com.voronin.english.domain.Word;
 import com.voronin.english.repository.QuestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +33,9 @@ public class QuestionService {
     private final QuestRepository questRepository;
 
     /**
-     * Word service.
+     * Noun service.
      */
-    private final WordService wordService;
+    private final NounService nounService;
 
     /**
      * Exam service.
@@ -46,16 +46,16 @@ public class QuestionService {
      * Constructor.
      *
      * @param questRepository question repository.
-     * @param wordService     word service.
+     * @param nounService     noun service.
      * @param examService     exam service.
      */
     @Autowired
     public QuestionService(
             final QuestRepository questRepository,
-            final WordService wordService,
+            final NounService nounService,
             final ExamService examService) {
         this.questRepository = questRepository;
-        this.wordService = wordService;
+        this.nounService = nounService;
         this.examService = examService;
     }
 
@@ -73,14 +73,14 @@ public class QuestionService {
      * Prepare question and save.
      *
      * @param exam     exam name.
-     * @param word     correct answer.
+     * @param noun     correct answer.
      * @param variants answer choice.
      * @return Question.
      */
-    public Question prepareAndSave(final String exam, final String word, final List<String> variants) {
-        logger.debug(String.format("Arguments - exam - %s, word - %s, variants - %s", exam, word, variants));
-        Word correctAnswer = this.wordService.getWordByName(word);
-        Set<Word> answerChoice = new HashSet<>(Lists.newArrayList(this.wordService.getWordsByNames(variants)));
+    public Question prepareAndSave(final String exam, final String noun, final List<String> variants) {
+        logger.debug(String.format("Arguments - exam - %s, word - %s, variants - %s", exam, noun, variants));
+        Noun correctAnswer = this.nounService.getNounByName(noun);
+        Set<Noun> answerChoice = new HashSet<>(Lists.newArrayList(this.nounService.getNounsByNames(variants)));
         answerChoice.add(correctAnswer);
         Question question = this.save(new Question(correctAnswer, this.examService.getExamByName(exam), answerChoice));
         logger.debug(String.format("Return - %s", question));

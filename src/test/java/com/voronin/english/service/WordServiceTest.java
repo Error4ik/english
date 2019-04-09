@@ -1,9 +1,9 @@
 package com.voronin.english.service;
 
-import com.voronin.english.domain.*;
+import com.voronin.english.domain.Word;
+import com.voronin.english.domain.CardFilled;
+import com.voronin.english.domain.PartOfSpeech;
 import com.voronin.english.repository.WordRepository;
-import com.voronin.english.util.WriteFileToDisk;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,34 +43,16 @@ public class WordServiceTest {
     private WordService wordService;
 
     /**
-     * Mock WriteFileToDisk.
-     */
-    @MockBean
-    private WriteFileToDisk writeFileToDisk;
-
-    /**
      * Mock WordRepository.
      */
     @MockBean
     private WordRepository wordRepository;
 
     /**
-     * Mock CategoryService.
-     */
-    @MockBean
-    private CategoryService categoryService;
-
-    /**
      * Mock PartOfSpeechService.
      */
     @MockBean
     private PartOfSpeechService partOfSpeechService;
-
-    /**
-     * Mock ImageService.
-     */
-    @MockBean
-    private ImageService imageService;
 
     /**
      * Mock TranslationService.
@@ -85,18 +65,6 @@ public class WordServiceTest {
      */
     @MockBean
     private PhraseService phraseService;
-
-    /**
-     * Mock MultipartFile.
-     */
-    @MockBean
-    private MultipartFile multipartFile;
-
-    /**
-     * Mock File.
-     */
-    @MockBean
-    private File file;
 
     /**
      * Mock JavaMailSender.
@@ -124,11 +92,6 @@ public class WordServiceTest {
     /**
      * Class for test.
      */
-    private Category category = new Category();
-
-    /**
-     * Class for test.
-     */
     private PartOfSpeech partOfSpeech = new PartOfSpeech();
 
     /**
@@ -142,11 +105,6 @@ public class WordServiceTest {
     private CardFilled cardFilled;
 
     /**
-     * Class for test.
-     */
-    private Image image = new Image();
-
-    /**
      * List Word for test.
      */
     private List<Word> list = new ArrayList<>();
@@ -156,14 +114,9 @@ public class WordServiceTest {
      */
     @Before
     public void init() {
-        category.setId(uuid);
-        category.setName("category");
         partOfSpeech.setId(uuid);
         partOfSpeech.setPartOfSpeech("speech");
-        image.setName("image");
-        image.setUrl("path");
         word.setWord("word");
-        word.setImage(image);
         cardFilled = new CardFilled("word", "transcription", "translation",
                 "category", "speech", "firstPhrase", "secondPhrase",
                 "firstPhraseTranslation", "secondPhraseTranslation",
@@ -184,84 +137,6 @@ public class WordServiceTest {
     }
 
     /**
-     * When call getWordsByCategoryId with limit and page
-     * should return list Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordsByCategoryIdWithLimitAndPageShouldReturnListWords() throws Exception {
-        when(wordRepository.getAllByCategoryId(category.getId(), pageable)).thenReturn(list);
-
-        assertThat(wordService.getWordsByCategoryId(category.getId(), pageable), is(list));
-    }
-
-    /**
-     * When call prepareAndSave with photo should return saved Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenPrepareAndSaveWithPhotoShouldReturnWord() throws Exception {
-        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
-        when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
-        when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
-
-        assertThat(wordService.prepareAndSave(cardFilled, multipartFile).getWord(), is(word.getWord()));
-    }
-
-    /**
-     * When call prepareAndSave without photo should return saved Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenPrepareAndSaveWithoutPhotoShouldReturnWord() throws Exception {
-        when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
-
-        Word w = wordService.prepareAndSave(cardFilled, null);
-        assertThat(w.getWord(), is(word.getWord()));
-    }
-
-    /**
-     * When call getWordByName should return Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordByNameShouldReturnWord() throws Exception {
-        when(wordRepository.getWordByWord(word.getWord())).thenReturn(word);
-
-        assertThat(wordService.getWordByName(word.getWord()), is(word));
-    }
-
-    /**
-     * When call getWordById should return Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordByIdShouldReturnWord() throws Exception {
-        when(wordRepository.getWordById(word.getId())).thenReturn(word);
-
-        assertThat(wordService.getWordById(word.getId()), is(word));
-    }
-
-    /**
-     * When call getWordsByNames should return list of Word.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenGetWordsByNamesShouldReturnListWord() throws Exception {
-        List<Word> words = Lists.newArrayList(word, word, word);
-        List<String> listOfNames = Lists.newArrayList("word", "word", "word");
-        when(wordRepository.getAllByWordIn(listOfNames)).thenReturn(words);
-
-        assertThat(wordService.getWordsByNames(listOfNames), is(words));
-    }
-
-    /**
      * When call getWordsByPartOfSpeech should return List of Word.
      *
      * @throws Exception exception.
@@ -274,16 +149,15 @@ public class WordServiceTest {
     }
 
     /**
-     * When call getNumberOfRecordsByCategoryId should return number of records.
+     * When call getWordById should return Word.
      *
      * @throws Exception exception.
      */
     @Test
-    public void whenGetNumberOfRecordsByCategoryIdShouldReturnNumberOfRecords() throws Exception {
-        final long numberOfRecords = 10;
-        when(wordRepository.getNumberOfRecordsByCategoryId(uuid)).thenReturn(numberOfRecords);
+    public void whenGetWordByIdShouldReturnWord() throws Exception {
+        when(wordRepository.getWordById(word.getId())).thenReturn(word);
 
-        assertThat(wordService.getNumberOfRecordsByCategoryId(uuid), is(numberOfRecords));
+        assertThat(wordService.getWordById(word.getId()), is(word));
     }
 
     /**
@@ -300,14 +174,29 @@ public class WordServiceTest {
     }
 
     /**
-     * When getWordsByCategoryId should return list of words.
+     * When call method save should return saved word.
      *
      * @throws Exception exception.
      */
     @Test
-    public void whenGetWordsByCategoryIdShouldReturnListOfWords() throws Exception {
-        when(wordRepository.getAllByCategoryId(uuid)).thenReturn(list);
+    public void whenSaveWordShouldReturnSavedWord() throws Exception {
+        when(this.wordRepository.save(word)).thenReturn(word);
 
-        assertThat(wordService.getWordsByCategoryId(uuid), is(list));
+        assertThat(wordService.save(word), is(word));
+    }
+
+    /**
+     * When call prepareAndSave without photo should return saved Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenPrepareAndSaveWithoutPhotoShouldReturnWord() throws Exception {
+        when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
+        final int numberOfWords = 1;
+
+        Word w = wordService.prepareAndSave(cardFilled);
+        assertThat(w.getWord(), is(word.getWord()));
+        assertThat(partOfSpeech.getNumberOfWords(), is(numberOfWords));
     }
 }

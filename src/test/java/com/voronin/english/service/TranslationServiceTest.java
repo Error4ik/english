@@ -1,7 +1,6 @@
 package com.voronin.english.service;
 
 import com.voronin.english.domain.Translation;
-import com.voronin.english.domain.Word;
 import com.voronin.english.repository.TranslationRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class TranslationServiceTest {
      */
     @Test
     public void whenSaveAllShouldReturnSavedList() throws Exception {
-        Translation translation = new Translation("translation", new Word());
+        Translation translation = new Translation("translation", null);
         List<Translation> list = Lists.newArrayList(translation);
 
         when(translationRepository.saveAll(list)).thenReturn(list);

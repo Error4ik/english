@@ -40,7 +40,7 @@ public class Translation {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_id")
-    private Word word;
+    private AnyWord word;
 
     /**
      * Empty constructor.
@@ -54,7 +54,7 @@ public class Translation {
      * @param translation translation word.
      * @param word        word.
      */
-    public Translation(final String translation, final Word word) {
+    public Translation(final String translation, final AnyWord word) {
         this.translation = translation;
         this.word = word;
     }
@@ -75,11 +75,11 @@ public class Translation {
         this.translation = translation;
     }
 
-    public Word getWord() {
+    public AnyWord getWord() {
         return word;
     }
 
-    public void setWord(final Word word) {
+    public void setWord(final AnyWord word) {
         this.word = word;
     }
 

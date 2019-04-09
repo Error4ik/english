@@ -36,7 +36,7 @@ public class Question {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "word_id")
-    private Word word;
+    private Noun noun;
 
     /**
      * Exam for question.
@@ -52,7 +52,7 @@ public class Question {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "question_words", joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "word_id"))
-    private Set<Word> words;
+    private Set<Noun> nouns;
 
     /**
      * Empty constructor.
@@ -62,14 +62,14 @@ public class Question {
 
     /**
      * Constructor.
-     * @param word Correct answer.
+     * @param noun Correct answer.
      * @param exam Exam for question.
-     * @param words Answer choice.
+     * @param nouns Answer choice.
      */
-    public Question(final Word word, final Exam exam, final Set<Word> words) {
-        this.word = word;
+    public Question(final Noun noun, final Exam exam, final Set<Noun> nouns) {
+        this.noun = noun;
         this.exam = exam;
-        this.words = words;
+        this.nouns = nouns;
     }
 
     public UUID getId() {
@@ -80,12 +80,12 @@ public class Question {
         this.id = id;
     }
 
-    public Word getWord() {
-        return word;
+    public AnyWord getNoun() {
+        return noun;
     }
 
-    public void setWord(final Word word) {
-        this.word = word;
+    public void setWord(final AnyWord word) {
+        this.noun = noun;
     }
 
     public Exam getExam() {
@@ -96,16 +96,16 @@ public class Question {
         this.exam = exam;
     }
 
-    public Set<Word> getWords() {
-        return words;
+    public Set<Noun> getNouns() {
+        return nouns;
     }
 
-    public void setWords(final Set<Word> words) {
-        this.words = words;
+    public void setNouns(final Set<Noun> nouns) {
+        this.nouns = nouns;
     }
 
     @Override
     public String toString() {
-        return String.format("Question{id=%s, word=%s}", getId(), getWord());
+        return String.format("Question{id=%s, word=%s}", getId(), getNoun());
     }
 }

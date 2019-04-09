@@ -1,6 +1,8 @@
 package com.voronin.english.controller;
 
+import com.voronin.english.domain.Noun;
 import com.voronin.english.domain.Word;
+import com.voronin.english.service.NounService;
 import com.voronin.english.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +31,19 @@ public class WordController {
     private final WordService wordService;
 
     /**
+     * Noun service.
+     */
+    private final NounService nounService;
+
+    /**
      * Constructor.
      *
      * @param wordService word service.
      */
     @Autowired
-    public WordController(final WordService wordService) {
+    public WordController(final WordService wordService, final NounService nounService) {
         this.wordService = wordService;
+        this.nounService = nounService;
     }
 
     /**
@@ -66,8 +74,8 @@ public class WordController {
             @PathVariable final int limit,
             @PathVariable final int page) {
         return new Object() {
-            public List<Word> getWordsByCategory() {
-                return wordService.getWordsByCategoryId(id, new PageRequest(
+            public List<Noun> getWordsByCategory() {
+                return nounService.getNounsByCategoryId(id, new PageRequest(
                         page,
                         limit,
                         Sort.Direction.ASC,
@@ -75,7 +83,7 @@ public class WordController {
             }
 
             public long getAllRecords() {
-                return wordService.getNumberOfRecordsByCategoryId(id);
+                return nounService.getNumberOfRecordsByCategoryId(id);
             }
         };
     }
@@ -116,7 +124,7 @@ public class WordController {
      * @return list of words.
      */
     @RequestMapping("/words-by-category/{id}")
-    public List<Word> getWordsByCategoryId(@PathVariable final UUID id) {
-        return this.wordService.getWordsByCategoryId(id);
+    public List<Noun> getWordsByCategoryId(@PathVariable final UUID id) {
+        return this.nounService.getNounsByCategoryId(id);
     }
 }
