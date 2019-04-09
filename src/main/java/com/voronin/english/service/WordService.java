@@ -130,7 +130,7 @@ public class WordService {
      */
     public Word prepareAndSave(final CardFilled card) {
         logger.debug(String.format("Arguments - word - %s", card));
-        PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech());
+        PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());
         Word word = new Word(card.getWord(), card.getTranscription(), partOfSpeech, card.getDescription());
         this.save(word);
         logger.info(String.format("Word save without image, %s", word));
