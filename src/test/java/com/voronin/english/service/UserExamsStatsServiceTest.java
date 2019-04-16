@@ -7,13 +7,6 @@ import com.voronin.english.domain.UserExamsStats;
 import com.voronin.english.repository.UserExamsStatsRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.Principal;
 import java.util.List;
@@ -22,7 +15,10 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * UserExamsStatsService test class.
@@ -30,40 +26,31 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 19.12.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(UserExamsStatsService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class UserExamsStatsServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private UserExamsStatsService userExamsStatsService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock UserExamsStatsRepository.
      */
-    @MockBean
-    private UserExamsStatsRepository userExamsStatsRepository;
+    private UserExamsStatsRepository userExamsStatsRepository = mock(UserExamsStatsRepository.class);
 
     /**
      * Mock UserService.
      */
-    @MockBean
-    private UserService userService;
+    private UserService userService = mock(UserService.class);
 
     /**
      * Mock ExamService.
      */
-    @MockBean
-    private ExamService examService;
+    private ExamService examService = mock(ExamService.class);
+
+    /**
+     * The class object under test.
+     */
+    private UserExamsStatsService userExamsStatsService =
+            new UserExamsStatsService(
+                    userExamsStatsRepository,
+                    userService,
+                    examService);
 
     /**
      * UUID id for test.
@@ -89,6 +76,10 @@ public class UserExamsStatsServiceTest {
         when(userExamsStatsRepository.save(examsStats)).thenReturn(examsStats);
 
         assertThat(userExamsStatsService.save(principal, uuid, 1), is(examsStats));
+        verify(userService, times(1)).getUserByEmail("user");
+        verify(examService, times(1)).getExamById(uuid);
+        verify(userExamsStatsRepository, times(1)).getUserExamsStatsByUserAndExam(user, exam);
+        verify(userExamsStatsRepository, times(1)).save(examsStats);
 
     }
 
@@ -111,6 +102,10 @@ public class UserExamsStatsServiceTest {
         when(userExamsStatsRepository.save(any(UserExamsStats.class))).thenReturn(examsStats);
 
         assertThat(userExamsStatsService.save(principal, uuid, 1), is(examsStats));
+        verify(userService, times(1)).getUserByEmail("user");
+        verify(examService, times(1)).getExamById(uuid);
+        verify(userExamsStatsRepository, times(1)).getUserExamsStatsByUserAndExam(user, exam);
+        verify(userExamsStatsRepository, times(1)).save(any(UserExamsStats.class));
 
     }
 
@@ -126,5 +121,6 @@ public class UserExamsStatsServiceTest {
         when(userExamsStatsRepository.getUserExamsStatsByUser(any(User.class))).thenReturn(list);
 
         assertThat(userExamsStatsService.getUserExamsStatsByUser(new User()), is(list));
+        verify(userExamsStatsRepository, times(1)).getUserExamsStatsByUser(any(User.class));
     }
 }

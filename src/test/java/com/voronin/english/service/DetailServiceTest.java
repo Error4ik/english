@@ -4,21 +4,17 @@ import com.voronin.english.domain.Role;
 import com.voronin.english.domain.User;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashSet;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * DetailService test class.
@@ -26,28 +22,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(DetailService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class DetailServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private DetailService detailService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock UserService.
      */
-    @MockBean
-    private UserService userService;
+    private UserService userService = mock(UserService.class);
+
+    /**
+     * The class object under test.
+     */
+    private DetailService detailService = new DetailService(userService);
 
 
     /**
@@ -75,6 +60,7 @@ public class DetailServiceTest {
         UserDetails userDetails = detailService.loadUserByUsername("test@test.ru");
 
         assertThat(userDetails.getUsername(), is(user.getEmail()));
+        verify(userService, times(1)).save(user);
     }
 
     /**

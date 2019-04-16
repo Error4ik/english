@@ -4,19 +4,15 @@ import com.voronin.english.domain.TypeOfPhrase;
 import com.voronin.english.repository.TypeOfPhraseRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * TypeOfPhraseService test class.
@@ -24,28 +20,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 04.02.2019.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(TypeOfPhraseService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class TypeOfPhraseServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private TypeOfPhraseService typeOfPhraseService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock TypeOfPhraseRepository.
      */
-    @MockBean
-    private TypeOfPhraseRepository typeOfPhraseRepository;
+    private TypeOfPhraseRepository typeOfPhraseRepository = mock(TypeOfPhraseRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private TypeOfPhraseService typeOfPhraseService = new TypeOfPhraseService(typeOfPhraseRepository);
 
     /**
      * When call save method should return saved entity.
@@ -58,6 +43,7 @@ public class TypeOfPhraseServiceTest {
         when(typeOfPhraseRepository.save(typeOfPhrase)).thenReturn(typeOfPhrase);
 
         assertThat(this.typeOfPhraseService.save(typeOfPhrase), is(typeOfPhrase));
+        verify(typeOfPhraseRepository, times(1)).save(typeOfPhrase);
     }
 
     /**
@@ -71,5 +57,6 @@ public class TypeOfPhraseServiceTest {
         when(typeOfPhraseRepository.findAll()).thenReturn(list);
 
         assertThat(this.typeOfPhraseService.findAll(), is(list));
+        verify(typeOfPhraseRepository, times(1)).findAll();
     }
 }

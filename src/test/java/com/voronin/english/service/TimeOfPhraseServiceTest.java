@@ -4,19 +4,15 @@ import com.voronin.english.domain.TimeOfPhrase;
 import com.voronin.english.repository.TimeOfPhraseRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * TimeOfPhraseService test class.
@@ -24,28 +20,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 04.02.2019.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(TimeOfPhraseService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class TimeOfPhraseServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private TimeOfPhraseService timeOfPhraseService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock TimeOfPhraseRepository.
      */
-    @MockBean
-    private TimeOfPhraseRepository timeOfPhraseRepository;
+    private TimeOfPhraseRepository timeOfPhraseRepository = mock(TimeOfPhraseRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private TimeOfPhraseService timeOfPhraseService = new TimeOfPhraseService(timeOfPhraseRepository);
 
     /**
      * When call save method should return saved entity.
@@ -58,6 +43,7 @@ public class TimeOfPhraseServiceTest {
         when(timeOfPhraseRepository.save(timeOfPhrase)).thenReturn(timeOfPhrase);
 
         assertThat(this.timeOfPhraseService.save(timeOfPhrase), is(timeOfPhrase));
+        verify(timeOfPhraseRepository, times(1)).save(timeOfPhrase);
     }
 
     /**
@@ -71,5 +57,6 @@ public class TimeOfPhraseServiceTest {
         when(this.timeOfPhraseRepository.findAll()).thenReturn(list);
 
         assertThat(this.timeOfPhraseService.findAll(), is(list));
+        verify(timeOfPhraseRepository, times(1)).findAll();
     }
 }

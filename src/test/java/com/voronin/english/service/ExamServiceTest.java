@@ -6,13 +6,6 @@ import com.voronin.english.repository.ExamRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,8 +13,9 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * ExamService test class.
@@ -29,34 +23,17 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  * @author Alexey Voronin.
  * @since 19.12.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(ExamService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class ExamServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private ExamService examService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock ExamRepository.
      */
-    @MockBean
-    private ExamRepository examRepository;
+    private ExamRepository examRepository = mock(ExamRepository.class);
 
     /**
      * Mock CategoryService.
      */
-    @MockBean
-    private CategoryService categoryService;
+    private CategoryService categoryService = mock(CategoryService.class);
 
     /**
      * Class for test.
@@ -67,6 +44,11 @@ public class ExamServiceTest {
      * Class for test.
      */
     private Category category = new Category();
+
+    /**
+     * The class object under test.
+     */
+    private ExamService examService = new ExamService(examRepository, categoryService);
 
     /**
      * UUID id for test.
@@ -96,6 +78,7 @@ public class ExamServiceTest {
         when(examRepository.getExamById(uuid)).thenReturn(exam);
 
         assertThat(examService.getExamById(uuid), is(exam));
+        verify(examRepository, times(1)).getExamById(uuid);
     }
 
     /**
@@ -109,6 +92,7 @@ public class ExamServiceTest {
         when(examRepository.findAll()).thenReturn(exams);
 
         assertThat(examService.getExams(), is(exams));
+        verify(examRepository, times(1)).findAll();
     }
 
     /**
@@ -121,6 +105,7 @@ public class ExamServiceTest {
         when(examRepository.getExamByCategory(category)).thenReturn(exam);
 
         assertThat(examService.getExamByCategory(category), is(exam));
+        verify(examRepository, times(1)).getExamByCategory(category);
     }
 
     /**
@@ -133,6 +118,7 @@ public class ExamServiceTest {
         when(examRepository.getExamByName(exam.getName())).thenReturn(exam);
 
         assertThat(examService.getExamByName(exam.getName()), is(exam));
+        verify(examRepository, times(1)).getExamByName(exam.getName());
     }
 
     /**
@@ -145,6 +131,7 @@ public class ExamServiceTest {
         when(examRepository.save(exam)).thenReturn(exam);
 
         assertThat(examService.save(exam), is(exam));
+        verify(examRepository, times(1)).save(exam);
     }
 
     /**
@@ -162,5 +149,6 @@ public class ExamServiceTest {
                         category.getName(),
                         0).getCategory().getName(),
                 is(exam.getCategory().getName()));
+        verify(categoryService, times(1)).getCategoryByName(category.getName());
     }
 }

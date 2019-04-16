@@ -6,14 +6,7 @@ import com.voronin.english.repository.CategoryRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,7 +16,10 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * CategoryService test class.
@@ -31,46 +27,32 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(CategoryService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class CategoryServiceTest {
 
     /**
      * Mock CategoryRepository.
      */
-    @MockBean
-    private CategoryRepository categoryRepository;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
+    private CategoryRepository categoryRepository = mock(CategoryRepository.class);
 
     /**
      * Mock WriteFileToDisk.
      */
-    @MockBean
-    private WriteFileToDisk writeFileToDisk;
+    private WriteFileToDisk writeFileToDisk = mock(WriteFileToDisk.class);
 
     /**
      * Mock ImageService.
      */
-    @MockBean
-    private ImageService imageService;
+    private ImageService imageService = mock(ImageService.class);
 
     /**
      * Mock MultipartFile.
      */
-    @MockBean
-    private MultipartFile multipartFile;
+    private MultipartFile multipartFile = mock(MultipartFile.class);
 
     /**
      * Mock File.
      */
-    @MockBean
-    private File file;
+    private File file = mock(File.class);
 
     /**
      * Category for test.
@@ -104,8 +86,7 @@ public class CategoryServiceTest {
     /**
      * The class object under test.
      */
-    @Autowired
-    private CategoryService categoryService;
+    private CategoryService categoryService = new CategoryService(categoryRepository, writeFileToDisk, imageService);
 
     /**
      * When call getCategories method should return list of categories.
@@ -120,6 +101,7 @@ public class CategoryServiceTest {
         when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(list);
 
         assertThat(categoryService.getCategories(), is(list));
+        verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
     }
 
     /**
@@ -132,6 +114,7 @@ public class CategoryServiceTest {
         when(categoryRepository.getCategoryByName(category.getName())).thenReturn(category);
 
         assertThat(categoryService.getCategoryByName(category.getName()).getId(), is(category.getId()));
+        verify(categoryRepository, times(1)).getCategoryByName(category.getName());
     }
 
     /**
@@ -145,6 +128,7 @@ public class CategoryServiceTest {
         when(categoryRepository.save(category)).thenReturn(category);
 
         assertThat(categoryService.prepareAndSave(category, multipartFile), is(category));
+        verify(categoryRepository, times(1)).save(category);
     }
 
     /**
@@ -157,5 +141,6 @@ public class CategoryServiceTest {
         when(categoryRepository.save(category)).thenReturn(category);
 
         assertThat(categoryService.save(category), is(category));
+        verify(categoryRepository, times(1)).save(category);
     }
 }

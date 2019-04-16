@@ -1,21 +1,15 @@
 package com.voronin.english.service;
 
+import com.voronin.english.domain.Message;
 import com.voronin.english.domain.Role;
 import com.voronin.english.domain.User;
 import com.voronin.english.repository.UserRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -27,7 +21,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * UserService test class.
@@ -35,46 +33,37 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(UserService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class UserServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private UserService userService;
 
     /**
      * Mock BCryptPasswordEncoder.
      */
-    @MockBean
-    private BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
 
     /**
      * Mock UserRepository.
      */
-    @MockBean
-    private UserRepository userRepository;
+    private UserRepository userRepository = mock(UserRepository.class);
 
     /**
      * Mock RoleService.
      */
-    @MockBean
-    private RoleService roleService;
+    private RoleService roleService = mock(RoleService.class);
 
     /**
      * Mock CustomEmailService.
      */
-    @MockBean
-    private CustomEmailService customEmailService;
+    private CustomEmailService customEmailService = mock(CustomEmailService.class);
 
     /**
-     * Mock JavaMailSender.
+     * The class object under test.
      */
-    @MockBean
-    private JavaMailSender javaMailSender;
+    private UserService userService =
+            new UserService(
+                    userRepository,
+                    encoder,
+                    roleService,
+                    customEmailService);
 
     /**
      * Path for activate user.
@@ -116,6 +105,7 @@ public class UserServiceTest {
         when(userRepository.getOne(uuid)).thenReturn(user);
 
         assertThat(userService.getUserById(uuid), is(user));
+        verify(userRepository, times(1)).getOne(uuid);
     }
 
     /**
@@ -128,6 +118,7 @@ public class UserServiceTest {
         when(userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
 
         assertThat(userService.getUserByEmail(user.getEmail()), is(user));
+        verify(userRepository, times(1)).getUserByEmail(user.getEmail());
     }
 
     /**
@@ -141,6 +132,9 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenReturn(user);
 
         assertThat(userService.regUser(user), is(optional));
+
+        verify(userRepository, times(1)).save(user);
+        verify(customEmailService, times(1)).send(any(Message.class));
     }
 
     /**
@@ -154,6 +148,7 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenThrow(DataIntegrityViolationException.class);
 
         assertThat(userService.regUser(user), is(optional));
+        verify(userRepository, times(1)).save(user);
     }
 
     /**
@@ -166,6 +161,7 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenReturn(user);
 
         assertThat(userService.save(user), is(user));
+        verify(userRepository, times(1)).save(user);
     }
 
     /**
@@ -178,6 +174,7 @@ public class UserServiceTest {
         when(userRepository.getUserByActivationKey("key")).thenReturn(null);
 
         assertNull(userService.activateUser("key"));
+        verify(userRepository, times(1)).getUserByActivationKey("key");
     }
 
     /**
@@ -190,6 +187,7 @@ public class UserServiceTest {
         when(userRepository.getUserByActivationKey("key")).thenReturn(user);
 
         assertTrue(userService.activateUser("key").isActive());
+        verify(userRepository, times(1)).getUserByActivationKey("key");
     }
 
     /**
@@ -203,6 +201,7 @@ public class UserServiceTest {
         when(userRepository.getUserByActivationKey("key")).thenReturn(user);
 
         assertThat(userService.activateUser("key").isActive(), is(true));
+        verify(userRepository, times(1)).getUserByActivationKey("key");
     }
 
     /**
@@ -216,6 +215,7 @@ public class UserServiceTest {
         when(userRepository.getAllByOrderByCreateDate()).thenReturn(users);
 
         assertThat(this.userService.getUsers(), is(users));
+        verify(userRepository, times(1)).getAllByOrderByCreateDate();
     }
 
     /**
@@ -231,6 +231,9 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenReturn(user);
 
         assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
+        verify(userRepository, times(1)).getOne(uuid);
+        verify(roleService, times(1)).getRoleById(uuid);
+        verify(userRepository, times(1)).save(user);
     }
 
     /**
@@ -246,5 +249,8 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenReturn(user);
 
         assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
+        verify(userRepository, times(1)).getOne(uuid);
+        verify(roleService, times(1)).getRoleById(uuid);
+        verify(userRepository, times(1)).save(user);
     }
 }

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(CategoryController.class)
-@WithMockUser(username = "user", roles = {"USER"})
+@WithMockUser(authorities = "USER")
 public class CategoryControllerTest {
 
     /**

@@ -2,7 +2,14 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
-import com.voronin.english.service.*;
+import com.voronin.english.service.WordService;
+import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.ExamService;
+import com.voronin.english.service.PhraseForTrainingService;
+import com.voronin.english.service.QuestionService;
+import com.voronin.english.service.NounService;
+import com.voronin.english.service.UserService;
+import com.voronin.english.service.RoleService;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(AdminController.class)
-@WithMockUser(username = "user", roles = {"USER"})
+@WithMockUser(authorities = "ADMIN")
 public class AdminControllerTest {
 
     /**

@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
-@WithMockUser(username = "user", roles = {"USER"})
+@WithMockUser(authorities = "USER")
 public class UserControllerTest {
 
     /**

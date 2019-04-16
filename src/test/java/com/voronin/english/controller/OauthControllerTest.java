@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(OauthController.class)
-@WithMockUser(username = "user", roles = {"USER"})
+@WithMockUser(authorities = "USER")
 public class OauthControllerTest {
 
     /**

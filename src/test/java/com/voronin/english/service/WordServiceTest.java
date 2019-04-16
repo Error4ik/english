@@ -6,15 +6,9 @@ import com.voronin.english.domain.PartOfSpeech;
 import com.voronin.english.repository.WordRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +16,13 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * WordService test class.
@@ -31,46 +30,41 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(WordService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class WordServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private WordService wordService;
 
     /**
      * Mock WordRepository.
      */
     @MockBean
-    private WordRepository wordRepository;
+    private WordRepository wordRepository = mock(WordRepository.class);
 
     /**
      * Mock PartOfSpeechService.
      */
     @MockBean
-    private PartOfSpeechService partOfSpeechService;
+    private PartOfSpeechService partOfSpeechService = mock(PartOfSpeechService.class);
 
     /**
      * Mock TranslationService.
      */
     @MockBean
-    private TranslationService translationService;
+    private TranslationService translationService = mock(TranslationService.class);
 
     /**
      * Mock PhraseService.
      */
     @MockBean
-    private PhraseService phraseService;
+    private PhraseService phraseService = mock(PhraseService.class);
 
     /**
-     * Mock JavaMailSender.
+     * The class object under test.
      */
-    @MockBean
-    private JavaMailSender javaMailSender;
+    private WordService wordService =
+            new WordService(
+                    wordRepository,
+                    partOfSpeechService,
+                    translationService,
+                    phraseService);
 
     /**
      * Mock Pageable.
@@ -134,6 +128,7 @@ public class WordServiceTest {
         when(wordRepository.findAll()).thenReturn(list);
 
         assertThat(wordService.getWords(), is(list));
+        verify(wordRepository, times(1)).findAll();
     }
 
     /**
@@ -146,6 +141,7 @@ public class WordServiceTest {
         when(wordRepository.getAllByPartOfSpeechId(uuid, pageable)).thenReturn(list);
 
         assertThat(wordService.getWordsByPartOfSpeechId(uuid, pageable), is(list));
+        verify(wordRepository, times(1)).getAllByPartOfSpeechId(uuid, pageable);
     }
 
     /**
@@ -158,6 +154,7 @@ public class WordServiceTest {
         when(wordRepository.getWordById(word.getId())).thenReturn(word);
 
         assertThat(wordService.getWordById(word.getId()), is(word));
+        verify(wordRepository, times(1)).getWordById(word.getId());
     }
 
     /**
@@ -171,6 +168,7 @@ public class WordServiceTest {
         when(wordRepository.getNumberOfRecordsByPartOfSpeechId(uuid)).thenReturn(numberOfRecords);
 
         assertThat(wordService.getNumberOfRecordsByPartOfSpeechId(uuid), is(numberOfRecords));
+        verify(wordRepository, times(1)).getNumberOfRecordsByPartOfSpeechId(uuid);
     }
 
     /**
@@ -183,10 +181,11 @@ public class WordServiceTest {
         when(this.wordRepository.save(word)).thenReturn(word);
 
         assertThat(wordService.save(word), is(word));
+        verify(wordRepository, times(1)).save(word);
     }
 
     /**
-     * When call prepareAndSave without photo should return saved Word.
+     * When call prepareAndSave should return saved Word.
      *
      * @throws Exception exception.
      */
@@ -198,5 +197,10 @@ public class WordServiceTest {
         Word w = wordService.prepareAndSave(cardFilled);
         assertThat(w.getWord(), is(word.getWord()));
         assertThat(partOfSpeech.getNumberOfWords(), is(numberOfWords));
+        verify(partOfSpeechService, times(1)).getPartOfSpeechByName(anyString());
+        verify(wordRepository, times(1)).save(any(Word.class));
+        verify(partOfSpeechService, times(1)).save(partOfSpeech);
+        verify(translationService, times(1)).saveAll(anyList());
+        verify(phraseService, times(1)).saveAll(anyList());
     }
 }

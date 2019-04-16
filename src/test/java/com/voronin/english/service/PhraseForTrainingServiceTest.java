@@ -5,21 +5,17 @@ import com.voronin.english.domain.PhraseForTraining;
 import com.voronin.english.repository.PhraseForTrainingRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * PhraseForTrainingService test class.
@@ -27,45 +23,34 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 04.02.2019.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(PhraseForTrainingService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class PhraseForTrainingServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private PhraseForTrainingService phraseForTrainingService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock PhraseForTrainingRepository.
      */
-    @MockBean
-    private PhraseForTrainingRepository phraseForTrainingRepository;
+    private PhraseForTrainingRepository phraseForTrainingRepository = mock(PhraseForTrainingRepository.class);
 
     /**
      * Mock PhraseCategoryService.
      */
-    @MockBean
-    private PhraseCategoryService phraseCategoryService;
+    private PhraseCategoryService phraseCategoryService = mock(PhraseCategoryService.class);
 
     /**
      * Mock PhraseCategory.
      */
-    @MockBean
-    private PhraseCategory phraseCategory;
+    private PhraseCategory phraseCategory = mock(PhraseCategory.class);
+
+    /**
+     * The class object under test.
+     */
+    private PhraseForTrainingService phraseForTrainingService =
+            new PhraseForTrainingService(
+                    phraseForTrainingRepository,
+                    phraseCategoryService);
 
     /**
      * Mock Pageable.
      */
-    @MockBean
     private Pageable pageable;
 
     /**
@@ -90,6 +75,7 @@ public class PhraseForTrainingServiceTest {
         when(phraseForTrainingRepository.getAllByPhraseCategoryId(id, pageable)).thenReturn(list);
 
         assertThat(this.phraseForTrainingService.getPhrasesByCategoryId(id, pageable), is(list));
+        verify(phraseForTrainingRepository, times(1)).getAllByPhraseCategoryId(id, pageable);
     }
 
     /**
@@ -102,6 +88,7 @@ public class PhraseForTrainingServiceTest {
         when(phraseForTrainingRepository.save(phraseForTraining)).thenReturn(phraseForTraining);
 
         assertThat(this.phraseForTrainingService.save(phraseForTraining), is(phraseForTraining));
+        verify(phraseForTrainingRepository, times(1)).save(phraseForTraining);
     }
 
     /**
@@ -118,6 +105,8 @@ public class PhraseForTrainingServiceTest {
                 phraseForTraining.getPhrase(),
                 phraseForTraining.getTranslation(),
                 phraseCategory.getName()), is(phraseForTraining));
+        verify(phraseForTrainingRepository, times(1)).save(phraseForTraining);
+        verify(phraseCategoryService, times(1)).getCategoryByName(phraseCategory.getName());
     }
 
     /**
@@ -131,5 +120,6 @@ public class PhraseForTrainingServiceTest {
         when(this.phraseForTrainingRepository.getNumberOfRecordsByPhraseCategoryId(id)).thenReturn(numberOfRecords);
 
         assertThat(this.phraseForTrainingService.getNumberOfRecordsByPhraseCategoryId(id), is(numberOfRecords));
+        verify(phraseForTrainingRepository, times(1)).getNumberOfRecordsByPhraseCategoryId(id);
     }
 }

@@ -4,19 +4,15 @@ import com.voronin.english.domain.PhraseCategory;
 import com.voronin.english.repository.PhraseCategoryRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * PhraseCategoryService test class.
@@ -24,28 +20,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 04.02.2019.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(PhraseCategoryService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class PhraseCategoryServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private PhraseCategoryService phraseCategoryService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock PhraseCategoryRepository.
      */
-    @MockBean
-    private PhraseCategoryRepository phraseCategoryRepository;
+    private PhraseCategoryRepository phraseCategoryRepository = mock(PhraseCategoryRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private PhraseCategoryService phraseCategoryService = new PhraseCategoryService(phraseCategoryRepository);
 
     /**
      * When call save should return saved entity.
@@ -58,6 +43,7 @@ public class PhraseCategoryServiceTest {
         when(phraseCategoryRepository.save(phraseCategory)).thenReturn(phraseCategory);
 
         assertThat(this.phraseCategoryService.save(phraseCategory), is(phraseCategory));
+        verify(phraseCategoryRepository, times(1)).save(phraseCategory);
     }
 
     /**
@@ -71,6 +57,7 @@ public class PhraseCategoryServiceTest {
         when(this.phraseCategoryRepository.findAll()).thenReturn(list);
 
         assertThat(this.phraseCategoryService.findAll(), is(list));
+        verify(phraseCategoryRepository, times(1)).findAll();
     }
 
     /**
@@ -84,6 +71,7 @@ public class PhraseCategoryServiceTest {
         when(phraseCategoryRepository.getByName("category")).thenReturn(phraseCategory);
 
         assertThat(this.phraseCategoryService.getCategoryByName("category"), is(phraseCategory));
+        verify(phraseCategoryRepository, times(1)).getByName("category");
     }
 
 }

@@ -5,13 +5,7 @@ import com.voronin.english.domain.PartOfSpeech;
 import com.voronin.english.repository.PartOfSpeechRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +13,10 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * PartOfSpeechService test class.
@@ -27,28 +24,18 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(PartOfSpeechService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class PartOfSpeechServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private PartOfSpeechService partOfSpeechService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock PartOfSpeechRepository.
      */
     @MockBean
-    private PartOfSpeechRepository partOfSpeechRepository;
+    private PartOfSpeechRepository partOfSpeechRepository = mock(PartOfSpeechRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private PartOfSpeechService partOfSpeechService = new PartOfSpeechService(partOfSpeechRepository);
 
     /**
      * Class for test.
@@ -75,6 +62,7 @@ public class PartOfSpeechServiceTest {
         when(partOfSpeechRepository.findAll()).thenReturn(list);
 
         assertThat(partOfSpeechService.getAll(), is(list));
+        verify(partOfSpeechRepository, times(1)).findAll();
     }
 
     /**
@@ -88,6 +76,8 @@ public class PartOfSpeechServiceTest {
                 .thenReturn(partOfSpeech);
 
         assertThat(partOfSpeechService.getPartOfSpeechByName(partOfSpeech.getPartOfSpeech()), is(partOfSpeech));
+        verify(partOfSpeechRepository, times(1))
+                .getPartOfSpeechByPartOfSpeech(partOfSpeech.getPartOfSpeech());
     }
 
     /**
@@ -100,6 +90,7 @@ public class PartOfSpeechServiceTest {
         when(partOfSpeechRepository.getById(partOfSpeech.getId())).thenReturn(partOfSpeech);
 
         assertThat(partOfSpeechService.getById(partOfSpeech.getId()), is(partOfSpeech));
+        verify(partOfSpeechRepository, times(1)).getById(partOfSpeech.getId());
     }
 
     /**
@@ -112,6 +103,7 @@ public class PartOfSpeechServiceTest {
         when(partOfSpeechRepository.save(partOfSpeech)).thenReturn(partOfSpeech);
 
         assertThat(partOfSpeechService.save(partOfSpeech), is(partOfSpeech));
+        verify(partOfSpeechRepository, times(1)).save(partOfSpeech);
     }
 
     /**
@@ -124,8 +116,9 @@ public class PartOfSpeechServiceTest {
         PartOfSpeech noun = new PartOfSpeech("Существительное");
         when(partOfSpeechRepository.findAll())
                 .thenReturn(Lists.newArrayList(noun, new PartOfSpeech("Прилагательное"), new PartOfSpeech("Союз")));
-        when(partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(noun.getPartOfSpeech())).thenReturn(noun);
 
         assertFalse(partOfSpeechService.getSpeechesWithoutNoun().contains(noun));
+        verify(partOfSpeechRepository, times(1))
+                .findAllByPartOfSpeechIsNotLike(noun.getPartOfSpeech());
     }
 }

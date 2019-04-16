@@ -9,15 +9,8 @@ import com.voronin.english.repository.NounRepository;
 import com.voronin.english.util.WriteFileToDisk;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -28,8 +21,11 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * Noun service test class.
@@ -37,82 +33,65 @@ import static org.mockito.Mockito.any;
  * @author Alexey Voronin.
  * @since 08.04.2019.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(NounService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class NounServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private NounService nounService;
 
     /**
      * Mock WriteFileToDisk.
      */
-    @MockBean
-    private WriteFileToDisk writeFileToDisk;
+    private WriteFileToDisk writeFileToDisk = mock(WriteFileToDisk.class);
 
     /**
      * Mock WordRepository.
      */
-    @MockBean
-    private NounRepository nounRepository;
+    private NounRepository nounRepository = mock(NounRepository.class);
 
     /**
      * Mock CategoryService.
      */
-    @MockBean
-    private CategoryService categoryService;
+    private CategoryService categoryService = mock(CategoryService.class);
 
     /**
      * Mock PartOfSpeechService.
      */
-    @MockBean
-    private PartOfSpeechService partOfSpeechService;
+    private PartOfSpeechService partOfSpeechService = mock(PartOfSpeechService.class);
 
     /**
      * Mock ImageService.
      */
-    @MockBean
-    private ImageService imageService;
+    private ImageService imageService = mock(ImageService.class);
 
     /**
      * Mock TranslationService.
      */
-    @MockBean
-    private TranslationService translationService;
+    private TranslationService translationService = mock(TranslationService.class);
 
     /**
      * Mock PhraseService.
      */
-    @MockBean
-    private PhraseService phraseService;
-
-    /**
-     * Mock MultipartFile.
-     */
-    @MockBean
-    private MultipartFile multipartFile;
+    private PhraseService phraseService = mock(PhraseService.class);
 
     /**
      * Mock File.
      */
-    @MockBean
-    private File file;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
+    private File file = mock(File.class);
 
     /**
      * Mock Pageable.
      */
-    @MockBean
-    private Pageable pageable;
+    private Pageable pageable = mock(Pageable.class);
+
+    /**
+     * The class object under test.
+     */
+    private NounService nounService =
+            new NounService(
+                    writeFileToDisk,
+                    partOfSpeechService,
+                    translationService,
+                    phraseService,
+                    imageService,
+                    categoryService,
+                    nounRepository);
 
     /**
      * Path to save image.
@@ -177,6 +156,7 @@ public class NounServiceTest {
         when(nounRepository.save(any(Noun.class))).thenReturn(noun);
 
         assertThat(nounService.save(noun), is(noun));
+        verify(nounRepository, times(1)).save(any(Noun.class));
     }
 
 
@@ -191,6 +171,7 @@ public class NounServiceTest {
         when(nounRepository.getAllByCategoryId(category.getId(), pageable)).thenReturn(list);
 
         assertThat(nounService.getNounsByCategoryId(category.getId(), pageable), is(list));
+        verify(nounRepository, times(1)).getAllByCategoryId(category.getId(), pageable);
     }
 
     /**
@@ -203,6 +184,7 @@ public class NounServiceTest {
         when(nounRepository.getAllByCategoryId(uuid)).thenReturn(list);
 
         assertThat(nounService.getNounsByCategoryId(uuid), is(list));
+        verify(nounRepository, times(1)).getAllByCategoryId(uuid);
     }
 
     /**
@@ -216,6 +198,7 @@ public class NounServiceTest {
         when(nounRepository.getNumberOfRecordsByCategoryId(uuid)).thenReturn(numberOfRecords);
 
         assertThat(nounService.getNumberOfRecordsByCategoryId(uuid), is(numberOfRecords));
+        verify(nounRepository, times(1)).getNumberOfRecordsByCategoryId(uuid);
     }
 
     /**
@@ -228,6 +211,7 @@ public class NounServiceTest {
         when(nounRepository.getNounByWord(noun.getWord())).thenReturn(noun);
 
         assertThat(nounService.getNounByName(noun.getWord()), is(noun));
+        verify(nounRepository, times(1)).getNounByWord(noun.getWord());
     }
 
     /**
@@ -242,6 +226,7 @@ public class NounServiceTest {
         when(nounRepository.getAllByWordIn(listOfNames)).thenReturn(nouns);
 
         assertThat(nounService.getNounsByNames(listOfNames), is(nouns));
+        verify(nounRepository, times(1)).getAllByWordIn(listOfNames);
     }
 
     /**
@@ -251,10 +236,12 @@ public class NounServiceTest {
      */
     @Test
     public void whenPrepareAndSaveShouldReturnNoun() throws Exception {
+        MultipartFile multipartFile = mock(MultipartFile.class);
         when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
         when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
         when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
 
         assertThat(nounService.prepareAndSave(cardFilled, multipartFile).getWord(), is(noun.getWord()));
+        verify(nounRepository, times(1)).save(noun);
     }
 }

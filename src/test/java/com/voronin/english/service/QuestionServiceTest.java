@@ -5,13 +5,6 @@ import com.voronin.english.domain.Question;
 import com.voronin.english.repository.QuestRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,8 +13,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.any;
 
 /**
  * QuestionService test class.
@@ -29,40 +25,27 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 19.12.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(QuestionService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class QuestionServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private QuestionService questionService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock QuestRepository.
      */
-    @MockBean
-    private QuestRepository questRepository;
+    private QuestRepository questRepository = mock(QuestRepository.class);
 
     /**
      * Mock WordService.
      */
-    @MockBean
-    private NounService nounService;
+    private NounService nounService = mock(NounService.class);
 
     /**
      * Mock ExamService.
      */
-    @MockBean
-    private ExamService examService;
+    private ExamService examService = mock(ExamService.class);
+
+    /**
+     * The class object under test.
+     */
+    private QuestionService questionService = new QuestionService(questRepository, nounService, examService);
 
     /**
      * When call save should return saved Question.
@@ -75,6 +58,7 @@ public class QuestionServiceTest {
         when(questRepository.save(question)).thenReturn(question);
 
         assertThat(questionService.save(question), is(question));
+        verify(questRepository, times(1)).save(question);
     }
 
     /**
@@ -93,9 +77,11 @@ public class QuestionServiceTest {
         question.setNouns(new HashSet<>(nouns));
         when(nounService.getNounByName(anyString())).thenReturn(noun);
         when(nounService.getNounsByNames(anyList())).thenReturn(nouns);
-        when(nounService.save(any(Noun.class))).thenReturn(noun);
         when(questRepository.save(any(Question.class))).thenReturn(question);
 
         assertThat(questionService.prepareAndSave("exam", noun.getWord(), variants), is(question));
+        verify(nounService, times(1)).getNounByName(anyString());
+        verify(nounService, times(1)).getNounsByNames(anyList());
+        verify(questRepository, times(1)).save(any(Question.class));
     }
 }

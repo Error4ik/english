@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(PhraseController.class)
-@WithMockUser(username = "user", roles = {"USER"})
+@WithMockUser(authorities = "USER")
 public class PhraseControllerTest {
 
     /**

@@ -4,20 +4,16 @@ import com.voronin.english.domain.Phrase;
 import com.voronin.english.repository.PhraseRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * PhraseService test class.
@@ -25,28 +21,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(PhraseService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class PhraseServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private PhraseService phraseService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock PhraseRepository.
      */
-    @MockBean
-    private PhraseRepository phraseRepository;
+    private PhraseRepository phraseRepository = mock(PhraseRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private PhraseService phraseService = new PhraseService(phraseRepository);
 
     /**
      * When call saveAll should return saved list.
@@ -62,5 +47,6 @@ public class PhraseServiceTest {
         when(phraseRepository.saveAll(list)).thenReturn(list);
 
         assertThat(phraseService.saveAll(list), is(list));
+        verify(phraseRepository, times(1)).saveAll(list);
     }
 }

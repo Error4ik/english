@@ -4,19 +4,15 @@ import com.voronin.english.domain.Translation;
 import com.voronin.english.repository.TranslationRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * TranslationService test class.
@@ -24,28 +20,17 @@ import static org.mockito.Mockito.when;
  * @author Alexey Voronin.
  * @since 30.11.2018.
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(TranslationService.class)
-@WithMockUser(username = "user", roles = {"USER"})
 public class TranslationServiceTest {
-
-    /**
-     * The class object under test.
-     */
-    @Autowired
-    private TranslationService translationService;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
 
     /**
      * Mock TranslationRepository.
      */
-    @MockBean
-    private TranslationRepository translationRepository;
+    private TranslationRepository translationRepository = mock(TranslationRepository.class);
+
+    /**
+     * The class object under test.
+     */
+    private TranslationService translationService = new TranslationService(translationRepository);
 
     /**
      * When call saveAll should return saved list.
@@ -60,5 +45,6 @@ public class TranslationServiceTest {
         when(translationRepository.saveAll(list)).thenReturn(list);
 
         assertThat(translationService.saveAll(list), is(list));
+        verify(translationRepository, times(1)).saveAll(list);
     }
 }
