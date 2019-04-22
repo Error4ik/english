@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -88,6 +89,7 @@ public class PhraseForTrainingService {
      * @param category  category.
      * @return saved entity.
      */
+    @Transactional
     public PhraseForTraining prepareAndSave(final String phrase, final String translate, final String category) {
         logger.debug(String.format("Arguments - phrase - %s, translate - %s, category - %s",
                 phrase,

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -128,6 +129,7 @@ public class WordService {
      * @param card  Filled model of the word.
      * @return Word.
      */
+    @Transactional
     public Word prepareAndSave(final CardFilled card) {
         logger.debug(String.format("Arguments - word - %s", card));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());

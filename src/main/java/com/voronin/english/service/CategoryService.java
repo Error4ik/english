@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.util.List;
 
@@ -92,6 +93,7 @@ public class CategoryService {
      * @param photo    image for category.
      * @return category.
      */
+    @Transactional
     public Category prepareAndSave(final Category category, final MultipartFile photo) {
         logger.debug(String.format("Arguments - %s, %s", category, photo));
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);

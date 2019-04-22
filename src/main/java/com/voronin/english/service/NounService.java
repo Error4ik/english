@@ -11,6 +11,7 @@ import com.voronin.english.domain.Translation;
 import com.voronin.english.domain.AnyWord;
 import com.voronin.english.repository.NounRepository;
 import com.voronin.english.util.WriteFileToDisk;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +172,7 @@ public class NounService {
      * @param card Filled model of the word.
      * @return Noun.
      */
+    @Transactional
     public Noun prepareAndSave(final CardFilled card, final MultipartFile photo) {
         logger.debug(String.format("Arguments - word - %s", card));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());
