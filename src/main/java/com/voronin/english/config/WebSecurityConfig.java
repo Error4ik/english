@@ -25,6 +25,16 @@ import javax.sql.DataSource;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
+     * BCrypt password encoder.
+     *
+     * @return BCryptPasswordEncoder.
+     */
+    @Bean
+    public BCryptPasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /**
      * Implementation user detail service.
      */
     @Autowired
@@ -72,15 +82,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    /**
-     * BCrypt password encoder.
-     *
-     * @return BCryptPasswordEncoder.
-     */
-    @Bean
-    public BCryptPasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 }
