@@ -167,7 +167,7 @@ public class AdminController {
      * @return exam saved to the database.
      */
     @RequestMapping("/add-exam")
-    public Exam addExam(final @RequestParam String name, final String category, final int type) {
+    public Exam addExam(final String name, final String category, final int type) {
         return examService.prepareAndSave(name, category, type);
     }
 
