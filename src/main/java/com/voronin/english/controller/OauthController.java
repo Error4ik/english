@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -44,6 +45,17 @@ public class OauthController {
     public OauthController(final UserService userService, final TokenStore tokenStore) {
         this.userService = userService;
         this.tokenStore = tokenStore;
+    }
+
+    /**
+     * Return current user.
+     *
+     * @param user user.
+     * @return user or null if user is not authorise.
+     */
+    @RequestMapping("/user/current")
+    public Principal getUserById(final Principal user) {
+        return user;
     }
 
     /**
