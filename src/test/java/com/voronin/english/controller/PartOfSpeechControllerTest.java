@@ -1,5 +1,6 @@
 package com.voronin.english.controller;
 
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.PartOfSpeechService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,12 @@ public class PartOfSpeechControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock PartOfSpeechService.

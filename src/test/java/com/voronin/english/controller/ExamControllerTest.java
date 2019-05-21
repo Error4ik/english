@@ -1,6 +1,7 @@
 package com.voronin.english.controller;
 
 import com.voronin.english.domain.User;
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.ExamService;
 import com.voronin.english.service.UserExamsStatsService;
 import com.voronin.english.service.UserService;
@@ -46,6 +47,12 @@ public class ExamControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock ExamService.

@@ -2,14 +2,7 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
-import com.voronin.english.service.WordService;
-import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.ExamService;
-import com.voronin.english.service.PhraseForTrainingService;
-import com.voronin.english.service.QuestionService;
-import com.voronin.english.service.NounService;
-import com.voronin.english.service.UserService;
-import com.voronin.english.service.RoleService;
+import com.voronin.english.service.*;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +48,12 @@ public class AdminControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock WordService.

@@ -2,6 +2,7 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.Image;
 import com.voronin.english.repository.ImageRepository;
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.ImageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,12 @@ public class ImageControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock ImageService.

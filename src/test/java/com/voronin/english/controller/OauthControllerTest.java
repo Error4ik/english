@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.voronin.english.domain.User;
 import com.voronin.english.repository.UserRepository;
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +59,12 @@ public class OauthControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock UserService.

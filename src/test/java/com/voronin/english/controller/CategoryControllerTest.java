@@ -1,6 +1,7 @@
 package com.voronin.english.controller;
 
 import com.voronin.english.service.CategoryService;
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.PhraseCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,12 @@ public class CategoryControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock CategoryService.

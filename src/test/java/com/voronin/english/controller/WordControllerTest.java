@@ -1,5 +1,6 @@
 package com.voronin.english.controller;
 
+import com.voronin.english.service.DetailService;
 import com.voronin.english.service.NounService;
 import com.voronin.english.service.WordService;
 import org.junit.Test;
@@ -45,6 +46,12 @@ public class WordControllerTest {
      */
     @MockBean
     private JavaMailSender javaMailSender;
+
+    /**
+     * Mock DetailService.
+     */
+    @MockBean
+    private DetailService detailService;
 
     /**
      * Mock WordService.
