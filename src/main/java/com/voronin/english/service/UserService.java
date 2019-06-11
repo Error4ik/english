@@ -123,6 +123,7 @@ public class UserService {
             user.setPassword(encoder.encode(user.getPassword()));
             user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
             user.setActivationKey(UUID.randomUUID().toString());
+            user.setEmail(user.getEmail().toLowerCase());
             result = Optional.of(this.save(user));
             customEmailService.send(
                     new Message(

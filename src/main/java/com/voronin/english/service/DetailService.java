@@ -47,7 +47,7 @@ public class DetailService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(final String email) {
-        final User user = this.userService.getUserByEmail(email);
+        final User user = this.userService.getUserByEmail(email.toLowerCase());
         if (user != null) {
             if (user.isActive()) {
                 Set<GrantedAuthority> roles = new HashSet<>();
