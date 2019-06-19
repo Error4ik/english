@@ -10,7 +10,8 @@ import com.voronin.english.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -27,9 +28,7 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,7 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 29.11.2018.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(OauthController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @WithMockUser(authorities = "USER")
 public class OauthControllerTest {
 
@@ -53,18 +53,6 @@ public class OauthControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
-
-    /**
-     * Mock DetailService.
-     */
-    @MockBean
-    private DetailService detailService;
 
     /**
      * Mock UserService.

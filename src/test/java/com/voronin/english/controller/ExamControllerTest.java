@@ -8,7 +8,9 @@ import com.voronin.english.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -30,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 19.12.2018.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(ExamController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @WithMockUser(authorities = "USER")
 public class ExamControllerTest {
 
@@ -41,18 +44,6 @@ public class ExamControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
-
-    /**
-     * Mock DetailService.
-     */
-    @MockBean
-    private DetailService detailService;
 
     /**
      * Mock ExamService.

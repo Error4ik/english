@@ -6,7 +6,8 @@ import com.voronin.english.service.WordService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 28.11.2018.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(WordController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @WithMockUser(authorities = "USER")
 public class WordControllerTest {
 
@@ -40,18 +42,6 @@ public class WordControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
-
-    /**
-     * Mock DetailService.
-     */
-    @MockBean
-    private DetailService detailService;
 
     /**
      * Mock WordService.

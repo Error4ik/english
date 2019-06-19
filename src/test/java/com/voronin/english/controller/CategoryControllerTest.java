@@ -1,22 +1,22 @@
 package com.voronin.english.controller;
 
 import com.voronin.english.service.CategoryService;
-import com.voronin.english.service.DetailService;
 import com.voronin.english.service.PhraseCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * CategoryController test.
@@ -25,8 +25,8 @@ import static org.mockito.Mockito.verify;
  * @since 29.11.2018.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(CategoryController.class)
-@WithMockUser(authorities = "USER")
+@SpringBootTest
+@AutoConfigureMockMvc
 public class CategoryControllerTest {
 
     /**
@@ -36,18 +36,6 @@ public class CategoryControllerTest {
      */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * Mock JavaMailSender.
-     */
-    @MockBean
-    private JavaMailSender javaMailSender;
-
-    /**
-     * Mock DetailService.
-     */
-    @MockBean
-    private DetailService detailService;
 
     /**
      * Mock CategoryService.
