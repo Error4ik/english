@@ -242,3 +242,6 @@ CREATE TABLE oauth_approvals (
   lastModifiedAt TIMESTAMP
 );
 
+
+ALTER TABLE public.phrases ALTER COLUMN word_id DROP NOT NULL;
+ALTER TABLE public.translations ALTER COLUMN word_id DROP NOT NULL;

@@ -16,9 +16,7 @@ import com.voronin.english.service.PhraseForTrainingService;
 import com.voronin.english.service.UserService;
 import com.voronin.english.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -129,6 +127,26 @@ public class AdminController {
     @RequestMapping("/add-word")
     public void saveWord(final CardFilled cardFilled) {
         this.wordService.prepareAndSave(cardFilled);
+    }
+
+    /**
+     * Delete word.
+     *
+     * @param id wordId for delete.
+     */
+    @DeleteMapping("/delete-word")
+    public void deleteWord(@RequestParam final UUID id) {
+        wordService.deleteWord(id);
+    }
+
+    /**
+     * Delete noun.
+     *
+     * @param id nounId for delete.
+     */
+    @DeleteMapping("/delete-noun")
+    public void deleteNoun(@RequestParam final UUID id) {
+        nounService.deleteNoun(id);
     }
 
     /**

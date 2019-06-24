@@ -1,10 +1,6 @@
 package com.voronin.english.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ManyToOne;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
 
 /**
  * Word is a noun.
@@ -26,7 +22,7 @@ public class Noun extends AnyWord {
     /**
      * Image.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "image_id")
     private Image image;
 

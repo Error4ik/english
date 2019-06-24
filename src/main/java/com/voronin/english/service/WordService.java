@@ -104,6 +104,23 @@ public class WordService {
     }
 
     /**
+     * Delete word.
+     *
+     * @param id id.
+     */
+    @Transactional
+    public void deleteWord(final UUID id) {
+        logger.debug(String.format("Arguments - wordId - %s", id));
+        Word word = this.wordRepository.getWordById(id);
+        PartOfSpeech partOfSpeech = word.getPartOfSpeech();
+        partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() - 1);
+        this.wordRepository.delete(word);
+        logger.debug(String.format("Delete - word - %s", word));
+        this.partOfSpeechService.save(partOfSpeech);
+        logger.debug(String.format("Change partOfSpeech number of word and save - partOfSpeech - %s", partOfSpeech));
+    }
+
+    /**
      * Get number of records by part of speech id.
      *
      * @param partOfSpeechId partOfSpeechId.
@@ -126,7 +143,7 @@ public class WordService {
     /**
      * Prepare and save Word.
      *
-     * @param card  Filled model of the word.
+     * @param card Filled model of the word.
      * @return Word.
      */
     @Transactional

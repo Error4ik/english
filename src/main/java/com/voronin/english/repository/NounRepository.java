@@ -53,6 +53,14 @@ public interface NounRepository extends JpaRepository<Noun, UUID> {
     Noun getNounByWord(String noun);
 
     /**
+     * Get noun by id.
+     *
+     * @param uuid id.
+     * @return Noun.
+     */
+    Noun getNounById(UUID uuid);
+
+    /**
      * Get the number of records by category id.
      *
      * @param categoryId category id.

@@ -54,8 +54,12 @@ public class WordController {
     @GetMapping("/words")
     public Object getWords() {
         return new Object() {
-            public List<Word> getAllWord() {
+            public List<Word> getAllWords() {
                 return wordService.getWords();
+            }
+
+            public List<Noun> getAllNouns() {
+                return nounService.getNouns();
             }
         };
     }

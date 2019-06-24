@@ -1,17 +1,9 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.english.domain.Noun;
-import com.voronin.english.domain.PartOfSpeech;
-import com.voronin.english.domain.Category;
-import com.voronin.english.domain.CardFilled;
-import com.voronin.english.domain.Image;
-import com.voronin.english.domain.Phrase;
-import com.voronin.english.domain.Translation;
-import com.voronin.english.domain.AnyWord;
+import com.voronin.english.domain.*;
 import com.voronin.english.repository.NounRepository;
 import com.voronin.english.util.WriteFileToDisk;
-import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +29,7 @@ public class NounService {
     /**
      * Logger.
      */
-    private final Logger logger = LoggerFactory.getLogger(WordService.class);
+    private final Logger logger = LoggerFactory.getLogger(NounService.class);
 
     /**
      * Part of speech service.
@@ -147,6 +139,40 @@ public class NounService {
     }
 
     /**
+     * Get all nouns.
+     *
+     * @return List of nouns.
+     */
+    public List<Noun> getNouns() {
+        return this.nounRepository.findAll();
+    }
+
+    /**
+     * Delete noun.
+     *
+     * @param id id.
+     */
+    @Transactional
+    public void deleteNoun(final UUID id) {
+        logger.debug(String.format("Arguments - nounId - %s", id));
+        Noun noun = this.nounRepository.getNounById(id);
+        Category category = noun.getCategory();
+        PartOfSpeech partOfSpeech = noun.getPartOfSpeech();
+        Image image = noun.getImage();
+        this.nounRepository.delete(noun);
+        logger.debug(String.format("Delete - %s", noun));
+        category.setWordsCount(category.getWordsCount() - 1);
+        this.categoryService.save(category);
+        logger.debug(String.format("Change category number of word and save - %s", category));
+        partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() - 1);
+        this.partOfSpeechService.save(partOfSpeech);
+        logger.debug(String.format("Change partOfSpeech number of word and save - partOfSpeech - %s", partOfSpeech));
+        File file = new File(image.getUrl());
+        boolean isDelete = file.delete();
+        logger.debug(String.format("Delete image from filesystem - %s", isDelete));
+    }
+
+    /**
      * Get noun by name.
      *
      * @param name word name.
@@ -174,7 +200,7 @@ public class NounService {
      */
     @Transactional
     public Noun prepareAndSave(final CardFilled card, final MultipartFile photo) {
-        logger.debug(String.format("Arguments - word - %s", card));
+        logger.debug(String.format("Arguments - noun - %s", card));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());
         Category category = this.categoryService.getCategoryByName(card.getCategory());
         Noun noun = new Noun(card.getWord(), card.getTranscription(), partOfSpeech, category, card.getDescription());
