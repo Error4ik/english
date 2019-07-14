@@ -2,6 +2,7 @@ package com.voronin.english.controller;
 
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Category;
+import com.voronin.english.repository.UserRepository;
 import com.voronin.english.service.WordService;
 import com.voronin.english.service.CategoryService;
 import com.voronin.english.service.NounService;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,6 +30,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -214,29 +217,83 @@ public class AdminControllerTest {
                 .prepareAndSave(phrase, translate, category);
     }
 
-//    /**
-//     * When mapping '/users' should call the getUsers method of the UserService class once.
-//     *
-//     * @throws Exception exception.
-//     */
-//    @Test
-//    public void whenMappingUsersShouldReturnStatusOkAndCallGetUsersMethodOneTime() throws Exception {
-//        this.mockMvc.perform(get("/admin/users")).andExpect(status().isOk());
-//
-//        verify(this.userService, times(1)).getUsers();
-//    }
-//
-//    /**
-//     * When mapping '/roles' should call the getRoles method of the RoleService class once.
-//     *
-//     * @throws Exception exception.
-//     */
-//    @Test
-//    public void whenMappingRolesShouldReturnStatusOkAndCallGetRolesMethodOneTime() throws Exception {
-//        this.mockMvc.perform(get("/admin/roles")).andExpect(status().isOk());
-//
-//        verify(this.roleService, times(1)).getRoles();
-//    }
+    /**
+     * When mapping '/admin/edit-noun' should call
+     * the editNounAndSave method of the NounService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingEditNounShouldReturnStatusOkAndCallEditNounAndSaveMethodOneTime()
+            throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        this.mockMvc
+                .perform(get("/admin/edit-noun")
+                        .flashAttr("cardFilled", cardFilled)
+                        .param("nounId", uuid.toString()))
+                .andExpect(status().isOk());
+
+        verify(this.nounService, times(1))
+                .editNounAndSave(cardFilled, null, uuid.toString());
+    }
+
+    /**
+     * When mapping '/admin/delete-noun' should call
+     * the deleteNoun method of the NounService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingDeleteNounShouldReturnStatusOkAndCallDeleteNounMethodOneTime()
+            throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        this.mockMvc
+                .perform(get("/admin/delete-noun")
+                        .param("id", uuid.toString()))
+                .andExpect(status().isOk());
+
+        verify(this.nounService, times(1))
+                .deleteNoun(uuid);
+    }
+
+    /**
+     * When mapping '/admin/edit-word' should call
+     * the editWordAndSave method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingEditWordShouldReturnStatusOkAndCallEditWordAndSaveMethodOneTime()
+            throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        this.mockMvc
+                .perform(get("/admin/edit-word")
+                        .flashAttr("cardFilled", cardFilled)
+                        .param("wordId", uuid.toString()))
+                .andExpect(status().isOk());
+
+        verify(this.wordService, times(1))
+                .editWordAndSave(cardFilled, uuid.toString());
+    }
+
+    /**
+     * When mapping '/admin/delete-word' should call
+     * the deleteWord method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingDeleteWordShouldReturnStatusOkAndCallDeleteWordMethodOneTime()
+            throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        this.mockMvc
+                .perform(get("/admin/delete-word")
+                        .param("id", uuid.toString()))
+                .andExpect(status().isOk());
+
+        verify(this.wordService, times(1))
+                .deleteWord(uuid);
+    }
 
     /**
      * When mapping '/change-role' should call the getUsers method of the UserService class once.

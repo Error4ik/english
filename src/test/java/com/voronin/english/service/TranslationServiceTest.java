@@ -47,4 +47,17 @@ public class TranslationServiceTest {
         assertThat(translationService.saveAll(list), is(list));
         verify(translationRepository, times(1)).saveAll(list);
     }
+
+    /**
+     * When call delete method should call delete method TranslationRepository class once.
+     * @throws Exception
+     */
+    @Test
+    public void whenDeleteMethodShouldCallDeleteMethodRepository() throws Exception {
+        Translation translation = new Translation();
+
+        this.translationService.delete(translation);
+
+        verify(this.translationRepository, times(1)).delete(translation);
+    }
 }

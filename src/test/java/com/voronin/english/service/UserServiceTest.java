@@ -129,11 +129,11 @@ public class UserServiceTest {
     @Test
     public void whenRegUserWithNewUserShouldReturnOptionalUser() throws Exception {
         Optional<User> optional = Optional.of(user);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        assertThat(userService.regUser(user), is(optional));
+        assertThat(userService.regUser(user).get().getEmail(), is(optional.get().getEmail()));
 
-        verify(userRepository, times(1)).save(user);
+        verify(userRepository, times(1)).save(any(User.class));
         verify(customEmailService, times(1)).send(any(Message.class));
     }
 
@@ -145,10 +145,10 @@ public class UserServiceTest {
     @Test
     public void whenRegUserWithExistUserShouldReturnOptionalUser() throws Exception {
         Optional<User> optional = Optional.empty();
-        when(userRepository.save(user)).thenThrow(DataIntegrityViolationException.class);
+        when(userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
 
         assertThat(userService.regUser(user), is(optional));
-        verify(userRepository, times(1)).save(user);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     /**

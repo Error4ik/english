@@ -74,17 +74,10 @@ public class ImageControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     public void whenMappingImageByIdShouldReturnByteArray() throws Exception {
         final UUID id = UUID.randomUUID();
-        File file = Files.createTempFile("file", ".png").toFile();
-        FileInputStream fis = new FileInputStream(file);
-
-        when(this.imageService.getImageById(id)).thenReturn(image);
-        when(this.image.getUrl()).thenReturn(file.getAbsolutePath());
-        whenNew(File.class).withAnyArguments().thenReturn(file);
-        whenNew(FileInputStream.class).withAnyArguments().thenReturn(fis);
 
         this.mockMvc.perform(get("/image/{id}", id))
                 .andExpect(status().isOk());
 
-        verify(imageService, times(1)).getImageById(id);
+        verify(this.imageService, times(1)).getBytesFromImage(id);
     }
 }

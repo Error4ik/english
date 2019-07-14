@@ -1,8 +1,14 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.english.domain.*;
+import com.voronin.english.domain.Noun;
+import com.voronin.english.domain.CardFilled;
+import com.voronin.english.domain.Category;
+import com.voronin.english.domain.PartOfSpeech;
+import com.voronin.english.domain.Image;
+import com.voronin.english.domain.Translation;
 import com.voronin.english.repository.NounRepository;
+import com.voronin.english.util.PhrasesAndTranslationUtil;
 import com.voronin.english.util.WriteFileToDisk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,19 +72,25 @@ public class NounService {
     private NounRepository nounRepository;
 
     /**
+     * Util class, get phrases and translation.
+     */
+    private final PhrasesAndTranslationUtil phrasesAndTranslationUtil;
+
+    /**
      * Default path to save image to disk.
      */
     @Value("${upload.image.folder}")
     private String pathToSaveImage;
 
     /**
-     * @param writeFileToDisk     class for writing a file to disk.
-     * @param partOfSpeechService partOfSpeech service.
-     * @param translationService  translation service.
-     * @param phraseService       phrase service.
-     * @param imageService        image service.
-     * @param categoryService     category service.
-     * @param nounRepository      noun repository.
+     * @param writeFileToDisk       class for writing a file to disk.
+     * @param partOfSpeechService   partOfSpeech service.
+     * @param translationService    translation service.
+     * @param phraseService         phrase service.
+     * @param imageService          image service.
+     * @param categoryService       category service.
+     * @param nounRepository        noun repository.
+     * @param phrasesAndTranslation util class get phrases and translation.
      */
     public NounService(
             final WriteFileToDisk writeFileToDisk,
@@ -88,7 +99,8 @@ public class NounService {
             final PhraseService phraseService,
             final ImageService imageService,
             final CategoryService categoryService,
-            final NounRepository nounRepository) {
+            final NounRepository nounRepository,
+            final PhrasesAndTranslationUtil phrasesAndTranslation) {
         this.writeFileToDisk = writeFileToDisk;
         this.partOfSpeechService = partOfSpeechService;
         this.translationService = translationService;
@@ -96,6 +108,7 @@ public class NounService {
         this.imageService = imageService;
         this.categoryService = categoryService;
         this.nounRepository = nounRepository;
+        this.phrasesAndTranslationUtil = phrasesAndTranslation;
     }
 
     /**
@@ -163,10 +176,8 @@ public class NounService {
         logger.debug(String.format("Delete - %s", noun));
         category.setWordsCount(category.getWordsCount() - 1);
         this.categoryService.save(category);
-        logger.debug(String.format("Change category number of word and save - %s", category));
         partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() - 1);
         this.partOfSpeechService.save(partOfSpeech);
-        logger.debug(String.format("Change partOfSpeech number of word and save - partOfSpeech - %s", partOfSpeech));
         File file = new File(image.getUrl());
         boolean isDelete = file.delete();
         logger.debug(String.format("Delete image from filesystem - %s", isDelete));
@@ -183,6 +194,16 @@ public class NounService {
     }
 
     /**
+     * Get noun by id.
+     *
+     * @param id id.
+     * @return noun by id.
+     */
+    public Noun getNounById(final UUID id) {
+        return this.nounRepository.getOne(id);
+    }
+
+    /**
      * Get list noun by names.
      *
      * @param names list of name.
@@ -195,7 +216,8 @@ public class NounService {
     /**
      * Prepare and save Noun.
      *
-     * @param card Filled model of the word.
+     * @param card  Filled model of the word.
+     * @param photo word image.
      * @return Noun.
      */
     @Transactional
@@ -203,49 +225,89 @@ public class NounService {
         logger.debug(String.format("Arguments - noun - %s", card));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());
         Category category = this.categoryService.getCategoryByName(card.getCategory());
-        Noun noun = new Noun(card.getWord(), card.getTranscription(), partOfSpeech, category, card.getDescription());
+        Noun noun = new Noun(
+                card.getWord(),
+                card.getTranscription().trim(),
+                partOfSpeech, category,
+                card.getDescription().trim());
         File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
         noun.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.save(noun);
         logger.debug(String.format("Save noun - %s", noun));
         partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() + 1);
         this.partOfSpeechService.save(partOfSpeech);
-        logger.debug(String.format("Save part of speech - %s", partOfSpeech));
-        this.translationService.saveAll(getTranslation(card, noun));
-        this.phraseService.saveAll(getPhrases(card, noun));
+        this.translationService.saveAll(phrasesAndTranslationUtil.getTranslation(card, noun));
+        this.phraseService.saveAll(phrasesAndTranslationUtil.getPhrases(card, noun));
         category.setWordsCount(category.getWordsCount() + 1);
         this.categoryService.save(category);
-        logger.debug(String.format("Save category - %s", category));
         logger.debug(String.format("Return - %s", noun));
         return noun;
     }
 
     /**
-     * Get phrases.
+     * Edit noun.
      *
-     * @param card Filled model of the word.
-     * @param word word.
-     * @return List of Phrase.
+     * @param cardFilled filled model of word.
+     * @param photo      image if any.
+     * @param wordId     the ID of the noun you want to edit.
+     * @return saved Noun.
      */
-    private List<Phrase> getPhrases(final CardFilled card, final AnyWord word) {
-        Phrase p1 = new Phrase(card.getFirstPhrase(), card.getFirstPhraseTranslation(), word);
-        Phrase p2 = new Phrase(card.getSecondPhrase(), card.getSecondPhraseTranslation(), word);
-        return Lists.newArrayList(p1, p2);
+    public Noun editNounAndSave(final CardFilled cardFilled, final MultipartFile photo, final String wordId) {
+        logger.debug(String.format("Arguments - CardFilled - %s,  - %s, wordId - %s", cardFilled, photo, wordId));
+        Noun noun = this.getNounById(UUID.fromString(wordId));
+        noun.setWord(cardFilled.getWord());
+        noun.setTranscription(cardFilled.getTranscription());
+        noun.setDescription(cardFilled.getDescription().trim());
+        if (!noun.getCategory().getName().equalsIgnoreCase(cardFilled.getCategory())) {
+            changingCategoryForWord(cardFilled, noun);
+        }
+        if (photo != null) {
+            changeImageForWord(photo, noun);
+        }
+        this.phrasesAndTranslationUtil.updatePhrase(
+                Lists.newArrayList(noun.getPhrases()),
+                this.phrasesAndTranslationUtil.getPhrases(cardFilled, noun));
+        this.phraseService.saveAll(Lists.newArrayList(noun.getPhrases()));
+        for (Translation translation : noun.getTranslations()) {
+            this.translationService.delete(translation);
+        }
+        noun.setTranslations(
+                this.translationService.saveAll(
+                        this.phrasesAndTranslationUtil.getTranslation(cardFilled, noun)));
+        logger.debug(String.format("Return word - %s", noun));
+        return this.save(noun);
     }
 
     /**
-     * Get translations.
+     * Changing image for word.
      *
-     * @param card Filled model of the word.
-     * @param word word.
-     * @return list of Translation.
+     * @param photo image.
+     * @param noun  word for changing.
      */
-    private List<Translation> getTranslation(final CardFilled card, final AnyWord word) {
-        List<Translation> translations = new ArrayList<>();
-        for (String s : card.getTranslation().split(",")) {
-            Translation t = new Translation(s, word);
-            translations.add(t);
-        }
-        return translations;
+    @Transactional
+    private void changeImageForWord(final MultipartFile photo, final Noun noun) {
+        Image oldImage = noun.getImage();
+        File fileForOldImage = new File(oldImage.getUrl());
+        fileForOldImage.delete();
+        File fileForNewImage = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        oldImage.setName(fileForNewImage.getName());
+        oldImage.setUrl(fileForNewImage.getAbsolutePath());
+        this.imageService.save(oldImage);
+    }
+
+    /**
+     * Changing category for word.
+     *
+     * @param cardFilled filled model of word.
+     * @param noun       word for changing.
+     */
+    @Transactional
+    private void changingCategoryForWord(final CardFilled cardFilled, final Noun noun) {
+        Category category = noun.getCategory();
+        category.setWordsCount(category.getWordsCount() - 1);
+        this.categoryService.save(category);
+        category = this.categoryService.getCategoryByName(cardFilled.getCategory());
+        category.setWordsCount(category.getWordsCount() + 1);
+        noun.setCategory(this.categoryService.save(category));
     }
 }

@@ -41,6 +41,6 @@ public class ImageController {
      */
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPhoto(@PathVariable final UUID id) {
-        return this.imageService.getByteFromImage(id);
+        return this.imageService.getBytesFromImage(id);
     }
 }

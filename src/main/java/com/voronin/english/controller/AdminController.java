@@ -1,5 +1,6 @@
 package com.voronin.english.controller;
 
+import com.google.common.collect.Lists;
 import com.voronin.english.domain.User;
 import com.voronin.english.domain.Category;
 import com.voronin.english.domain.CardFilled;
@@ -120,6 +121,31 @@ public class AdminController {
     }
 
     /**
+     * Edit noun.
+     *
+     * @param cardFilled filled model of card.
+     * @param photo      the image to the word.
+     * @param nounId     noun id for edit.
+     */
+    @RequestMapping("/edit-noun")
+    public void editNoun(
+            final CardFilled cardFilled,
+            final @RequestParam(value = "photo", required = false) MultipartFile photo,
+            final String nounId) {
+        this.nounService.editNounAndSave(cardFilled, photo, nounId);
+    }
+
+    /**
+     * Delete noun.
+     *
+     * @param id nounId for delete.
+     */
+    @RequestMapping("/delete-noun")
+    public void deleteNoun(@RequestParam final UUID id) {
+        nounService.deleteNoun(id);
+    }
+
+    /**
      * Add new word.
      *
      * @param cardFilled Filled model for cards.
@@ -130,24 +156,26 @@ public class AdminController {
     }
 
     /**
+     * Edit word.
+     *
+     * @param cardFilled filled model of card.
+     * @param wordId     word id fo edit.
+     */
+    @RequestMapping("/edit-word")
+    public void editWord(final CardFilled cardFilled, final String wordId) {
+        this.wordService.editWordAndSave(cardFilled, wordId);
+    }
+
+    /**
      * Delete word.
      *
      * @param id wordId for delete.
      */
-    @DeleteMapping("/delete-word")
+    @RequestMapping("/delete-word")
     public void deleteWord(@RequestParam final UUID id) {
         wordService.deleteWord(id);
     }
 
-    /**
-     * Delete noun.
-     *
-     * @param id nounId for delete.
-     */
-    @DeleteMapping("/delete-noun")
-    public void deleteNoun(@RequestParam final UUID id) {
-        nounService.deleteNoun(id);
-    }
 
     /**
      * Add new category for nouns.

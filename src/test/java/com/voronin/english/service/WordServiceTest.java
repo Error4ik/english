@@ -1,9 +1,9 @@
 package com.voronin.english.service;
 
-import com.voronin.english.domain.Word;
-import com.voronin.english.domain.CardFilled;
-import com.voronin.english.domain.PartOfSpeech;
+import com.google.common.collect.Lists;
+import com.voronin.english.domain.*;
 import com.voronin.english.repository.WordRepository;
+import com.voronin.english.util.PhrasesAndTranslationUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 /**
  * WordService test class.
@@ -35,26 +33,27 @@ public class WordServiceTest {
     /**
      * Mock WordRepository.
      */
-    @MockBean
     private WordRepository wordRepository = mock(WordRepository.class);
 
     /**
      * Mock PartOfSpeechService.
      */
-    @MockBean
     private PartOfSpeechService partOfSpeechService = mock(PartOfSpeechService.class);
 
     /**
      * Mock TranslationService.
      */
-    @MockBean
     private TranslationService translationService = mock(TranslationService.class);
 
     /**
      * Mock PhraseService.
      */
-    @MockBean
     private PhraseService phraseService = mock(PhraseService.class);
+
+    /**
+     * Mock PhrasesAndTranslation.
+     */
+    private PhrasesAndTranslationUtil phrasesAndTranslation = mock(PhrasesAndTranslationUtil.class);
 
     /**
      * The class object under test.
@@ -64,7 +63,8 @@ public class WordServiceTest {
                     wordRepository,
                     partOfSpeechService,
                     translationService,
-                    phraseService);
+                    phraseService,
+                    phrasesAndTranslation);
 
     /**
      * Mock Pageable.
@@ -111,6 +111,7 @@ public class WordServiceTest {
         partOfSpeech.setId(uuid);
         partOfSpeech.setPartOfSpeech("speech");
         word.setWord("word");
+        word.setPartOfSpeech(partOfSpeech);
         cardFilled = new CardFilled("word", "transcription", "translation",
                 "category", "speech", "firstPhrase", "secondPhrase",
                 "firstPhraseTranslation", "secondPhraseTranslation",
@@ -202,5 +203,73 @@ public class WordServiceTest {
         verify(partOfSpeechService, times(1)).save(partOfSpeech);
         verify(translationService, times(1)).saveAll(anyList());
         verify(phraseService, times(1)).saveAll(anyList());
+    }
+
+    /**
+     * When call deleteWord method should call delete method
+     * WordRepository class once and change numberOfWords in the PartOfSpeech.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenDeleteWordShouldChangeTheNumberOfWordsInThePartOfSpeech() throws Exception {
+        final PartOfSpeech part = new PartOfSpeech();
+        part.setNumberOfWords(2);
+        final int expectedNumberOfWords = 1;
+        this.word.setPartOfSpeech(part);
+        when(this.wordRepository.getWordById(uuid)).thenReturn(word);
+
+        this.wordService.deleteWord(uuid);
+
+        assertThat(part.getNumberOfWords(), is(expectedNumberOfWords));
+        verify(this.wordRepository, times(1)).delete(word);
+        verify(this.partOfSpeechService, times(1)).save(part);
+    }
+
+    /**
+     * When editWordAndSave without change part of speech
+     * should return changed word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenEditWordAndSaveWithoutChangesPartOfSpeechShouldReturnSavedWord() throws Exception {
+        when(this.wordService.getWordById(uuid)).thenReturn(word);
+        this.word.setPhrases(new HashSet<>(Lists.newArrayList(new Phrase())));
+        this.word.setTranslations(Lists.newArrayList(new Translation()));
+
+        this.wordService.editWordAndSave(cardFilled, uuid.toString());
+
+        assertThat(this.word.getDescription(), is(cardFilled.getDescription()));
+        assertThat(this.word.getTranscription(), is(cardFilled.getTranscription()));
+        assertThat(this.word.getPartOfSpeech().getPartOfSpeech(), is(cardFilled.getPartOfSpeech()));
+    }
+
+    /**
+     * When editWordAndSave with changed part of speech should return changed word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenEditWordAndSaveWithChangedPartOfSpeechShouldReturnChangedWord() throws Exception {
+        this.word.setPhrases(new HashSet<>(Lists.newArrayList(new Phrase())));
+        this.word.setTranslations(Lists.newArrayList(new Translation()));
+        this.cardFilled.setPartOfSpeech("new part of speech");
+        this.partOfSpeech.setNumberOfWords(2);
+        final int oldPartOfSpeechNumberOfWords = 1;
+        final int newPartOfSpeechNumberOfWords = 1;
+        final PartOfSpeech part = new PartOfSpeech();
+        part.setPartOfSpeech("new part of speech");
+        when(this.wordService.getWordById(uuid)).thenReturn(word);
+        when(this.wordService.save(any(Word.class))).thenReturn(word);
+        when(this.partOfSpeechService.getPartOfSpeechByName(cardFilled.getPartOfSpeech())).thenReturn(part);
+        when(this.partOfSpeechService.save(any(PartOfSpeech.class))).thenReturn(part);
+
+        this.wordService.editWordAndSave(cardFilled, uuid.toString());
+
+        assertThat(this.word.getDescription(), is(cardFilled.getDescription()));
+        assertThat(this.word.getTranscription(), is(cardFilled.getTranscription()));
+        assertThat(word.getPartOfSpeech().getNumberOfWords(), is(newPartOfSpeechNumberOfWords));
+        assertThat(this.partOfSpeech.getNumberOfWords(), is(oldPartOfSpeechNumberOfWords));
     }
 }

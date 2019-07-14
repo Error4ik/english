@@ -2,17 +2,19 @@ package com.voronin.english.service;
 
 import com.voronin.english.domain.Image;
 import com.voronin.english.repository.ImageRepository;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 /**
  * ImageService test class.
@@ -65,5 +67,57 @@ public class ImageServiceTest {
 
         assertThat(this.imageService.getImageById(image.getId()), is(image));
         verify(imageRepository, times(1)).getOne(image.getId());
+    }
+
+    /**
+     * When call method getBytesFromImage with image
+     * equals null should return byte array zero length.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetBytesFromImageWithImageEqualsNullShouldReturnByteArrayZeroLength() throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        when(this.imageRepository.getOne(uuid)).thenReturn(null);
+        byte[] b = new byte[0];
+
+        assertThat(this.imageService.getBytesFromImage(uuid), is(b));
+        verify(this.imageRepository, times(1)).getOne(uuid);
+    }
+
+    /**
+     * When call getBytesFromImage with image, should return byte array.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetBytesFromImageWithImageShouldReturnByteArray() throws Exception {
+        final UUID uuid = UUID.randomUUID();
+        File file = File.createTempFile("test", ".txt");
+        image.setUrl(file.getAbsolutePath());
+        when(this.imageRepository.getOne(uuid)).thenReturn(image);
+        String text = "Hello world!";
+        byte[] b;
+        try (FileOutputStream fos = new FileOutputStream(file); FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = text.getBytes();
+            fos.write(buffer, 0, buffer.length);
+            b = IOUtils.toByteArray(fis);
+        }
+
+        assertThat(this.imageService.getBytesFromImage(uuid), is(b));
+        verify(this.imageRepository, times(1)).getOne(uuid);
+        file.delete();
+    }
+
+    /**
+     * When call delete method should call delete method ImageRepository class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenDeleteImageShouldCallDeleteMethodOneTime() throws Exception {
+        this.imageService.delete(image);
+
+        verify(this.imageRepository, times(1)).delete(image);
     }
 }

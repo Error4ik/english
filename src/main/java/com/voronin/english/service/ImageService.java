@@ -68,7 +68,7 @@ public class ImageService {
      * @param imageId image id.
      * @return image in bytes.
      */
-    public byte[] getByteFromImage(final UUID imageId) {
+    public byte[] getBytesFromImage(final UUID imageId) {
         byte[] b = new byte[0];
         Image image = this.getImageById(imageId);
         if (image != null) {
@@ -79,5 +79,14 @@ public class ImageService {
             }
         }
         return b;
+    }
+
+    /**
+     * Delete image.
+     *
+     * @param image image for delete.
+     */
+    public void delete(final Image image) {
+        this.imageRepository.delete(image);
     }
 }

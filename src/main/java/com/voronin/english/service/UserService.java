@@ -119,17 +119,18 @@ public class UserService {
     public Optional<User> regUser(final User user) {
         logger.debug(String.format("Arguments - %s", user));
         Optional<User> result = Optional.empty();
+        User newUser = new User();
+        newUser.setPassword(encoder.encode(user.getPassword()));
+        newUser.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
+        newUser.setActivationKey(UUID.randomUUID().toString());
+        newUser.setEmail(user.getEmail().toLowerCase());
         try {
-            user.setPassword(encoder.encode(user.getPassword()));
-            user.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
-            user.setActivationKey(UUID.randomUUID().toString());
-            user.setEmail(user.getEmail().toLowerCase());
-            result = Optional.of(this.save(user));
+            result = Optional.of(this.save(newUser));
             customEmailService.send(
                     new Message(
-                            user.getEmail(),
+                            newUser.getEmail(),
                             "Activated account for ~ english.ru",
-                            String.format("%s/activate/%s", activatePath, user.getActivationKey())));
+                            String.format("%s/activate/%s", activatePath, newUser.getActivationKey())));
         } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }

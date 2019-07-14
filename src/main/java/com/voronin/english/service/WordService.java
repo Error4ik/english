@@ -1,13 +1,12 @@
 package com.voronin.english.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.english.domain.AnyWord;
-import com.voronin.english.domain.Phrase;
 import com.voronin.english.domain.Translation;
 import com.voronin.english.domain.PartOfSpeech;
 import com.voronin.english.domain.CardFilled;
 import com.voronin.english.domain.Word;
 import com.voronin.english.repository.WordRepository;
+import com.voronin.english.util.PhrasesAndTranslationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,23 +52,31 @@ public class WordService {
     private final PhraseService phraseService;
 
     /**
+     * Util class, get phrases and translation.
+     */
+    private final PhrasesAndTranslationUtil phrasesAndTranslationUtil;
+
+    /**
      * Constructor.
      *
-     * @param wordRepository      word repository.
-     * @param partOfSpeechService part of speech service.
-     * @param translationService  translation service.
-     * @param phraseService       phrase service.
+     * @param wordRepository        word repository.
+     * @param partOfSpeechService   part of speech service.
+     * @param translationService    translation service.
+     * @param phraseService         phrase service.
+     * @param phrasesAndTranslation util class get phrases and translation.
      */
     @Autowired
     public WordService(
             final WordRepository wordRepository,
             final PartOfSpeechService partOfSpeechService,
             final TranslationService translationService,
-            final PhraseService phraseService) {
+            final PhraseService phraseService,
+            final PhrasesAndTranslationUtil phrasesAndTranslation) {
         this.wordRepository = wordRepository;
         this.partOfSpeechService = partOfSpeechService;
         this.translationService = translationService;
         this.phraseService = phraseService;
+        this.phrasesAndTranslationUtil = phrasesAndTranslation;
     }
 
     /**
@@ -150,43 +156,63 @@ public class WordService {
     public Word prepareAndSave(final CardFilled card) {
         logger.debug(String.format("Arguments - word - %s", card));
         PartOfSpeech partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(card.getPartOfSpeech().trim());
-        Word word = new Word(card.getWord(), card.getTranscription(), partOfSpeech, card.getDescription());
+        Word word = new Word(
+                card.getWord(),
+                card.getTranscription().trim(),
+                partOfSpeech,
+                card.getDescription().trim());
         this.save(word);
         logger.info(String.format("Word save without image, %s", word));
         partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() + 1);
         this.partOfSpeechService.save(partOfSpeech);
-        this.translationService.saveAll(getTranslation(card, word));
-        this.phraseService.saveAll(getPhrases(card, word));
+        this.translationService.saveAll(phrasesAndTranslationUtil.getTranslation(card, word));
+        this.phraseService.saveAll(phrasesAndTranslationUtil.getPhrases(card, word));
         logger.debug(String.format("Return - %s", word));
         return word;
     }
 
     /**
-     * Get phrases.
+     * Edit word.
      *
-     * @param card Filled model of the word.
-     * @param word word.
-     * @return List of Phrase.
+     * @param cardFilled Filled model of the word.
+     * @param wordId     word id fo edit.
      */
-    private List<Phrase> getPhrases(final CardFilled card, final AnyWord word) {
-        Phrase p1 = new Phrase(card.getFirstPhrase(), card.getFirstPhraseTranslation(), word);
-        Phrase p2 = new Phrase(card.getSecondPhrase(), card.getSecondPhraseTranslation(), word);
-        return Lists.newArrayList(p1, p2);
+    public Word editWordAndSave(final CardFilled cardFilled, final String wordId) {
+        logger.debug(String.format("Arguments - CardFilled - %s, wordId - %s", cardFilled, wordId));
+        Word word = this.getWordById(UUID.fromString(wordId));
+        word.setWord(cardFilled.getWord());
+        word.setTranscription(cardFilled.getTranscription());
+        word.setDescription(cardFilled.getDescription());
+        if (!word.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase(cardFilled.getPartOfSpeech())) {
+            changePartOfSpeech(cardFilled, word);
+        }
+        this.phrasesAndTranslationUtil.updatePhrase(
+                Lists.newArrayList(word.getPhrases()),
+                this.phrasesAndTranslationUtil.getPhrases(cardFilled, word));
+        this.phraseService.saveAll(Lists.newArrayList(word.getPhrases()));
+        for (Translation translation : word.getTranslations()) {
+            this.translationService.delete(translation);
+        }
+        word.setTranslations(
+                this.translationService.saveAll(
+                        this.phrasesAndTranslationUtil.getTranslation(cardFilled, word)));
+        logger.debug(String.format("Return word - %s", word));
+        return this.save(word);
     }
 
     /**
-     * Get translations.
+     * Changing part of speech for word.
      *
-     * @param card Filled model of the word.
-     * @param word word.
-     * @return list of Translation.
+     * @param cardFilled Filled model of the word.
+     * @param word       word for changing.
      */
-    private List<Translation> getTranslation(final CardFilled card, final AnyWord word) {
-        List<Translation> translations = new ArrayList<>();
-        for (String s : card.getTranslation().split(",")) {
-            Translation t = new Translation(s, word);
-            translations.add(t);
-        }
-        return translations;
+    @Transactional
+    private void changePartOfSpeech(final CardFilled cardFilled, final Word word) {
+        PartOfSpeech partOfSpeech = word.getPartOfSpeech();
+        partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() - 1);
+        this.partOfSpeechService.save(partOfSpeech);
+        partOfSpeech = this.partOfSpeechService.getPartOfSpeechByName(cardFilled.getPartOfSpeech());
+        partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() + 1);
+        word.setPartOfSpeech(this.partOfSpeechService.save(partOfSpeech));
     }
 }

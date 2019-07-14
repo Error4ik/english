@@ -40,4 +40,11 @@ public class TranslationService {
     public List<Translation> saveAll(final List<Translation> list) {
         return this.translationRepository.saveAll(list);
     }
+
+    /**
+     * @param translation t.
+     */
+    public void delete(final Translation translation) {
+        this.translationRepository.delete(translation);
+    }
 }
