@@ -230,7 +230,7 @@ public class NounService {
                 card.getTranscription().trim(),
                 partOfSpeech, category,
                 card.getDescription().trim());
-        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getWord());
         noun.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.save(noun);
         logger.debug(String.format("Save noun - %s", noun));
@@ -289,7 +289,7 @@ public class NounService {
         Image oldImage = noun.getImage();
         File fileForOldImage = new File(oldImage.getUrl());
         fileForOldImage.delete();
-        File fileForNewImage = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        File fileForNewImage = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getWord());
         oldImage.setName(fileForNewImage.getName());
         oldImage.setUrl(fileForNewImage.getAbsolutePath());
         this.imageService.save(oldImage);

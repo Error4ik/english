@@ -37,19 +37,25 @@ public class WriteFileToDisk {
 
     /**
      * Write image to disk.
-     * @param photo image.
+     *
+     * @param photo           image.
      * @param pathToSaveImage path to save.
+     * @param imageName       name for image.
      * @return File.
      */
-    public File writeImage(final MultipartFile photo, final String pathToSaveImage) {
+    public File writeImage(final MultipartFile photo, final String pathToSaveImage, final String imageName) {
         File dir = new File(pathToSaveImage);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        String path = String.format("%s%s%s-%s.%s", dir, fileSeparator,
-                photo.getOriginalFilename().replace(".png", ""),
-                System.currentTimeMillis(), fileExtension
+        String path = String.format(
+                "%s%s%s-%s.%s",
+                dir,
+                fileSeparator,
+                imageName,
+                System.currentTimeMillis(),
+                fileExtension
         );
 
         File file = new File(path);

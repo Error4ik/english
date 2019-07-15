@@ -243,7 +243,7 @@ public class NounServiceTest {
     @Test
     public void whenPrepareAndSaveShouldReturnNoun() throws Exception {
         MultipartFile multipartFile = mock(MultipartFile.class);
-        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
+        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getWord())).thenReturn(file);
         when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
         when(partOfSpeechService.getPartOfSpeechByName(anyString())).thenReturn(partOfSpeech);
 
@@ -358,7 +358,7 @@ public class NounServiceTest {
         noun.setPhrases(new HashSet<>(Lists.newArrayList(new Phrase())));
         noun.setTranslations(Lists.newArrayList(new Translation()));
         MultipartFile multipartFile = mock(MultipartFile.class);
-        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage)).thenReturn(file);
+        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getWord())).thenReturn(file);
         when(file.getName()).thenReturn("new name file");
         when(file.getAbsolutePath()).thenReturn("new absolute path");
 

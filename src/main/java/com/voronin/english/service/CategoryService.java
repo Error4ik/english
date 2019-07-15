@@ -96,7 +96,7 @@ public class CategoryService {
     @Transactional
     public Category prepareAndSave(final Category category, final MultipartFile photo) {
         logger.debug(String.format("Arguments - %s, %s", category, photo));
-        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage);
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage, category.getName());
         category.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.categoryRepository.save(category);
         logger.debug(String.format("Return - %s", category));
