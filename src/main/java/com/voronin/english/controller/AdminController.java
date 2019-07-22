@@ -254,15 +254,12 @@ public class AdminController {
     /**
      * Change the user role.
      *
-     * @param principal Principal.
-     * @param userId    User.
-     * @param roleId    Role.
+     * @param userId User.
+     * @param roleId Role.
+     * @return the user for whom the role was changed.
      */
     @RequestMapping("/change-role")
-    public User changeRole(
-            final Principal principal,
-            final @RequestParam UUID userId,
-            final @RequestParam String roleId) {
-        return userService.changeUserRole(principal, userId, UUID.fromString(roleId));
+    public User changeRole(final @RequestParam UUID userId, final @RequestParam String roleId) {
+        return userService.changeUserRole(userId, UUID.fromString(roleId));
     }
 }

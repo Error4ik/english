@@ -167,13 +167,12 @@ public class UserService {
     /**
      * Change User role or add new role.
      *
-     * @param principal Principal.
-     * @param userId    User id.
-     * @param roleId    Role id.
-     * @return User.
+     * @param userId User id.
+     * @param roleId Role id.
+     * @return the user for whom the role was changed.
      */
-    public User changeUserRole(final Principal principal, final UUID userId, final UUID roleId) {
-        logger.debug(String.format("Arguments - %s, userId - %s, roleId - %s", principal, userId, roleId));
+    public User changeUserRole(final UUID userId, final UUID roleId) {
+        logger.debug(String.format("Arguments - userId - %s, roleId - %s", userId, roleId));
         User user = this.getUserById(userId);
         Role role = roleService.getRoleById(roleId);
         if (user != null && role != null) {

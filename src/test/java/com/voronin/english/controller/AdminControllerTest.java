@@ -303,12 +303,11 @@ public class AdminControllerTest {
     @Test
     public void whenMappingChangeRoleShouldReturnStatusOkAndCallChangeUserRoleMethodOneTime() throws Exception {
         UUID uuid = UUID.randomUUID();
-        Principal principal = SecurityContextHolder.getContext().getAuthentication();
         this.mockMvc.perform(get("/admin/change-role")
                 .param("userId", uuid.toString())
                 .param("roleId", uuid.toString()))
                 .andExpect(status().isOk());
 
-        verify(this.userService, times(1)).changeUserRole(principal, uuid, uuid);
+        verify(this.userService, times(1)).changeUserRole(uuid, uuid);
     }
 }

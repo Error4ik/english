@@ -82,11 +82,6 @@ public class UserServiceTest {
     private UUID uuid = UUID.randomUUID();
 
     /**
-     * Principal.
-     */
-    private Principal principal;
-
-    /**
      * initialization of objects for the tests.
      */
     @Before
@@ -230,7 +225,7 @@ public class UserServiceTest {
         when(roleService.getRoleById(uuid)).thenReturn(role);
         when(userRepository.save(user)).thenReturn(user);
 
-        assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
+        assertThat(this.userService.changeUserRole(uuid, uuid), is(user));
         verify(userRepository, times(1)).getOne(uuid);
         verify(roleService, times(1)).getRoleById(uuid);
         verify(userRepository, times(1)).save(user);
@@ -248,7 +243,7 @@ public class UserServiceTest {
         when(roleService.getRoleById(uuid)).thenReturn(role);
         when(userRepository.save(user)).thenReturn(user);
 
-        assertThat(this.userService.changeUserRole(principal, uuid, uuid), is(user));
+        assertThat(this.userService.changeUserRole(uuid, uuid), is(user));
         verify(userRepository, times(1)).getOne(uuid);
         verify(roleService, times(1)).getRoleById(uuid);
         verify(userRepository, times(1)).save(user);
