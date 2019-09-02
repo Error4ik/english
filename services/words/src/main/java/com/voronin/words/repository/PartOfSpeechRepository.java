@@ -4,7 +4,6 @@ import com.voronin.words.domain.PartOfSpeech;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -14,7 +13,8 @@ import java.util.UUID;
  * @since 10.10.2018.
  */
 @Repository
-public interface PartOfSpeechRepository extends JpaRepository<PartOfSpeech, UUID> {
+public interface PartOfSpeechRepository extends
+        JpaRepository<PartOfSpeech, UUID> {
 
     /**
      * Get part of speech by name.

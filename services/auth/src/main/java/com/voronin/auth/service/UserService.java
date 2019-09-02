@@ -100,6 +100,16 @@ public class UserService {
     }
 
     /**
+     * Get user id by email.
+     *
+     * @param email user email.
+     * @return user id.
+     */
+    public String getUserIdByEmail(final String email) {
+        return this.userRepository.getUserByEmail(email).getId().toString();
+    }
+
+    /**
      * Save User to db.
      *
      * @param user User.

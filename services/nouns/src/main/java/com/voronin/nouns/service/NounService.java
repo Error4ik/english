@@ -1,7 +1,11 @@
 package com.voronin.nouns.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.nouns.domain.*;
+import com.voronin.nouns.domain.Noun;
+import com.voronin.nouns.domain.CardFilled;
+import com.voronin.nouns.domain.Category;
+import com.voronin.nouns.domain.Image;
+import com.voronin.nouns.domain.Translation;
 import com.voronin.nouns.repository.NounRepository;
 import com.voronin.nouns.utils.PhrasesAndTranslationUtil;
 import com.voronin.nouns.utils.WriteFileToDisk;

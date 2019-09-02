@@ -13,5 +13,6 @@ import java.util.UUID;
  * @since 10.10.2018.
  */
 @Repository
-public interface TranslationRepository extends JpaRepository<Translation, UUID> {
+public interface TranslationRepository extends
+        JpaRepository<Translation, UUID> {
 }

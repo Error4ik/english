@@ -2,7 +2,6 @@ package com.voronin.sentence.controller;
 
 import com.voronin.sentence.domain.Category;
 import com.voronin.sentence.service.CategoryService;
-import com.voronin.sentence.service.SentenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,21 +23,15 @@ public class CategoryController {
      */
     private final CategoryService categoryService;
 
-    /**
-     *
-     */
-    private final SentenceService sentenceService;
 
     /**
      * Controller.
      *
      * @param categoryService category service.
-     * @param sentenceService SentenceService.
      */
     @Autowired
-    public CategoryController(final CategoryService categoryService, final SentenceService sentenceService) {
+    public CategoryController(final CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.sentenceService = sentenceService;
     }
 
     /**

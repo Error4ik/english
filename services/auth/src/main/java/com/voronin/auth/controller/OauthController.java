@@ -10,7 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -68,6 +73,17 @@ public class OauthController {
     @RequestMapping("/user/current")
     public Principal getUserById(final Principal user) {
         return user;
+    }
+
+    /**
+     * Get user id by email.
+     *
+     * @param principal user .
+     * @return user id.
+     */
+    @RequestMapping("/userId")
+    public String getUserId(final Principal principal) {
+        return this.userService.getUserIdByEmail(principal.getName());
     }
 
     /**
