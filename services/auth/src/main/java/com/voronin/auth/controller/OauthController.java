@@ -81,9 +81,9 @@ public class OauthController {
      * @param principal user .
      * @return user id.
      */
-    @RequestMapping("/userId")
-    public String getUserId(final Principal principal) {
-        return this.userService.getUserIdByEmail(principal.getName());
+    @RequestMapping("/user")
+    public User getUserId(final Principal principal) {
+        return this.userService.getUserByEmail(principal.getName());
     }
 
     /**

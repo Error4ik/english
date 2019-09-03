@@ -1,5 +1,6 @@
 package com.voronin.nouns.service;
 
+import com.google.gson.Gson;
 import com.voronin.nouns.domain.Exam;
 import com.voronin.nouns.domain.UserExamsStats;
 import com.voronin.nouns.repository.UserExamsStatsRepository;
@@ -56,6 +57,12 @@ public class UserExamsStatsService {
     private String userUrl;
 
     /**
+     * class for using Gson.
+     */
+    @Autowired
+    private Gson gson;
+
+    /**
      * Constructor.
      *
      * @param userExamsStatsRepository User exam stats repository.
@@ -79,7 +86,7 @@ public class UserExamsStatsService {
      */
     public UserExamsStats save(final Principal principal, final UUID examId, final int correctAnswer) {
         logger.debug(String.format("Arguments - examId - %s, correctAnswer - %s", examId, correctAnswer));
-        UUID userId = UUID.fromString(this.getUserId(principal));
+        UUID userId = this.getUserId(principal);
         Exam exam = this.examService.getExamById(examId);
         UserExamsStats examsStats = this.userExamsStatsRepository.getUserExamsStatsByUserIdAndExam(userId, exam);
         if (examsStats == null) {
@@ -100,8 +107,8 @@ public class UserExamsStatsService {
      * @return List of UserExamsStats.
      */
     public List<UserExamsStats> getUserExamsStatsByUser(final Principal principal) {
-        String userId = getUserId(principal);
-        return this.userExamsStatsRepository.getUserExamsStatsByUserId(UUID.fromString(userId));
+        UUID userId = getUserId(principal);
+        return this.userExamsStatsRepository.getUserExamsStatsByUserId(userId);
     }
 
     /**
@@ -110,7 +117,7 @@ public class UserExamsStatsService {
      * @param principal access token.
      * @return user id.
      */
-    private String getUserId(final Principal principal) {
+    private UUID getUserId(final Principal principal) {
         String access = "";
         if (principal != null) {
             access = ((Map<String, String>)
@@ -121,11 +128,13 @@ public class UserExamsStatsService {
                             .get("details"))
                     .get("tokenValue");
         }
-        final String url = String.format("%s/userId", userUrl);
+        final String url = String.format("%s/user", userUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        return restTemplate.postForObject(url, entity, String.class);
+        String result = restTemplate.postForObject(url, entity, String.class);
+        Map<String, String> userValueMap = gson.fromJson(result, Map.class);
+        return UUID.fromString(userValueMap.get("id"));
     }
 }
