@@ -41,9 +41,10 @@ public class UserExamsStatsService {
     private final UserExamsStatsRepository userExamsStatsRepository;
 
     /**
-     * User service.
+     * RestTemplate.
      */
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     /**
      * Exam service.
