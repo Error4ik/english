@@ -1,6 +1,9 @@
 package com.voronin.words.util;
 
-import com.voronin.words.domain.*;
+import com.voronin.words.domain.Word;
+import com.voronin.words.domain.CardFilled;
+import com.voronin.words.domain.Phrase;
+import com.voronin.words.domain.Translation;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;

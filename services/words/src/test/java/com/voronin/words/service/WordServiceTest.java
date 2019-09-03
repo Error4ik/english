@@ -1,7 +1,11 @@
 package com.voronin.words.service;
 
 import com.google.common.collect.Lists;
-import com.voronin.words.domain.*;
+import com.voronin.words.domain.Word;
+import com.voronin.words.domain.PartOfSpeech;
+import com.voronin.words.domain.Phrase;
+import com.voronin.words.domain.Translation;
+import com.voronin.words.domain.CardFilled;
 import com.voronin.words.repository.WordRepository;
 import com.voronin.words.util.PhrasesAndTranslationUtil;
 import org.junit.Before;
@@ -20,7 +24,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * WordService test class.

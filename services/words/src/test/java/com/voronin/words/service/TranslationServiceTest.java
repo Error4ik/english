@@ -9,7 +9,10 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 /**
  * TranslationService test class.
@@ -47,7 +50,7 @@ public class TranslationServiceTest {
 
     /**
      * When call delete method should call delete method TranslationRepository class once.
-     * @throws Exception
+     * @throws Exception exception.
      */
     @Test
     public void whenDeleteMethodShouldCallDeleteMethodRepository() throws Exception {

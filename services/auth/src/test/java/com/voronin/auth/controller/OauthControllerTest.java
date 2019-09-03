@@ -28,7 +28,10 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -269,5 +272,18 @@ public class OauthControllerTest {
 
         verify(this.userService, times(1))
                 .changeUserRole(UUID.fromString(userId), UUID.fromString(roleId));
+    }
+
+    /**
+     * When mapping "/userId" should return status isOk and
+     * call method getUserIdByEmail by UserService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingUserIdShouldReturnStatusOk() throws Exception {
+        this.mockMvc.perform(get("/user")).andExpect(status().isOk());
+
+        verify(this.userService, times(1)).getUserByEmail(any(String.class));
     }
 }
