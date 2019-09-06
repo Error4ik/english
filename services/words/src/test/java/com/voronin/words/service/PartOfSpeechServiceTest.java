@@ -46,7 +46,7 @@ public class PartOfSpeechServiceTest {
      */
     @Before
     public void init() {
-        partOfSpeech.setPartOfSpeech("speech");
+        partOfSpeech.setName("speech");
         partOfSpeech.setId(UUID.randomUUID());
     }
 
@@ -71,12 +71,12 @@ public class PartOfSpeechServiceTest {
      */
     @Test
     public void getPartOfSpeechByName() throws Exception {
-        when(partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(partOfSpeech.getPartOfSpeech()))
+        when(partOfSpeechRepository.getPartOfSpeechByName(partOfSpeech.getName()))
                 .thenReturn(partOfSpeech);
 
-        assertThat(partOfSpeechService.getPartOfSpeechByName(partOfSpeech.getPartOfSpeech()), is(partOfSpeech));
+        assertThat(partOfSpeechService.getPartOfSpeechByName(partOfSpeech.getName()), is(partOfSpeech));
         verify(partOfSpeechRepository, times(1))
-                .getPartOfSpeechByPartOfSpeech(partOfSpeech.getPartOfSpeech());
+                .getPartOfSpeechByName(partOfSpeech.getName());
     }
 
     /**

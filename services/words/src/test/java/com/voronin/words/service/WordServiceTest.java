@@ -116,7 +116,7 @@ public class WordServiceTest {
     @Before
     public void init() {
         partOfSpeech.setId(uuid);
-        partOfSpeech.setPartOfSpeech("speech");
+        partOfSpeech.setName("speech");
         word.setWord("word");
         word.setPartOfSpeech(partOfSpeech);
         cardFilled = new CardFilled("word", "transcription", "translation",
@@ -249,7 +249,7 @@ public class WordServiceTest {
 
         assertThat(this.word.getDescription(), is(cardFilled.getDescription()));
         assertThat(this.word.getTranscription(), is(cardFilled.getTranscription()));
-        assertThat(this.word.getPartOfSpeech().getPartOfSpeech(), is(cardFilled.getPartOfSpeech()));
+        assertThat(this.word.getPartOfSpeech().getName(), is(cardFilled.getPartOfSpeech()));
     }
 
     /**
@@ -266,7 +266,7 @@ public class WordServiceTest {
         final int oldPartOfSpeechNumberOfWords = 1;
         final int newPartOfSpeechNumberOfWords = 1;
         final PartOfSpeech part = new PartOfSpeech();
-        part.setPartOfSpeech("new part of speech");
+        part.setName("new part of speech");
         when(this.wordService.getWordById(uuid)).thenReturn(word);
         when(this.wordService.save(any(Word.class))).thenReturn(word);
         when(this.partOfSpeechService.getPartOfSpeechByName(cardFilled.getPartOfSpeech())).thenReturn(part);
@@ -278,5 +278,33 @@ public class WordServiceTest {
         assertThat(this.word.getTranscription(), is(cardFilled.getTranscription()));
         assertThat(word.getPartOfSpeech().getNumberOfWords(), is(newPartOfSpeechNumberOfWords));
         assertThat(this.partOfSpeech.getNumberOfWords(), is(oldPartOfSpeechNumberOfWords));
+    }
+
+    /**
+     * When call getWordByWord should return Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetWordByWordShouldReturnNoun() throws Exception {
+        when(wordRepository.getWordByWord(word.getWord())).thenReturn(word);
+
+        assertThat(wordService.getWordByWord(word.getWord()), is(word));
+        verify(wordRepository, times(1)).getWordByWord(word.getWord());
+    }
+
+    /**
+     * When call getWordsByNames should return list of Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetNounsByNamesShouldReturnListNouns() throws Exception {
+        List<Word> words = Lists.newArrayList(word, word, word);
+        List<String> listOfNames = Lists.newArrayList("word", "word", "word");
+        when(wordRepository.getAllByWordIn(listOfNames)).thenReturn(words);
+
+        assertThat(wordService.getWordByNames(listOfNames), is(words));
+        verify(wordRepository, times(1)).getAllByWordIn(listOfNames);
     }
 }

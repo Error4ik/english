@@ -110,6 +110,26 @@ public class WordService {
     }
 
     /**
+     * Get Word by word.
+     *
+     * @param word word name.
+     * @return Word.
+     */
+    public Word getWordByWord(final String word) {
+        return this.wordRepository.getWordByWord(word);
+    }
+
+    /**
+     * Get the words that are included in the list.
+     *
+     * @param names names.
+     * @return List of Word.
+     */
+    public List<Word> getWordByNames(final List<String> names) {
+        return this.wordRepository.getAllByWordIn(names);
+    }
+
+    /**
      * Delete word.
      *
      * @param id id.
@@ -183,7 +203,7 @@ public class WordService {
         word.setWord(cardFilled.getWord());
         word.setTranscription(cardFilled.getTranscription());
         word.setDescription(cardFilled.getDescription());
-        if (!word.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase(cardFilled.getPartOfSpeech())) {
+        if (!word.getPartOfSpeech().getName().equalsIgnoreCase(cardFilled.getPartOfSpeech())) {
             changePartOfSpeech(cardFilled, word);
         }
         this.phrasesAndTranslationUtil.updatePhrase(

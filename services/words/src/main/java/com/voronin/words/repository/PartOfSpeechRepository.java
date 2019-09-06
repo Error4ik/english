@@ -19,10 +19,10 @@ public interface PartOfSpeechRepository extends
     /**
      * Get part of speech by name.
      *
-     * @param partOfSpeech name.
+     * @param name name.
      * @return part of speech.
      */
-    PartOfSpeech getPartOfSpeechByPartOfSpeech(String partOfSpeech);
+    PartOfSpeech getPartOfSpeechByName(String name);
 
     /**
      * Get part of speech by id.

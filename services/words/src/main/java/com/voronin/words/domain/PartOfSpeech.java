@@ -29,7 +29,7 @@ public class PartOfSpeech {
      * Part of speech name.
      */
     @Column(name = "part_of_speech")
-    private String partOfSpeech;
+    private String name;
 
     /**
      * Number words in part of speech.
@@ -48,8 +48,8 @@ public class PartOfSpeech {
     public PartOfSpeech() {
     }
 
-    public PartOfSpeech(final String partOfSpeech) {
-        this.partOfSpeech = partOfSpeech;
+    public PartOfSpeech(final String name) {
+        this.name = name;
     }
 
     public UUID getId() {
@@ -60,12 +60,12 @@ public class PartOfSpeech {
         this.id = id;
     }
 
-    public String getPartOfSpeech() {
-        return partOfSpeech;
+    public String getName() {
+        return name;
     }
 
-    public void setPartOfSpeech(final String partOfSpeech) {
-        this.partOfSpeech = partOfSpeech;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public int getNumberOfWords() {
@@ -94,16 +94,16 @@ public class PartOfSpeech {
         }
         PartOfSpeech that = (PartOfSpeech) o;
         return Objects.equals(getId(), that.getId())
-                && Objects.equals(getPartOfSpeech(), that.getPartOfSpeech());
+                && Objects.equals(getName(), that.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPartOfSpeech());
+        return Objects.hash(getId(), getName());
     }
 
     @Override
     public String toString() {
-        return String.format("Part of speech {id=%s partOfSpeech=%s}", getId(), getPartOfSpeech());
+        return String.format("Part of speech {id=%s name=%s}", getId(), getName());
     }
 }

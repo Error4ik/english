@@ -48,7 +48,7 @@ public class PartOfSpeechService {
      * @return PartOfSpeech.
      */
     public PartOfSpeech getPartOfSpeechByName(final String name) {
-        return this.partOfSpeechRepository.getPartOfSpeechByPartOfSpeech(name);
+        return this.partOfSpeechRepository.getPartOfSpeechByName(name);
     }
 
     /**

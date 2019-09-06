@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,22 @@ public interface WordRepository extends JpaRepository<Word, UUID> {
      * @return word.
      */
     Word getWordById(UUID uuid);
+
+    /**
+     * Get word by word name.
+     *
+     * @param word word name.
+     * @return Word.
+     */
+    Word getWordByWord(String word);
+
+    /**
+     * Get the words that are included in the list.
+     *
+     * @param words list.
+     * @return List of Word.
+     */
+    List<Word> getAllByWordIn(Collection<String> words);
 
     /**
      * Get words by part of speech.
