@@ -53,6 +53,14 @@ public interface WordRepository extends JpaRepository<Word, UUID> {
     List<Word> getAllByPartOfSpeechId(UUID partOfSpeechId, Pageable pageable);
 
     /**
+     * Get words by part of speech id.
+     *
+     * @param partOfSpeechId part of speech id.
+     * @return list of Word.
+     */
+    List<Word> getAllByPartOfSpeechId(UUID partOfSpeechId);
+
+    /**
      * Get the number of records by part of speech id.
      *
      * @param partOfSpeechId partOfSpeech id.

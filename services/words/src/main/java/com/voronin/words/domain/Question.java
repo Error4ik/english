@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Set;
 
 /**
@@ -58,6 +59,19 @@ public class Question {
      * Empty constructor.
      */
     public Question() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param word  correct answer.
+     * @param words list of variants.
+     * @param exam  exam.
+     */
+    public Question(final Word word, final Set<Word> words, final Exam exam) {
+        this.word = word;
+        this.words = words;
+        this.exam = exam;
     }
 
     public UUID getId() {

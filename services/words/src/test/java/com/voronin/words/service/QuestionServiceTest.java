@@ -80,8 +80,8 @@ public class QuestionServiceTest {
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
         assertThat(questionService.prepareAndSave("exam", word.getWord(), variants), is(question));
-//        verify(wordService, times(1)).getWordByWord(anyString());
-//        verify(wordService, times(1)).getWordByNames(anyList());
+        verify(wordService, times(1)).getWordByWord(anyString());
+        verify(wordService, times(1)).getWordByNames(anyList());
         verify(questionRepository, times(1)).save(any(Question.class));
     }
 }

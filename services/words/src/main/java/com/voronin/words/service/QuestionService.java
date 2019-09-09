@@ -1,11 +1,17 @@
 package com.voronin.words.service;
 
+import com.google.common.collect.Lists;
 import com.voronin.words.domain.Question;
+import com.voronin.words.domain.Word;
 import com.voronin.words.repository.QuestionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Question service.
@@ -15,6 +21,11 @@ import java.util.List;
  */
 @Service
 public class QuestionService {
+
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(QuestionService.class);
 
     /**
      * Question repository.
@@ -67,7 +78,12 @@ public class QuestionService {
      * @return Question.
      */
     public Question prepareAndSave(final String exam, final String word, final List<String> variants) {
-        Question question = new Question();
-        return this.save(question);
+        logger.debug(String.format("Arguments - exam - %s, word - %s, variants - %s", exam, word, variants));
+        Word correctAnswer = this.wordService.getWordByWord(word);
+        Set<Word> answerChoice = new HashSet<>(Lists.newArrayList(this.wordService.getWordByNames(variants)));
+        answerChoice.add(correctAnswer);
+        Question question = this.save(new Question(correctAnswer, answerChoice, this.examService.getExamByName(exam)));
+        logger.debug(String.format("Return - %s", question));
+        return question;
     }
 }

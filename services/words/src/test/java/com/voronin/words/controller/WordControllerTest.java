@@ -148,4 +148,18 @@ public class WordControllerTest {
 
         verify(this.wordService, times(1)).deleteWord(wordId);
     }
+
+    /**
+     * When mapping '/word/words-by-part-of-speech/{id}'
+     * should call the getWordsByPartOfSpeechId method of the WordService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingWordsByPartOfSpeechIdShouldReturnStatusOk() throws Exception {
+        this.mockMvc
+                .perform(get("/word/words/by/part-of-speech/{id}/", uuid))
+                .andExpect(status().isOk());
+        verify(this.wordService, times(1)).getWordsByPartOfSpeechId(uuid);
+    }
 }

@@ -71,6 +71,7 @@ public class UserExam {
         this.exam = exam;
         this.totalQuestions = totalQuestions;
         this.correctAnswer = correctAnswer;
+        this.date = new Timestamp(System.currentTimeMillis());
     }
 
     public UUID getId() {

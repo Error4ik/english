@@ -130,6 +130,16 @@ public class WordService {
     }
 
     /**
+     * Get words by part of speech id.
+     *
+     * @param id part of speech id.
+     * @return list of words.
+     */
+    public List<Word> getWordsByPartOfSpeechId(final UUID id) {
+        return this.wordRepository.getAllByPartOfSpeechId(id);
+    }
+
+    /**
      * Delete word.
      *
      * @param id id.

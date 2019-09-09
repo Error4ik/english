@@ -307,4 +307,18 @@ public class WordServiceTest {
         assertThat(wordService.getWordByNames(listOfNames), is(words));
         verify(wordRepository, times(1)).getAllByWordIn(listOfNames);
     }
+
+    /**
+     * When getWordsByPartOfSpeechId should return list of Word.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenGetWordsByPartOfSpeechIdShouldReturnListOfWords() throws Exception {
+        final List<Word> lists = Lists.newArrayList(new Word());
+        when(wordRepository.getAllByPartOfSpeechId(uuid)).thenReturn(lists);
+
+        assertThat(wordService.getWordsByPartOfSpeechId(uuid), is(lists));
+        verify(wordRepository, times(1)).getAllByPartOfSpeechId(uuid);
+    }
 }

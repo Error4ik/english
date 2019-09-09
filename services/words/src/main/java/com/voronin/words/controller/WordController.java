@@ -59,8 +59,8 @@ public class WordController {
      */
     @PreAuthorize("hasAuthority('admin')")
     @RequestMapping("/edit-word")
-    public void editWord(final CardFilled cardFilled, final String wordId) {
-        this.wordService.editWordAndSave(cardFilled, wordId);
+    public Word editWord(final CardFilled cardFilled, final String wordId) {
+        return this.wordService.editWordAndSave(cardFilled, wordId);
     }
 
     /**
@@ -101,6 +101,17 @@ public class WordController {
                 return wordService.getNumberOfRecordsByPartOfSpeechId(id);
             }
         };
+    }
+
+    /**
+     * Get list of Word by part of speech id.
+     *
+     * @param id part of speech id.
+     * @return list of Word.
+     */
+    @RequestMapping("/words/by/part-of-speech/{id}")
+    public List<Word> getWordsByPartOfSpeechId(@PathVariable final UUID id) {
+        return this.wordService.getWordsByPartOfSpeechId(id);
     }
 
     /**
