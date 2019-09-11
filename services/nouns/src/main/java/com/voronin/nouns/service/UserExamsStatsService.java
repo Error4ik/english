@@ -119,23 +119,8 @@ public class UserExamsStatsService {
      * @return user id.
      */
     private UUID getUserId(final Principal principal) {
-        String access = "";
-        if (principal != null) {
-            access = ((Map<String, String>)
-                    ((Map<String, Object>)
-                            ((OAuth2Authentication) principal)
-                                    .getUserAuthentication()
-                                    .getDetails())
-                            .get("details"))
-                    .get("tokenValue");
-        }
-        final String url = String.format("%s/user", userUrl);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + access);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        String result = restTemplate.postForObject(url, entity, String.class);
-        Map<String, String> userValueMap = gson.fromJson(result, Map.class);
-        return UUID.fromString(userValueMap.get("id"));
+        final String key = (String) ((Map) ((Map) ((OAuth2Authentication) principal)
+                .getUserAuthentication().getDetails()).get("principal")).get("id");
+        return UUID.fromString(key);
     }
 }

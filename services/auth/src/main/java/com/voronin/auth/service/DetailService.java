@@ -1,5 +1,6 @@
 package com.voronin.auth.service;
 
+import com.voronin.auth.domain.Person;
 import com.voronin.auth.domain.Role;
 import com.voronin.auth.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class DetailService implements UserDetailsService {
                 }
                 user.setLastVisit(Timestamp.valueOf(LocalDateTime.now()));
                 userService.save(user);
-                return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), roles);
+                return new Person(user.getId(), user.getEmail(), user.getPassword(), roles);
             } else {
                 throw new DisabledException("The user is not activated.");
             }
