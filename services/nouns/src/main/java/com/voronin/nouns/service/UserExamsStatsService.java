@@ -8,12 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -39,12 +35,6 @@ public class UserExamsStatsService {
      * User exam stats repository.
      */
     private final UserExamsStatsRepository userExamsStatsRepository;
-
-    /**
-     * RestTemplate.
-     */
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * Exam service.
@@ -105,6 +95,7 @@ public class UserExamsStatsService {
     /**
      * Get list UserExamStats by user.
      *
+     * @param principal principal.
      * @return List of UserExamsStats.
      */
     public List<UserExamsStats> getUserExamsStatsByUser(final Principal principal) {

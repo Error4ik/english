@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -36,12 +35,6 @@ public class UserExamService {
      * User exam repository.
      */
     private final UserExamRepository userExamRepository;
-
-    /**
-     * RestTemplate.
-     */
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * Exam service.
@@ -100,6 +93,7 @@ public class UserExamService {
     /**
      * Get list UserExamStats by user.
      *
+     * @param principal principal.
      * @return List of UserExamsStats.
      */
     public List<UserExam> getUserExamByUser(final Principal principal) {
