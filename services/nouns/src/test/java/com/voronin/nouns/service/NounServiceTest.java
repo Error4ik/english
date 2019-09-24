@@ -126,7 +126,7 @@ public class NounServiceTest {
         category.setId(uuid);
         category.setName("category");
         category.setNounsCount(2);
-        noun.setNoun("noun");
+        noun.setWord("noun");
         noun.setImage(new Image("test", "test"));
         noun.setCategory(category);
         noun.setPartOfSpeech("speech");
@@ -199,10 +199,10 @@ public class NounServiceTest {
      */
     @Test
     public void whenGetNounByNameShouldReturnNoun() throws Exception {
-        when(nounRepository.getNounByNoun(noun.getNoun())).thenReturn(noun);
+        when(nounRepository.getNounByWord(noun.getWord())).thenReturn(noun);
 
-        assertThat(nounService.getNounByName(noun.getNoun()), is(noun));
-        verify(nounRepository, times(1)).getNounByNoun(noun.getNoun());
+        assertThat(nounService.getNounByName(noun.getWord()), is(noun));
+        verify(nounRepository, times(1)).getNounByWord(noun.getWord());
     }
 
     /**
@@ -214,10 +214,10 @@ public class NounServiceTest {
     public void whenGetNounsByNamesShouldReturnListNouns() throws Exception {
         List<Noun> nouns = Lists.newArrayList(noun, noun, noun);
         List<String> listOfNames = Lists.newArrayList("word", "word", "word");
-        when(nounRepository.getAllByNounIn(listOfNames)).thenReturn(nouns);
+        when(nounRepository.getAllByWordIn(listOfNames)).thenReturn(nouns);
 
         assertThat(nounService.getNounsByNames(listOfNames), is(nouns));
-        verify(nounRepository, times(1)).getAllByNounIn(listOfNames);
+        verify(nounRepository, times(1)).getAllByWordIn(listOfNames);
     }
 
     /**
@@ -228,10 +228,10 @@ public class NounServiceTest {
     @Test
     public void whenPrepareAndSaveShouldReturnNoun() throws Exception {
         MultipartFile multipartFile = mock(MultipartFile.class);
-        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getNoun())).thenReturn(file);
+        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getWord())).thenReturn(file);
         when(categoryService.getCategoryByName(cardFilled.getCategory())).thenReturn(category);
 
-        assertThat(nounService.prepareAndSave(cardFilled, multipartFile).getNoun(), is(noun.getNoun()));
+        assertThat(nounService.prepareAndSave(cardFilled, multipartFile).getWord(), is(noun.getWord()));
         verify(nounRepository, times(1)).save(any(Noun.class));
     }
 
@@ -340,7 +340,7 @@ public class NounServiceTest {
         noun.setPhrases(new HashSet<>(Lists.newArrayList(new Phrase())));
         noun.setTranslations(Lists.newArrayList(new Translation()));
         MultipartFile multipartFile = mock(MultipartFile.class);
-        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getNoun())).thenReturn(file);
+        when(writeFileToDisk.writeImage(multipartFile, pathToSaveImage, noun.getWord())).thenReturn(file);
         when(file.getName()).thenReturn("new name file");
         when(file.getAbsolutePath()).thenReturn("new absolute path");
 

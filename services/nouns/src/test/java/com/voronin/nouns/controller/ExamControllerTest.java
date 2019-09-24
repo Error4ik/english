@@ -126,7 +126,7 @@ public class ExamControllerTest {
         final List<String> variants = Lists.newArrayList("word");
         this.mockMvc.perform(get("/exam/add-question")
                 .param("exam", exam)
-                .param("noun", noun)
+                .param("word", noun)
                 .param("variants", "word"))
                 .andExpect(status().isOk());
 

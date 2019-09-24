@@ -74,7 +74,7 @@ public class ExamController {
      * Add new question for exam by nouns.
      *
      * @param exam     name of the exam.
-     * @param noun     correct answer.
+     * @param word     correct answer.
      * @param variants answers variants.
      * @return question saved to the database.
      */
@@ -82,9 +82,9 @@ public class ExamController {
     @PreAuthorize("hasAuthority('admin')")
     public Question addQuestion(
             final @RequestParam String exam,
-            final @RequestParam String noun,
+            final @RequestParam String word,
             final @RequestParam List<String> variants) {
-        return this.questionService.prepareAndSave(exam, noun, variants);
+        return this.questionService.prepareAndSave(exam, word, variants);
     }
 
     /**

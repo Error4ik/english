@@ -112,7 +112,7 @@ public class NounController {
                         page,
                         limit,
                         Sort.Direction.ASC,
-                        "noun"));
+                        "word"));
             }
 
             public long getAllRecords() {
