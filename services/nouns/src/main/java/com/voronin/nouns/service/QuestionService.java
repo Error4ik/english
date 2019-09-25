@@ -73,13 +73,13 @@ public class QuestionService {
      * Prepare question and save.
      *
      * @param exam     exam name.
-     * @param word     correct answer.
+     * @param noun     correct answer.
      * @param variants answer choice.
      * @return Question.
      */
-    public Question prepareAndSave(final String exam, final String word, final List<String> variants) {
-        logger.debug(String.format("Arguments - exam - %s, word - %s, variants - %s", exam, word, variants));
-        Noun correctAnswer = this.nounService.getNounByName(word);
+    public Question prepareAndSave(final String exam, final String noun, final List<String> variants) {
+        logger.debug(String.format("Arguments - exam - %s, noun - %s, variants - %s", exam, noun, variants));
+        Noun correctAnswer = this.nounService.getNounByName(noun);
         Set<Noun> answerChoice = new HashSet<>(Lists.newArrayList(this.nounService.getNounsByNames(variants)));
         answerChoice.add(correctAnswer);
         Question question = this.save(new Question(correctAnswer, this.examService.getExamByName(exam), answerChoice));

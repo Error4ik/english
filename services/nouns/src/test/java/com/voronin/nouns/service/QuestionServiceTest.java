@@ -68,8 +68,8 @@ public class QuestionServiceTest {
     @Test
     public void whenPrepareAndSaveShouldReturnSavedQuestion() throws Exception {
         Noun noun = new Noun();
-        noun.setWord("exam");
-        List<String> variants = Lists.newArrayList(noun.getWord());
+        noun.setNoun("exam");
+        List<String> variants = Lists.newArrayList(noun.getNoun());
         List<Noun> nouns = Lists.newArrayList(noun);
         Question question = new Question();
         question.setWord(noun);
@@ -78,7 +78,7 @@ public class QuestionServiceTest {
         when(nounService.getNounsByNames(anyList())).thenReturn(nouns);
         when(questionRepository.save(any(Question.class))).thenReturn(question);
 
-        assertThat(questionService.prepareAndSave("exam", noun.getWord(), variants), is(question));
+        assertThat(questionService.prepareAndSave("exam", noun.getNoun(), variants), is(question));
         verify(nounService, times(1)).getNounByName(anyString());
         verify(nounService, times(1)).getNounsByNames(anyList());
         verify(questionRepository, times(1)).save(any(Question.class));

@@ -42,7 +42,7 @@ public interface NounRepository extends JpaRepository<Noun, UUID> {
      * @param nouns list.
      * @return list of Noun.
      */
-    List<Noun> getAllByWordIn(Collection<String> nouns);
+    List<Noun> getAllByNounIn(Collection<String> nouns);
 
     /**
      * Get noun by name.
@@ -50,7 +50,7 @@ public interface NounRepository extends JpaRepository<Noun, UUID> {
      * @param noun name.
      * @return Noun.
      */
-    Noun getNounByWord(String noun);
+    Noun getNounByNoun(String noun);
 
     /**
      * Get noun by id.

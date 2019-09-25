@@ -35,7 +35,7 @@ public class Noun {
     /**
      * Noun.
      */
-    private String word;
+    private String noun;
 
     /**
      * Transcription.
@@ -97,19 +97,19 @@ public class Noun {
     /**
      * Constructor.
      *
-     * @param word          word.
+     * @param noun          noun.
      * @param transcription transcription.
      * @param partOfSpeech  part of speech.
      * @param category      category.
      * @param description   description
      */
     public Noun(
-            final String word,
+            final String noun,
             final String transcription,
             final String partOfSpeech,
             final Category category,
             final String description) {
-        this.word = word;
+        this.noun = noun;
         this.transcription = transcription;
         this.partOfSpeech = partOfSpeech;
         this.category = category;
@@ -124,12 +124,12 @@ public class Noun {
         this.id = id;
     }
 
-    public String getWord() {
-        return word;
+    public String getNoun() {
+        return noun;
     }
 
-    public void setWord(final String word) {
-        this.word = word;
+    public void setNoun(final String noun) {
+        this.noun = noun;
     }
 
     public String getTranscription() {
@@ -198,6 +198,6 @@ public class Noun {
 
     @Override
     public String toString() {
-        return String.format("Noun {id = %s, word = %s}", getId(), getWord());
+        return String.format("Noun {id = %s, noun = %s}", getId(), getNoun());
     }
 }

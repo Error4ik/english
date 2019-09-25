@@ -178,7 +178,7 @@ public class NounService {
      * @return Noun.
      */
     public Noun getNounByName(final String name) {
-        return this.nounRepository.getNounByWord(name);
+        return this.nounRepository.getNounByNoun(name);
     }
 
     /**
@@ -198,7 +198,7 @@ public class NounService {
      * @return List of Noun.
      */
     public List<Noun> getNounsByNames(final List<String> names) {
-        return this.nounRepository.getAllByWordIn(names);
+        return this.nounRepository.getAllByNounIn(names);
     }
 
     /**
@@ -218,7 +218,7 @@ public class NounService {
                 card.getPartOfSpeech().trim(),
                 category,
                 card.getDescription().trim());
-        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getWord());
+        File file = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getNoun());
         noun.setImage(this.imageService.save(new Image(file.getName(), file.getAbsolutePath())));
         this.save(noun);
         logger.debug(String.format("Save noun - %s", noun));
@@ -241,7 +241,7 @@ public class NounService {
     public Noun editNounAndSave(final CardFilled cardFilled, final MultipartFile photo, final String nounId) {
         logger.debug(String.format("Arguments - CardFilled - %s,  - %s, nounId - %s", cardFilled, photo, nounId));
         Noun noun = this.getNounById(UUID.fromString(nounId));
-        noun.setWord(cardFilled.getNoun());
+        noun.setNoun(cardFilled.getNoun());
         noun.setTranscription(cardFilled.getTranscription());
         noun.setDescription(cardFilled.getDescription().trim());
         if (!noun.getCategory().getName().equalsIgnoreCase(cardFilled.getCategory())) {
@@ -275,7 +275,7 @@ public class NounService {
         Image oldImage = noun.getImage();
         File fileForOldImage = new File(oldImage.getUrl());
         fileForOldImage.delete();
-        File fileForNewImage = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getWord());
+        File fileForNewImage = this.writeFileToDisk.writeImage(photo, pathToSaveImage, noun.getNoun());
         oldImage.setName(fileForNewImage.getName());
         oldImage.setUrl(fileForNewImage.getAbsolutePath());
         this.imageService.save(oldImage);
