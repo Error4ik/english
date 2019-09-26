@@ -27,6 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
                 "/image/**",
-                "/category/**", "/noun/nouns/**");
+                "/category/categories/**", "/noun/nouns/**");
     }
 }

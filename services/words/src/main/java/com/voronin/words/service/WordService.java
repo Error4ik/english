@@ -192,7 +192,7 @@ public class WordService {
                 partOfSpeech,
                 card.getDescription().trim());
         this.save(word);
-        logger.info(String.format("Word save without image, %s", word));
+        logger.debug(String.format("Save word, %s", word));
         partOfSpeech.setNumberOfWords(partOfSpeech.getNumberOfWords() + 1);
         this.partOfSpeechService.save(partOfSpeech);
         this.translationService.saveAll(phrasesAndTranslationUtil.getTranslation(card, word));
