@@ -4,6 +4,7 @@ import com.voronin.sentence.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,4 +23,11 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
      * @return PhraseCategory.
      */
     Category getByName(String name);
+
+    /**
+     * Get all categories ordered by time.
+     *
+     * @return list of Categories.
+     */
+    List<Category> findAllByOrderByTimeAsc();
 }

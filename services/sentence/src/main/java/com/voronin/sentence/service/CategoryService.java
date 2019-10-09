@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * PhraseCategory service.
+ * Category service.
  *
  * @author Alexey Voronin.
  * @since 02.02.2019.
@@ -17,14 +17,14 @@ import java.util.List;
 public class CategoryService {
 
     /**
-     * PhraseCategoryRepository.
+     * CategoryRepository.
      */
     private final CategoryRepository categoryRepository;
 
     /**
      * Constructor.
      *
-     * @param categoryRepository PhraseCategoryRepository.
+     * @param categoryRepository CategoryRepository.
      */
     @Autowired
     public CategoryService(final CategoryRepository categoryRepository) {
@@ -34,7 +34,7 @@ public class CategoryService {
     /**
      * Save entity.
      *
-     * @param category PhraseCategory.
+     * @param category Category.
      * @return saved entity.
      */
     public Category save(final Category category) {
@@ -42,19 +42,19 @@ public class CategoryService {
     }
 
     /**
-     * Get all PhraseCategory.
+     * Get all Categories.
      *
-     * @return list of PhraseCategory.
+     * @return list of Categories.
      */
     public List<Category> getCategories() {
-        return this.categoryRepository.findAll();
+        return this.categoryRepository.findAllByOrderByTimeAsc();
     }
 
     /**
      * Get category by name.
      *
      * @param categoryName category name.
-     * @return PhraseCategory.
+     * @return Category.
      */
     public Category getCategoryByName(final String categoryName) {
         return this.categoryRepository.getByName(categoryName);
