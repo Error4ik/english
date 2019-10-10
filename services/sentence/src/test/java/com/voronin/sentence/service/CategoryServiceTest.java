@@ -51,7 +51,7 @@ public class CategoryServiceTest {
     @Test
     public void whenGetCategoriesShouldReturnListOfCategory() throws Exception {
         final List<Category> categories = Lists.newArrayList(new Category(), new Category());
-        when(this.categoryRepository.findAll()).thenReturn(categories);
+        when(this.categoryRepository.findAllByOrderByTimeAsc()).thenReturn(categories);
 
         assertThat(this.categoryService.getCategories(), is(categories));
     }
