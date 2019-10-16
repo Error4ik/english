@@ -1,37 +1,37 @@
-package com.voronin.nouns.service;
+package com.voronin.sentence.service;
 
-import com.voronin.nouns.domain.Category;
-import com.voronin.nouns.domain.Exam;
-import com.voronin.nouns.domain.UserExamsStats;
-import com.voronin.nouns.repository.UserExamsStatsRepository;
+import com.voronin.sentence.domain.Exam;
+import com.voronin.sentence.domain.UserExam;
+import com.voronin.sentence.repository.UserExamRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-import java.util.LinkedHashMap;
+
 import java.util.List;
 import java.util.UUID;
+import java.util.LinkedHashMap;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * UserExamsStats test.
+ * UserExamService test.
  *
  * @author Alexey Voronin.
- * @since 03.09.2019.
+ * @since 11.10.2019.
  */
-public class UserExamsStatsServiceTest {
+public class UserExamServiceTest {
 
     /**
      * UserExamRepository mock.
      */
-    private final UserExamsStatsRepository userExamsStatsRepository = mock(UserExamsStatsRepository.class);
+    private final UserExamRepository userExamRepository = mock(UserExamRepository.class);
 
     /**
      * ExamService mock.
@@ -61,7 +61,7 @@ public class UserExamsStatsServiceTest {
     /**
      * UserExam for test.
      */
-    private UserExamsStats userExamsStats;
+    private UserExam userExam;
 
     /**
      * Token for test.
@@ -80,16 +80,16 @@ public class UserExamsStatsServiceTest {
         linkedHashMap.put("principal", principal);
         token.setDetails(linkedHashMap);
 
-        exam = new Exam("exam", new Category(), 1);
+        exam = new Exam("exam", Exam.ExamType.PAST);
         exam.setId(id);
         exam.setQuestions(Lists.emptyList());
-        userExamsStats = new UserExamsStats(id, exam, exam.getQuestions().size(), correctAnswers);
+        userExam = new UserExam(id, exam, exam.getQuestions().size(), correctAnswers);
     }
 
     /**
      * The class object under test.
      */
-    private UserExamsStatsService userExamService = new UserExamsStatsService(userExamsStatsRepository, examService);
+    private UserExamService userExamService = new UserExamService(userExamRepository, examService);
 
     /**
      * When call method getUserExamByUser should return List of UserExams.
@@ -98,12 +98,12 @@ public class UserExamsStatsServiceTest {
      */
     @Test
     public void whenGetUserExamByUserShouldReturnUserShouldReturnListOfUserExams() throws Exception {
-        List<UserExamsStats> userExams = Lists.newArrayList(userExamsStats);
+        List<UserExam> userExams = Lists.newArrayList(userExam);
 
         when(oAuth2Authentication.getUserAuthentication()).thenReturn(token);
-        when(this.userExamsStatsRepository.getUserExamsStatsByUserId(id)).thenReturn(userExams);
+        when(this.userExamRepository.getUserExamByUserId(id)).thenReturn(userExams);
 
-        assertThat(this.userExamService.getUserExamsStatsByUser(oAuth2Authentication), is(userExams));
+        assertThat(this.userExamService.getUserExamByUser(oAuth2Authentication), is(userExams));
     }
 
     /**
@@ -115,10 +115,10 @@ public class UserExamsStatsServiceTest {
     public void whenSaveWithFirstUserExamThenReturnSavedUserExam() throws Exception {
         when(oAuth2Authentication.getUserAuthentication()).thenReturn(token);
         when(this.examService.getExamById(id)).thenReturn(exam);
-        when(this.userExamsStatsRepository.getUserExamsStatsByUserIdAndExam(id, exam)).thenReturn(null);
-        when(this.userExamsStatsRepository.save(any(UserExamsStats.class))).thenReturn(userExamsStats);
+        when(this.userExamRepository.getUserExamByUserIdAndExamId(id, id)).thenReturn(null);
+        when(this.userExamRepository.save(any(UserExam.class))).thenReturn(userExam);
 
-        assertThat(this.userExamService.save(oAuth2Authentication, id, correctAnswers), is(userExamsStats));
+        assertThat(this.userExamService.save(oAuth2Authentication, id, correctAnswers), is(userExam));
     }
 
     /**
@@ -131,9 +131,9 @@ public class UserExamsStatsServiceTest {
     public void whenSaveWithUserExamNotNullShouldReturnSavedUserExam() throws Exception {
         when(oAuth2Authentication.getUserAuthentication()).thenReturn(token);
         when(this.examService.getExamById(id)).thenReturn(exam);
-        when(this.userExamsStatsRepository.getUserExamsStatsByUserIdAndExam(id, exam)).thenReturn(userExamsStats);
-        when(this.userExamsStatsRepository.save(any(UserExamsStats.class))).thenReturn(userExamsStats);
+        when(this.userExamRepository.getUserExamByUserIdAndExamId(id, id)).thenReturn(userExam);
+        when(this.userExamRepository.save(any(UserExam.class))).thenReturn(userExam);
 
-        assertThat(this.userExamService.save(oAuth2Authentication, id, correctAnswers), is(userExamsStats));
+        assertThat(this.userExamService.save(oAuth2Authentication, id, correctAnswers), is(userExam));
     }
 }
