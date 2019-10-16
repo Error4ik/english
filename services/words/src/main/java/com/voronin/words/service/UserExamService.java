@@ -1,13 +1,11 @@
 package com.voronin.words.service;
 
-import com.google.gson.Gson;
 import com.voronin.words.domain.Exam;
 import com.voronin.words.domain.UserExam;
 import com.voronin.words.repository.UserExamRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 
@@ -40,18 +38,6 @@ public class UserExamService {
      * Exam service.
      */
     private final ExamService examService;
-
-    /**
-     * User service url.
-     */
-    @Value("${user.url}")
-    private String userUrl;
-
-    /**
-     * class for using Gson.
-     */
-    @Autowired
-    private Gson gson;
 
     /**
      * Constructor.
