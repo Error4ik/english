@@ -3,6 +3,7 @@ package com.voronin.auth.service;
 import com.voronin.auth.domain.Message;
 import com.voronin.auth.domain.Role;
 import com.voronin.auth.domain.User;
+import com.voronin.auth.exception.ApiRequestException;
 import com.voronin.auth.repository.UserRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -11,19 +12,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 /**
@@ -37,7 +41,7 @@ public class UserServiceTest {
     /**
      * Mock BCryptPasswordEncoder.
      */
-    private BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     /**
      * Mock UserRepository.
@@ -53,6 +57,11 @@ public class UserServiceTest {
      * Mock CustomEmailService.
      */
     private CustomEmailService customEmailService = mock(CustomEmailService.class);
+
+    /**
+     * Principal for test.
+     */
+    private Principal principal = mock(Principal.class);
 
     /**
      * The class object under test.
@@ -87,6 +96,7 @@ public class UserServiceTest {
     public void init() {
         user = new User("user@user.ru", "password", new HashSet<>(Lists.newArrayList(new Role("user"))));
         user.setId(uuid);
+        user.setActive(true);
     }
 
     /**
@@ -122,10 +132,9 @@ public class UserServiceTest {
      */
     @Test
     public void whenRegUserWithNewUserShouldReturnOptionalUser() throws Exception {
-        Optional<User> optional = Optional.of(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        assertThat(userService.regUser(user).get().getEmail(), is(optional.get().getEmail()));
+        assertThat(userService.regUser(user), is(user));
 
         verify(userRepository, times(1)).save(any(User.class));
         verify(customEmailService, times(1)).send(any(Message.class));
@@ -136,13 +145,11 @@ public class UserServiceTest {
      *
      * @throws Exception exception.
      */
-    @Test
+    @Test(expected = ApiRequestException.class)
     public void whenRegUserWithExistUserShouldReturnOptionalUser() throws Exception {
-        Optional<User> optional = Optional.empty();
         when(userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
 
-        assertThat(userService.regUser(user), is(optional));
-        verify(userRepository, times(1)).save(any(User.class));
+        assertThat(userService.regUser(user), is(user));
     }
 
     /**
@@ -179,6 +186,7 @@ public class UserServiceTest {
     @Test
     public void whenUserIsNotNullButUserIsNotActivatedShouldActivatedUserAndReturnIt() throws Exception {
         when(userRepository.getUserByActivationKey("key")).thenReturn(user);
+        this.user.setActive(false);
 
         assertTrue(userService.activateUser("key").isActive());
         verify(userRepository, times(1)).getUserByActivationKey("key");
@@ -246,5 +254,109 @@ public class UserServiceTest {
         verify(userRepository, times(1)).getOne(uuid);
         verify(roleService, times(1)).getRoleById(uuid);
         verify(userRepository, times(1)).save(user);
+    }
+
+    /**
+     * When call updateEmail with incorrect password should throw ApiRequestException.
+     *
+     * @throws Exception ApiRequestException.
+     */
+    @Test
+    public void whenUpdateEmailWithIncorrectPasswordShouldReturnThrowException() throws Exception {
+        final String incorrectPassword = "incorrectPassword";
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(anyString())).thenReturn(user);
+
+        Throwable thrown = catchThrowable(() -> {
+            this.userService.updateEmail(principal, user.getEmail(), incorrectPassword);
+        });
+//        assertThat(thrown).isInstanceOf(ApiRequestException.class);
+        assertThat(thrown.getMessage(), is("Не верный пароль."));
+    }
+
+    /**
+     * When call updateEmail with an old email should throw ApiRequestException.
+     *
+     * @throws Exception ApiRequestException.
+     */
+    @Test
+    public void whenUpdateEmailWithAnOldEmailShouldThrowException() throws Exception {
+        final String password = "password";
+        user.setPassword(encoder.encode(user.getPassword()));
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        Throwable thrown = catchThrowable(() -> {
+            userService.updateEmail(principal, user.getEmail(), password);
+        });
+        assertThat(thrown.getMessage(), is("Вы ввели старую почту."));
+    }
+
+    /**
+     * When call updateUser with correct email and password should return user.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUpdateEmailWithCorrectEmailAndPasswordShouldReturnUser() throws Exception {
+        final String password = "password";
+        final String newEmail = "newEmail";
+        user.setPassword(encoder.encode(user.getPassword()));
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        User actualUser = this.userService.updateEmail(principal, newEmail, password);
+
+        assertThat(actualUser.getActivationKey(), is(user.getActivationKey()));
+        assertThat(actualUser.isActive(), is(user.isActive()));
+    }
+
+    /**
+     * When updateEmail with email is already registered should throw DataIntegrityViolationException.
+     *
+     * @throws Exception DataIntegrityViolationException.
+     */
+    @Test
+    public void whenUpdateEmailWithEmailThatIsAlreadyRegisteredShouldThrowException() throws Exception {
+        final String password = "password";
+        final String newEmail = "newEmail";
+        user.setPassword(encoder.encode(user.getPassword()));
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        when(this.userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
+
+        Throwable thrown = catchThrowable(() -> {
+            userService.updateEmail(principal, newEmail, password);
+        });
+        assertThat(thrown.getMessage(), is("Пользователь с такой почтой уже зарегистрирован."));
+    }
+
+    /**
+     * When updatePassword with old password incorrect should return false.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUpdatePasswordWithOldPasswordIncorrectShouldReturnFalse() throws Exception {
+        user.setPassword(encoder.encode(user.getPassword()));
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        assertFalse(this.userService.updatePassword(principal, user.getPassword(), "password"));
+    }
+
+    /**
+     * When updatePassword with correct password should return true.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenUpdatePasswordWithCorrectPasswordShouldReturnTrue() throws Exception {
+        user.setPassword(encoder.encode(user.getPassword()));
+        when(principal.getName()).thenReturn(user.getEmail());
+        when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        assertTrue(this.userService.updatePassword(principal, "password", "12345"));
     }
 }

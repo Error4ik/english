@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.voronin.auth.domain.Message;
 import com.voronin.auth.domain.Role;
 import com.voronin.auth.domain.User;
+import com.voronin.auth.exception.ApiRequestException;
 import com.voronin.auth.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -113,28 +114,24 @@ public class UserService {
      * Registration user.
      *
      * @param user user.
-     * @return Optional User or DataIntegrityViolationException if registration failed.
+     * @return Optional User or Optional.empty if registration failed.
      */
-    public Optional<User> regUser(final User user) {
+    public User regUser(final User user) {
         logger.debug(String.format("Arguments - %s", user));
-        Optional<User> result = Optional.empty();
         User newUser = new User();
         newUser.setPassword(encoder.encode(user.getPassword()));
         newUser.setRoles(new HashSet<>(Lists.newArrayList(this.roleService.findRoleByName("user"))));
         newUser.setActivationKey(UUID.randomUUID().toString());
         newUser.setEmail(user.getEmail().toLowerCase());
         try {
-            result = Optional.of(this.save(newUser));
-            customEmailService.send(
-                    new Message(
-                            newUser.getEmail(),
-                            "Activated account for ~ english.ru",
-                            String.format("%s/activate/%s", activatePath, newUser.getActivationKey())));
-        } catch (DataIntegrityViolationException | UnsupportedEncodingException e) {
+            this.save(newUser);
+        } catch (DataIntegrityViolationException e) {
             logger.error(e.getMessage());
+            throw new ApiRequestException("Пользователь с такой почтой уже зарегистрирован.");
         }
-        logger.debug(String.format("Return - %s", result));
-        return result;
+        sendMessage(newUser);
+        logger.debug(String.format("Return - %s", user));
+        return user;
     }
 
     /**
@@ -185,5 +182,78 @@ public class UserService {
             logger.debug(String.format("Saved user - %s", user));
         }
         return user;
+    }
+
+    /**
+     * Change user email.
+     *
+     * @param principal current principal.
+     * @param newEmail  new user email.
+     * @param password  user password.
+     * @return User or error if the old password is incorrect.
+     */
+    public User updateEmail(final Principal principal, final String newEmail, final String password) {
+        logger.debug(String.format("Arguments - %s %s", principal, newEmail));
+        User user = this.userRepository.getUserByEmail(principal.getName());
+
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new ApiRequestException("Не верный пароль.");
+        }
+
+        if (user.getEmail().equalsIgnoreCase(newEmail)) {
+            throw new ApiRequestException("Вы ввели старую почту.");
+        }
+
+        user.setEmail(newEmail);
+        user.setActivationKey(UUID.randomUUID().toString());
+        user.setActive(false);
+        try {
+            this.save(user);
+        } catch (DataIntegrityViolationException e) {
+            logger.error(e.getMessage());
+            throw new ApiRequestException("Пользователь с такой почтой уже зарегистрирован.");
+        }
+        sendMessage(user);
+        logger.debug(String.format("Return - %s", user));
+        return user;
+    }
+
+    /**
+     * Update user password.
+     *
+     * @param principal current User.
+     * @param oldPass   old user password.
+     * @param newPass   new user password.
+     * @return User or error if the old password is incorrect.
+     */
+    public boolean updatePassword(final Principal principal, final String oldPass, final String newPass) {
+        logger.debug(String.format("Arguments - %s", principal));
+        boolean result = false;
+        User user = this.userRepository.getUserByEmail(principal.getName());
+
+        if (encoder.matches(oldPass, user.getPassword())) {
+            user.setPassword(encoder.encode(newPass));
+            this.save(user);
+            result = true;
+        }
+        logger.debug(String.format("Password isChanged? - %s", result));
+        return result;
+    }
+
+    /**
+     * Send the activation code to the user's email.
+     *
+     * @param user user.
+     */
+    private void sendMessage(final User user) {
+        try {
+            customEmailService.send(
+                    new Message(
+                            user.getEmail(),
+                            "Activated account for ~ english.ru",
+                            String.format("%s/activate/%s", activatePath, user.getActivationKey())));
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage());
+        }
     }
 }

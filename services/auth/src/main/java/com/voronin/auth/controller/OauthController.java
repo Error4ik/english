@@ -12,15 +12,14 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -93,17 +92,8 @@ public class OauthController {
      * @return user or error message if a user with this name is already registered.
      */
     @RequestMapping("/registration")
-    public Object registration(@RequestBody final User user) {
-        Optional<User> result = this.userService.regUser(user);
-        return result.<Object>map(usr -> new Object() {
-            public User getUser() {
-                return usr;
-            }
-        }).orElseGet(() -> new Object() {
-            public String getError() {
-                return String.format("Пользователь с почтой %s уже зарегистрирован.", user.getEmail());
-            }
-        });
+    public User registration(@RequestBody final User user) {
+        return this.userService.regUser(user);
     }
 
     /**
@@ -115,6 +105,35 @@ public class OauthController {
     @RequestMapping("/activate/{key}")
     public String activateUser(final @PathVariable String key) {
         return String.format("Activation is %s", this.userService.activateUser(key).isActive());
+    }
+
+    /**
+     * Change update user email.
+     *
+     * @param principal current principal.
+     * @param email     new user email.
+     * @param password  user password.
+     * @return Changed user.
+     */
+    @RequestMapping("/update-email")
+    public User updateEmail(
+            final Principal principal,
+            @RequestParam final String email,
+            @RequestParam final String password) {
+        return this.userService.updateEmail(principal, email, password);
+    }
+
+    /**
+     * Change user password.
+     *
+     * @param principal current user.
+     * @param oldPass   old user password.
+     * @param newPass   new user password.
+     * @return true when the password is changed.
+     */
+    @RequestMapping("/update-password")
+    public boolean updatePassword(final Principal principal, final String oldPass, final String newPass) {
+        return this.userService.updatePassword(principal, oldPass, newPass);
     }
 
     /**

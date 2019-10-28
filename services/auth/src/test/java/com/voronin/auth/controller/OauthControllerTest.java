@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
+import java.security.Principal;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.anyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -115,43 +116,12 @@ public class OauthControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(user);
 
-        when(this.userService.regUser(user)).thenReturn(Optional.of(user));
-
-        this.mockMvc
-                .perform(post("/registration")
-                        .header("Content-type", "application/json; charset=utf-8").with(csrf())
-                        .content(requestJson))
-                .andExpect(status()
-                        .isOk());
-
-        verify(this.userService, times(1)).regUser(user);
-    }
-
-    /**
-     * When Mapping '/registration' valid user should return status isOk
-     * and return error and call regUser method once.
-     *
-     * @throws Exception exception.
-     */
-    @Test
-    public void whenMappingRegistrationShouldReturnStatusOkAndReturnWithError() throws Exception {
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setEmail("test");
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(user);
-        Optional<User> result = Optional.empty();
-
         this.mockMvc
                 .perform(post("/registration")
                         .header("Content-type", "application/json; charset=utf-8")
                         .with(csrf())
                         .content(requestJson))
-                .andExpect(status()
-                        .isOk())
-                .andReturn();
+                .andExpect(status().isOk());
 
         verify(this.userService, times(1)).regUser(user);
     }
@@ -206,6 +176,7 @@ public class OauthControllerTest {
     public void whenMappingActivateWithKeyShouldReturnStatusOkAndCallActivateUserMethodOnce() throws Exception {
         final UUID uuid = UUID.randomUUID();
         when(this.userService.activateUser(uuid.toString())).thenReturn(new User());
+
         this.mockMvc
                 .perform(get("/activate/{key}", uuid.toString()))
                 .andExpect(status().isOk());
@@ -214,10 +185,13 @@ public class OauthControllerTest {
     }
 
     /**
+     * When mapping '/users' should return status isOk
+     * and call method getUsers of the UserService class once.
+     *
      * @throws Exception exception.
      */
     @Test
-    public void whenMappingUsersShouldReturnListOfUser() throws Exception {
+    public void whenMappingUsersShouldReturnListOfUsers() throws Exception {
         this.mockMvc.perform(get("/users")).andExpect(status().isOk());
 
         verify(this.userService, times(1)).getUsers();
@@ -285,5 +259,39 @@ public class OauthControllerTest {
         this.mockMvc.perform(get("/user")).andExpect(status().isOk());
 
         verify(this.userService, times(1)).getUserByEmail(any(String.class));
+    }
+
+    /**
+     * When mapping '/update-email' should return status isOk
+     * and call method updateEmail of the UserService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingUpdateEmailShouldReturnStatusOk() throws Exception {
+        this.mockMvc.perform(post("/update-email")
+                .with(csrf())
+                .param("email", "email")
+                .param("password", "password"))
+                .andExpect(status().isOk());
+
+        verify(this.userService, times(1)).updateEmail(any(Principal.class), anyString(), anyString());
+    }
+
+    /**
+     * When mapping '/update-password' should return status isOk
+     * and call method updatePassword of the UserService class once.
+     *
+     * @throws Exception exception.
+     */
+    @Test
+    public void whenMappingUpdatePasswordShouldReturnStatusOk() throws Exception {
+        this.mockMvc.perform(post("/update-password")
+                .with(csrf())
+                .param("oldPass", "oldPass")
+                .param("newPass", "newPass"))
+                .andExpect(status().isOk());
+
+        verify(this.userService, times(1)).updatePassword(any(Principal.class), anyString(), anyString());
     }
 }
