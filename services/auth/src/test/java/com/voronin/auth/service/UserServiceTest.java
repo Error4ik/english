@@ -22,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -289,6 +290,7 @@ public class UserServiceTest {
         Throwable thrown = catchThrowable(() -> {
             userService.updateEmail(principal, user.getEmail(), password);
         });
+
         assertThat(thrown.getMessage(), is("Вы ввели старую почту."));
     }
 
@@ -329,11 +331,13 @@ public class UserServiceTest {
         Throwable thrown = catchThrowable(() -> {
             userService.updateEmail(principal, newEmail, password);
         });
+
         assertThat(thrown.getMessage(), is("Пользователь с такой почтой уже зарегистрирован."));
     }
 
     /**
-     * When updatePassword with old password incorrect should return false.
+     * When updatePassword with old password incorrect should
+     * throw ApiRequestException.
      *
      * @throws Exception exception.
      */
@@ -343,11 +347,15 @@ public class UserServiceTest {
         when(principal.getName()).thenReturn(user.getEmail());
         when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
 
-        assertFalse(this.userService.updatePassword(principal, user.getPassword(), "password"));
+        Throwable thrown = catchThrowable(() -> {
+            this.userService.updatePassword(principal, user.getPassword(), "password");
+        });
+
+        assertThat(thrown.getMessage(), is("Incorrect old password."));
     }
 
     /**
-     * When updatePassword with correct password should return true.
+     * When updatePassword with correct password should return user.
      *
      * @throws Exception exception.
      */
@@ -357,6 +365,6 @@ public class UserServiceTest {
         when(principal.getName()).thenReturn(user.getEmail());
         when(this.userRepository.getUserByEmail(user.getEmail())).thenReturn(user);
 
-        assertTrue(this.userService.updatePassword(principal, "password", "12345"));
+        assertNotNull(this.userService.updatePassword(principal, "password", "12345"));
     }
 }

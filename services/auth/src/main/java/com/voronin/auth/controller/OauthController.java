@@ -129,10 +129,10 @@ public class OauthController {
      * @param principal current user.
      * @param oldPass   old user password.
      * @param newPass   new user password.
-     * @return true when the password is changed.
+     * @return User or error if the old password is incorrect.
      */
     @RequestMapping("/update-password")
-    public boolean updatePassword(final Principal principal, final String oldPass, final String newPass) {
+    public User updatePassword(final Principal principal, final String oldPass, final String newPass) {
         return this.userService.updatePassword(principal, oldPass, newPass);
     }
 

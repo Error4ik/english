@@ -226,18 +226,18 @@ public class UserService {
      * @param newPass   new user password.
      * @return User or error if the old password is incorrect.
      */
-    public boolean updatePassword(final Principal principal, final String oldPass, final String newPass) {
+    public User updatePassword(final Principal principal, final String oldPass, final String newPass) {
         logger.debug(String.format("Arguments - %s", principal));
-        boolean result = false;
         User user = this.userRepository.getUserByEmail(principal.getName());
 
-        if (encoder.matches(oldPass, user.getPassword())) {
-            user.setPassword(encoder.encode(newPass));
-            this.save(user);
-            result = true;
+        if (!encoder.matches(oldPass, user.getPassword())) {
+            throw new ApiRequestException("Incorrect old password.");
         }
-        logger.debug(String.format("Password isChanged? - %s", result));
-        return result;
+        user.setPassword(encoder.encode(newPass));
+        this.save(user);
+
+        logger.debug(String.format("Password isChanged? - %s", user));
+        return user;
     }
 
     /**
