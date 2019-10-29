@@ -175,8 +175,6 @@ public class OauthControllerTest {
     @Test
     public void whenMappingActivateWithKeyShouldReturnStatusOkAndCallActivateUserMethodOnce() throws Exception {
         final UUID uuid = UUID.randomUUID();
-        when(this.userService.activateUser(uuid.toString())).thenReturn(new User());
-
         this.mockMvc
                 .perform(get("/activate/{key}", uuid.toString()))
                 .andExpect(status().isOk());

@@ -9,7 +9,6 @@ import com.voronin.auth.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,11 +53,6 @@ public class UserService {
      */
     private final CustomEmailService customEmailService;
 
-    /**
-     * Path for activate user.
-     */
-    @Value("${auth.user.activate.path}")
-    private String activatePath;
 
     /**
      * Constructor.
@@ -140,15 +134,23 @@ public class UserService {
      * @param activationKey user key.
      * @return User.
      */
-    public User activateUser(final String activationKey) {
+    public String activateUser(final String activationKey) {
         logger.debug(String.format("Arguments - %s", activationKey));
         User user = this.userRepository.getUserByActivationKey(activationKey);
-        if (user != null && !user.isActive()) {
-            user.setActive(true);
-            this.userRepository.save(user);
+        if (user == null) {
+            logger.debug("User not found.");
+            throw new ApiRequestException("User not found.");
         }
-        logger.debug(String.format("Return - %s", user));
-        return user;
+
+        if (user.isActive()) {
+            logger.debug("The user is already activated.");
+            throw new ApiRequestException("The user is already activated.");
+        }
+
+        user.setActive(true);
+        this.userRepository.save(user);
+        logger.debug(String.format("User is activate? - %s", user.isActive()));
+        return String.format("%s successfully activated.", user.getEmail());
     }
 
     /**
@@ -251,7 +253,7 @@ public class UserService {
                     new Message(
                             user.getEmail(),
                             "Activated account for ~ english.ru",
-                            String.format("%s/activate/%s", activatePath, user.getActivationKey())));
+                            String.format("Your activation key -    %s", user.getActivationKey())));
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }

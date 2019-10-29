@@ -8,7 +8,6 @@ import com.voronin.auth.repository.UserRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -21,9 +20,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -73,12 +70,6 @@ public class UserServiceTest {
                     encoder,
                     roleService,
                     customEmailService);
-
-    /**
-     * Path for activate user.
-     */
-    @Value("${auth.user.activate.path}")
-    private String activatePath;
 
     /**
      * Class for test.
@@ -167,44 +158,55 @@ public class UserServiceTest {
     }
 
     /**
-     * When user is null should return null.
+     * When user is null should throw ApiRequestException.
      *
      * @throws Exception exception.
      */
     @Test
-    public void whenActivatedWithUserNullShouldReturnNull() throws Exception {
-        when(userRepository.getUserByActivationKey("key")).thenReturn(null);
+    public void whenActivatedWithUserNullShouldThrowException() throws Exception {
+        when(userRepository.getUserByActivationKey(user.getId().toString())).thenReturn(null);
 
-        assertNull(userService.activateUser("key"));
-        verify(userRepository, times(1)).getUserByActivationKey("key");
+        Throwable thrown = catchThrowable(() -> {
+            userService.activateUser(user.getId().toString());
+        });
+
+        assertThat(thrown.getMessage(), is("User not found."));
+        verify(userRepository, times(1)).getUserByActivationKey(user.getId().toString());
     }
 
     /**
-     * When the user is not null and the user is not activated, you should activate the user and return it.
+     * When the user is not null and the user is not activated,
+     * should activate the user and return it.
      *
      * @throws Exception exception.
      */
     @Test
     public void whenUserIsNotNullButUserIsNotActivatedShouldActivatedUserAndReturnIt() throws Exception {
-        when(userRepository.getUserByActivationKey("key")).thenReturn(user);
+        final String expectedMessage = String.format("%s successfully activated.", user.getEmail());
+        when(userRepository.getUserByActivationKey(user.getId().toString())).thenReturn(user);
         this.user.setActive(false);
 
-        assertTrue(userService.activateUser("key").isActive());
-        verify(userRepository, times(1)).getUserByActivationKey("key");
+        assertThat(userService.activateUser(user.getId().toString()), is(expectedMessage));
+        assertTrue(user.isActive());
+        verify(userRepository, times(1)).getUserByActivationKey(user.getId().toString());
     }
 
     /**
-     * When user is not null and user is activated should return that user.
+     * When user is not null and user is activated should throw ApiRequestException.
      *
      * @throws Exception exception.
      */
     @Test
     public void whenUserIsNotNulAndUserIsActivatedShouldReturnThatUser() throws Exception {
         user.setActive(true);
-        when(userRepository.getUserByActivationKey("key")).thenReturn(user);
+        when(userRepository.getUserByActivationKey(user.getId().toString())).thenReturn(user);
 
-        assertThat(userService.activateUser("key").isActive(), is(true));
-        verify(userRepository, times(1)).getUserByActivationKey("key");
+        Throwable thrown = catchThrowable(() -> {
+            userService.activateUser(user.getId().toString());
+        });
+
+        assertThat(thrown.getMessage(), is("The user is already activated."));
+        verify(userRepository, times(1)).getUserByActivationKey(user.getId().toString());
     }
 
     /**

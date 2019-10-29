@@ -100,11 +100,11 @@ public class OauthController {
      * Activate user by key.
      *
      * @param key user key.
-     * @return User.
+     * @return Message if user activate or throw exception.
      */
     @RequestMapping("/activate/{key}")
     public String activateUser(final @PathVariable String key) {
-        return String.format("Activation is %s", this.userService.activateUser(key).isActive());
+        return this.userService.activateUser(key);
     }
 
     /**
